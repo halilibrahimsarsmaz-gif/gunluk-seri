@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
     private float dp;
     private ScrollView scroll;
     private ImageView preview;
-    private TextView title, subtitle, status, mainBtn, nextBtn, modeBtn, batteryBtn, themeLabel, note;
+    private TextView title, subtitle, status, mainBtn, nextBtn, modeBtn, keepBtn, batteryBtn, themeLabel, note;
     private LinearLayout chips;
     private int previewSeq = 0;
 
@@ -103,6 +103,11 @@ public class MainActivity extends Activity {
         modeBtn.setTextSize(14);
         modeBtn.setOnClickListener(v -> toggleMode());
         root.addView(modeBtn, btnLp(10));
+
+        keepBtn = button();
+        keepBtn.setTextSize(14);
+        keepBtn.setOnClickListener(v -> cycleKeep());
+        root.addView(keepBtn, btnLp(10));
 
         themeLabel = text("Tema", 13, true);
         themeLabel.setLetterSpacing(0.2f);
@@ -178,6 +183,11 @@ public class MainActivity extends Activity {
         }
         styleSecondary(nextBtn, t);
         styleSecondary(modeBtn, t);
+        styleSecondary(keepBtn, t);
+        int ks = Engine.keepSeconds(this);
+        keepBtn.setText(ks > 0
+                ? "Okuma süresi: ekran " + ks + " sn açık kalır  (dokun: değiştir)"
+                : "Okuma süresi: telefonun kendi ayarı  (dokun: değiştir)");
         modeBtn.setText(Engine.onScreen(this)
                 ? "Değişim: her ekran açılışında ✓  (dokun: sadece saat başı)"
                 : "Değişim: sadece saat başı ✓  (dokun: her ekran açılışında)");
@@ -227,6 +237,16 @@ public class MainActivity extends Activity {
         Engine.advance(this);
         refresh();
         if (Engine.isActive(this)) applyInBackground("Kilit ekranı güncellendi.");
+    }
+
+    private void cycleKeep() {
+        int cur = Engine.keepSeconds(this);
+        int[] o = Engine.KEEP_OPTIONS;
+        int next = o[0];
+        for (int i = 0; i < o.length; i++) if (o[i] == cur) { next = o[(i + 1) % o.length]; break; }
+        Engine.prefs(this).edit().putInt("keepSec", next).apply();
+        refresh();
+        toast(next > 0 ? "Kilit ekranı " + next + " saniye açık kalacak." : "Telefonun kendi ekran süresi kullanılacak.");
     }
 
     private void toggleMode() {

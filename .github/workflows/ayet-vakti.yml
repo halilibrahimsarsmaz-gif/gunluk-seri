@@ -31,6 +31,7 @@ jobs:
               <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
               <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
               <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+              <uses-permission android:name="android.permission.WAKE_LOCK" />
               <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
               <application
@@ -56,7 +57,7 @@ jobs:
                       android:foregroundServiceType="specialUse">
                       <property
                           android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                          android:value="Ekran kapandiginda kilit ekrani ayetini yeniler" />
+                          android:value="Kilit ekrani ayetini yeniler ve okuma icin ekrani acik tutar" />
                   </service>
 
                   <receiver android:name=".TickReceiver" android:exported="true">
@@ -469,6 +470,10 @@ jobs:
 
               static boolean onScreen(Context c) { return prefs(c).getBoolean("onScreen", true); }
 
+              static final int[] KEEP_OPTIONS = {0, 20, 30, 45, 60};
+              /** Kilit ekranı açıldığında ekranın kaç saniye açık kalacağı (0 = telefonun kendi ayarı). */
+              static int keepSeconds(Context c) { return prefs(c).getInt("keepSec", 30); }
+
               /** Sıradaki ayetin konumu; her değişimde bir ilerler, liste bitmeden aynı ayet gelmez. */
               static AyetData.Ayet current(Context c) {
                   int n = AyetData.ALL.length;
@@ -490,7 +495,7 @@ jobs:
               /** Ekran kapanınca ayet değiştiren arka plan servisini açar ya da kapatır. */
               static void syncService(Context c) {
                   Intent i = new Intent(c, ScreenService.class);
-                  if (isActive(c) && onScreen(c)) {
+                  if (isActive(c)) {
                       try { c.startForegroundService(i); } catch (Throwable ignored) {}
                   } else {
                       c.stopService(i);
@@ -590,7 +595,7 @@ jobs:
               private float dp;
               private ScrollView scroll;
               private ImageView preview;
-              private TextView title, subtitle, status, mainBtn, nextBtn, modeBtn, batteryBtn, themeLabel, note;
+              private TextView title, subtitle, status, mainBtn, nextBtn, modeBtn, keepBtn, batteryBtn, themeLabel, note;
               private LinearLayout chips;
               private int previewSeq = 0;
 
@@ -659,6 +664,11 @@ jobs:
                   modeBtn.setTextSize(14);
                   modeBtn.setOnClickListener(v -> toggleMode());
                   root.addView(modeBtn, btnLp(10));
+
+                  keepBtn = button();
+                  keepBtn.setTextSize(14);
+                  keepBtn.setOnClickListener(v -> cycleKeep());
+                  root.addView(keepBtn, btnLp(10));
 
                   themeLabel = text("Tema", 13, true);
                   themeLabel.setLetterSpacing(0.2f);
@@ -734,6 +744,11 @@ jobs:
                   }
                   styleSecondary(nextBtn, t);
                   styleSecondary(modeBtn, t);
+                  styleSecondary(keepBtn, t);
+                  int ks = Engine.keepSeconds(this);
+                  keepBtn.setText(ks > 0
+                          ? "Okuma süresi: ekran " + ks + " sn açık kalır  (dokun: değiştir)"
+                          : "Okuma süresi: telefonun kendi ayarı  (dokun: değiştir)");
                   modeBtn.setText(Engine.onScreen(this)
                           ? "Değişim: her ekran açılışında ✓  (dokun: sadece saat başı)"
                           : "Değişim: sadece saat başı ✓  (dokun: her ekran açılışında)");
@@ -783,6 +798,16 @@ jobs:
                   Engine.advance(this);
                   refresh();
                   if (Engine.isActive(this)) applyInBackground("Kilit ekranı güncellendi.");
+              }
+
+              private void cycleKeep() {
+                  int cur = Engine.keepSeconds(this);
+                  int[] o = Engine.KEEP_OPTIONS;
+                  int next = o[0];
+                  for (int i = 0; i < o.length; i++) if (o[i] == cur) { next = o[(i + 1) % o.length]; break; }
+                  Engine.prefs(this).edit().putInt("keepSec", next).apply();
+                  refresh();
+                  toast(next > 0 ? "Kilit ekranı " + next + " saniye açık kalacak." : "Telefonun kendi ekran süresi kullanılacak.");
               }
 
               private void toggleMode() {
@@ -1062,7 +1087,9 @@ jobs:
           import android.content.IntentFilter;
           import android.content.pm.ServiceInfo;
           import android.os.Build;
+          import android.app.KeyguardManager;
           import android.os.IBinder;
+          import android.os.PowerManager;
           import android.os.SystemClock;
 
           import java.util.concurrent.ExecutorService;
@@ -1078,11 +1105,17 @@ jobs:
               private final ExecutorService worker = Executors.newSingleThreadExecutor();
               private final AtomicBoolean busy = new AtomicBoolean(false);
               private long lastRun = 0;
+              private PowerManager.WakeLock keepOn;
 
               private final BroadcastReceiver screenReceiver = new BroadcastReceiver() {
                   @Override
                   public void onReceive(Context context, Intent intent) {
-                      if (!Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) return;
+                      String action = intent.getAction();
+                      if (Intent.ACTION_SCREEN_ON.equals(action)) { holdScreen(); return; }
+                      if (Intent.ACTION_USER_PRESENT.equals(action)) { releaseScreen(); return; }
+                      if (!Intent.ACTION_SCREEN_OFF.equals(action)) return;
+                      releaseScreen();
+                      if (!Engine.onScreen(context)) return;
                       long now = SystemClock.elapsedRealtime();
                       if (now - lastRun < 1500 || !busy.compareAndSet(false, true)) return;
                       lastRun = now;
@@ -1121,12 +1154,15 @@ jobs:
                   } else {
                       startForeground(1, n);
                   }
-                  registerReceiver(screenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+                  IntentFilter f = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+                  f.addAction(Intent.ACTION_SCREEN_ON);
+                  f.addAction(Intent.ACTION_USER_PRESENT);
+                  registerReceiver(screenReceiver, f);
               }
 
               @Override
               public int onStartCommand(Intent intent, int flags, int startId) {
-                  if (!Engine.isActive(this) || !Engine.onScreen(this)) {
+                  if (!Engine.isActive(this)) {
                       stopSelf();
                       return START_NOT_STICKY;
                   }
@@ -1136,8 +1172,32 @@ jobs:
               @Override
               public void onDestroy() {
                   try { unregisterReceiver(screenReceiver); } catch (Throwable ignored) {}
+                  releaseScreen();
                   worker.shutdown();
                   super.onDestroy();
+              }
+
+              /** Kilit ekranı açıkken ayeti okuyabilmeniz için ekranı bir süre açık tutar. */
+              @SuppressWarnings("deprecation")
+              private void holdScreen() {
+                  int sec = Engine.keepSeconds(this);
+                  if (sec <= 0) return;
+                  KeyguardManager km = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+                  if (km == null || !km.isKeyguardLocked()) return;
+                  releaseScreen();
+                  try {
+                      PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+                      keepOn = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "AyetVakti:okuma");
+                      keepOn.setReferenceCounted(false);
+                      keepOn.acquire(sec * 1000L);
+                  } catch (Throwable ignored) {
+                      keepOn = null;
+                  }
+              }
+
+              private void releaseScreen() {
+                  try { if (keepOn != null && keepOn.isHeld()) keepOn.release(); } catch (Throwable ignored) {}
+                  keepOn = null;
               }
 
               @Override

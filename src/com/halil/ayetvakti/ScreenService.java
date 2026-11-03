@@ -11,7 +11,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ServiceInfo;
 import android.os.Build;
+import android.app.KeyguardManager;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.SystemClock;
 
 import java.util.concurrent.ExecutorService;
@@ -27,11 +29,17 @@ public class ScreenService extends Service {
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private final AtomicBoolean busy = new AtomicBoolean(false);
     private long lastRun = 0;
+    private PowerManager.WakeLock keepOn;
 
     private final BroadcastReceiver screenReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (!Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) return;
+            String action = intent.getAction();
+            if (Intent.ACTION_SCREEN_ON.equals(action)) { holdScreen(); return; }
+            if (Intent.ACTION_USER_PRESENT.equals(action)) { releaseScreen(); return; }
+            if (!Intent.ACTION_SCREEN_OFF.equals(action)) return;
+            releaseScreen();
+            if (!Engine.onScreen(context)) return;
             long now = SystemClock.elapsedRealtime();
             if (now - lastRun < 1500 || !busy.compareAndSet(false, true)) return;
             lastRun = now;
@@ -70,12 +78,15 @@ public class ScreenService extends Service {
         } else {
             startForeground(1, n);
         }
-        registerReceiver(screenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+        IntentFilter f = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+        f.addAction(Intent.ACTION_SCREEN_ON);
+        f.addAction(Intent.ACTION_USER_PRESENT);
+        registerReceiver(screenReceiver, f);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (!Engine.isActive(this) || !Engine.onScreen(this)) {
+        if (!Engine.isActive(this)) {
             stopSelf();
             return START_NOT_STICKY;
         }
@@ -85,8 +96,32 @@ public class ScreenService extends Service {
     @Override
     public void onDestroy() {
         try { unregisterReceiver(screenReceiver); } catch (Throwable ignored) {}
+        releaseScreen();
         worker.shutdown();
         super.onDestroy();
+    }
+
+    /** Kilit ekranı açıkken ayeti okuyabilmeniz için ekranı bir süre açık tutar. */
+    @SuppressWarnings("deprecation")
+    private void holdScreen() {
+        int sec = Engine.keepSeconds(this);
+        if (sec <= 0) return;
+        KeyguardManager km = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+        if (km == null || !km.isKeyguardLocked()) return;
+        releaseScreen();
+        try {
+            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            keepOn = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "AyetVakti:okuma");
+            keepOn.setReferenceCounted(false);
+            keepOn.acquire(sec * 1000L);
+        } catch (Throwable ignored) {
+            keepOn = null;
+        }
+    }
+
+    private void releaseScreen() {
+        try { if (keepOn != null && keepOn.isHeld()) keepOn.release(); } catch (Throwable ignored) {}
+        keepOn = null;
     }
 
     @Override

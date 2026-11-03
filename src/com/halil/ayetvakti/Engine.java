@@ -45,6 +45,10 @@ final class Engine {
 
     static boolean onScreen(Context c) { return prefs(c).getBoolean("onScreen", true); }
 
+    static final int[] KEEP_OPTIONS = {0, 20, 30, 45, 60};
+    /** Kilit ekranı açıldığında ekranın kaç saniye açık kalacağı (0 = telefonun kendi ayarı). */
+    static int keepSeconds(Context c) { return prefs(c).getInt("keepSec", 30); }
+
     /** Sıradaki ayetin konumu; her değişimde bir ilerler, liste bitmeden aynı ayet gelmez. */
     static AyetData.Ayet current(Context c) {
         int n = AyetData.ALL.length;
@@ -66,7 +70,7 @@ final class Engine {
     /** Ekran kapanınca ayet değiştiren arka plan servisini açar ya da kapatır. */
     static void syncService(Context c) {
         Intent i = new Intent(c, ScreenService.class);
-        if (isActive(c) && onScreen(c)) {
+        if (isActive(c)) {
             try { c.startForegroundService(i); } catch (Throwable ignored) {}
         } else {
             c.stopService(i);
