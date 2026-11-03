@@ -1,0 +1,827 @@
+# Ayet Vakti — her saat başı kilit ekranında bir ayet.
+# Bu tek dosya uygulamanın tüm kaynak kodunu içerir; GitHub her kaydedişte APK'yı derleyip
+# depo sayfasındaki "Releases" bölümüne koyar.
+name: Ayet Vakti APK
+
+on:
+  push:
+    branches: [ayet-vakti]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      KS_B64: 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
+    steps:
+      - name: Kaynak dosyalarını oluştur
+        run: |
+          mkdir -p "$(dirname 'AndroidManifest.xml')"
+          cat > 'AndroidManifest.xml' <<'AYET_EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+              package="com.halil.ayetvakti">
+
+              <uses-permission android:name="android.permission.SET_WALLPAPER" />
+              <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+              <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+              <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
+              <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+              <application
+                  android:label="Ayet Vakti"
+                  android:icon="@mipmap/ic_launcher"
+                  android:roundIcon="@mipmap/ic_launcher"
+                  android:allowBackup="true"
+                  android:theme="@android:style/Theme.Material.NoActionBar">
+
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:screenOrientation="portrait">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+
+                  <receiver android:name=".TickReceiver" android:exported="true">
+                      <intent-filter>
+                          <action android:name="android.intent.action.BOOT_COMPLETED" />
+                          <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                          <action android:name="android.intent.action.TIME_SET" />
+                          <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                      </intent-filter>
+                  </receiver>
+              </application>
+          </manifest>
+          AYET_EOF
+          mkdir -p "$(dirname 'res/values/colors.xml')"
+          cat > 'res/values/colors.xml' <<'AYET_EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <color name="ic_bg">#0F1A3A</color>
+          </resources>
+          AYET_EOF
+          mkdir -p "$(dirname 'res/mipmap-anydpi-v26/ic_launcher.xml')"
+          cat > 'res/mipmap-anydpi-v26/ic_launcher.xml' <<'AYET_EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+              <background android:drawable="@color/ic_bg" />
+              <foreground android:drawable="@drawable/ic_fg" />
+              <monochrome android:drawable="@drawable/ic_fg" />
+          </adaptive-icon>
+          AYET_EOF
+          mkdir -p "$(dirname 'res/drawable/ic_fg.xml')"
+          cat > 'res/drawable/ic_fg.xml' <<'AYET_EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="108dp" android:height="108dp"
+              android:viewportWidth="108" android:viewportHeight="108">
+              <path android:fillColor="#D9B26A" android:pathData="M37,37 H71 V71 H37 Z" />
+              <path android:fillColor="#D9B26A" android:pathData="M54,30 L78,54 L54,78 L30,54 Z" />
+              <path android:fillColor="#0F1A3A" android:pathData="M44,54 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0 Z" />
+              <path android:fillColor="#D9B26A" android:pathData="M49.5,54 a4.5,4.5 0 1,0 9,0 a4.5,4.5 0 1,0 -9,0 Z" />
+          </vector>
+          AYET_EOF
+          mkdir -p "$(dirname 'src/com/halil/ayetvakti/AyetData.java')"
+          cat > 'src/com/halil/ayetvakti/AyetData.java' <<'AYET_EOF'
+          package com.halil.ayetvakti;
+
+          /** Güzel ahlak, insan ilişkileri ve iyi insan olmak üzerine seçilmiş ayetler (meal: anlam aktarımı). */
+          final class AyetData {
+              private AyetData() {}
+
+              static final class Ayet {
+                  final String topic, text, ref;
+                  Ayet(String topic, String text, String ref) { this.topic = topic; this.text = text; this.ref = ref; }
+              }
+
+              private static Ayet a(String topic, String text, String ref) { return new Ayet(topic, text, ref); }
+
+              static final Ayet[] ALL = {
+                  a("Kardeşlik", "Ey insanlar! Sizi bir erkek ve bir dişiden yarattık; birbirinizi tanıyasınız diye sizi milletlere ve kabilelere ayırdık. Allah katında en değerliniz, O'na karşı gelmekten en çok sakınanınızdır.", "Hucurât Sûresi, 13"),
+                  a("Saygı", "Ey iman edenler! Bir topluluk bir başka topluluğu alaya almasın; belki onlar kendilerinden daha hayırlıdır. Birbirinizi ayıplamayın ve birbirinizi kötü lakaplarla çağırmayın.", "Hucurât Sûresi, 11"),
+                  a("Dil ve Kalp", "Ey iman edenler! Zannın birçoğundan kaçının; çünkü zannın bir kısmı günahtır. Birbirinizin kusurlarını araştırmayın, birbirinizin arkasından çekiştirmeyin.", "Hucurât Sûresi, 12"),
+                  a("Kardeşlik", "Müminler ancak kardeştir. Öyleyse kardeşlerinizin arasını düzeltin ve Allah'tan sakının ki size merhamet edilsin.", "Hucurât Sûresi, 10"),
+                  a("Doğruluk", "Ey iman edenler! Size güvenilmez biri bir haber getirirse onu iyice araştırın; yoksa bilmeden bir topluluğa zarar verir, sonra yaptığınıza pişman olursunuz.", "Hucurât Sûresi, 6"),
+                  a("Güzel Davranış", "İyilikle kötülük bir olmaz. Sen kötülüğü en güzel şekilde sav. O zaman seninle arasında düşmanlık bulunan kimse, sanki candan bir dost oluverir.", "Fussilet Sûresi, 34"),
+                  a("Tevazu", "İnsanlardan yüz çevirip kibirlenme, yeryüzünde böbürlenerek yürüme. Çünkü Allah kendini beğenip övünen hiç kimseyi sevmez.", "Lokmân Sûresi, 18"),
+                  a("Tevazu", "Yürüyüşünde ölçülü ol, sesini alçalt.", "Lokmân Sûresi, 19"),
+                  a("Sabır", "Yavrum! Namazı kıl, iyiliği emret, kötülükten alıkoy, başına gelene sabret. Şüphesiz bunlar kararlılık gerektiren işlerdendir.", "Lokmân Sûresi, 17"),
+                  a("Anne Baba", "Rabbin, yalnız O'na kulluk etmenizi ve anne babaya iyi davranmanızı emretti. Onlardan biri ya da ikisi senin yanında yaşlanırsa onlara \"öf\" bile deme, onları azarlama; onlara güzel söz söyle.", "İsrâ Sûresi, 23"),
+                  a("Anne Baba", "Onlara merhamet ederek alçakgönüllülük kanadını indir ve de ki: \"Rabbim! Onlar beni küçükken nasıl şefkatle yetiştirdilerse, Sen de onlara öyle merhamet et.\"", "İsrâ Sûresi, 24"),
+                  a("Cömertlik", "Akrabaya, yoksula ve yolda kalmışa hakkını ver; fakat malını saçıp savurma.", "İsrâ Sûresi, 26"),
+                  a("Ölçülülük", "Elini boynuna bağlayıp cimri olma; büsbütün açıp saçma da. Sonra kınanmış ve pişman olarak oturup kalırsın.", "İsrâ Sûresi, 29"),
+                  a("Sözünde Durmak", "Yetim ergenlik çağına erişinceye kadar onun malına, en güzel şekil dışında yaklaşmayın. Verdiğiniz sözü yerine getirin; çünkü verilen sözden sorumlu tutulacaksınız.", "İsrâ Sûresi, 34"),
+                  a("Dürüstlük", "Ölçtüğünüz zaman tam ölçün, doğru terazi ile tartın. Bu hem daha hayırlı hem de sonuç bakımından daha güzeldir.", "İsrâ Sûresi, 35"),
+                  a("Dil ve Kalp", "Hakkında bilgin olmayan şeyin ardına düşme. Çünkü kulak, göz ve kalp; bunların hepsi ondan sorumludur.", "İsrâ Sûresi, 36"),
+                  a("Tevazu", "Yeryüzünde böbürlenerek yürüme. Çünkü sen ne yeri yarabilirsin ne de boyca dağlara ulaşabilirsin.", "İsrâ Sûresi, 37"),
+                  a("Güzel Söz", "Kullarıma söyle, sözün en güzelini söylesinler.", "İsrâ Sûresi, 53"),
+                  a("Adalet", "Şüphesiz Allah adaleti, iyilik yapmayı ve yakınlara yardım etmeyi emreder; hayâsızlığı, kötülüğü ve azgınlığı yasaklar. Düşünüp öğüt alasınız diye size öğüt verir.", "Nahl Sûresi, 90"),
+                  a("Güzel Söz", "Rabbinin yoluna hikmetle ve güzel öğütle çağır; onlarla en güzel şekilde tartış.", "Nahl Sûresi, 125"),
+                  a("Sabır", "Eğer karşılık verecekseniz, size yapılanın misliyle karşılık verin. Ama sabrederseniz, andolsun bu, sabredenler için daha hayırlıdır.", "Nahl Sûresi, 126"),
+                  a("Salih Amel", "Erkek olsun kadın olsun, kim mümin olarak salih amel işlerse, ona mutlaka güzel bir hayat yaşatırız.", "Nahl Sûresi, 97"),
+                  a("Affetmek", "Onlar bollukta da darlıkta da Allah yolunda harcayanlar, öfkelerini yutanlar ve insanları affedenlerdir. Allah iyilik yapanları sever.", "Âl-i İmrân Sûresi, 134"),
+                  a("Merhamet", "Allah'ın rahmeti sayesinde onlara yumuşak davrandın. Eğer kaba ve katı yürekli olsaydın, etrafından dağılıp giderlerdi. Onları affet, onlar için bağışlanma dile ve işlerde onlarla danış.", "Âl-i İmrân Sûresi, 159"),
+                  a("Cömertlik", "Sevdiğiniz şeylerden harcamadıkça iyiliğe asla erişemezsiniz.", "Âl-i İmrân Sûresi, 92"),
+                  a("İyiliğe Çağrı", "İçinizden hayra çağıran, iyiliği emredip kötülükten alıkoyan bir topluluk bulunsun. İşte kurtuluşa erenler onlardır.", "Âl-i İmrân Sûresi, 104"),
+                  a("Sabır", "Ey iman edenler! Sabredin, sabırda yarışın, birbirinize destek olun ve Allah'tan sakının ki kurtuluşa eresiniz.", "Âl-i İmrân Sûresi, 200"),
+                  a("Güzel Söz", "Anne babaya, akrabaya, yetimlere ve yoksullara iyilik edin; insanlara güzel söz söyleyin.", "Bakara Sûresi, 83"),
+                  a("Gerçek İyilik", "İyilik, yalnızca yüzünüzü doğuya ve batıya çevirmeniz değildir. Asıl iyilik; sevdiği maldan akrabaya, yetimlere, yoksullara ve yolda kalmışa verenlerin, sözlerini tutanların, darlıkta ve sıkıntıda sabredenlerin iyiliğidir.", "Bakara Sûresi, 177"),
+                  a("Güzel Söz", "Güzel bir söz ve bağışlama, arkasından incitme gelen bir sadakadan daha hayırlıdır.", "Bakara Sûresi, 263"),
+                  a("Cömertlik", "Ey iman edenler! Sadakalarınızı başa kakarak ve incitici davranarak boşa çıkarmayın.", "Bakara Sûresi, 264"),
+                  a("Sabır", "Ey iman edenler! Sabır ve namazla yardım dileyin. Şüphesiz Allah sabredenlerle beraberdir.", "Bakara Sûresi, 153"),
+                  a("İhsan", "İyilik edin; çünkü Allah iyilik edenleri sever.", "Bakara Sûresi, 195"),
+                  a("Umut", "Allah hiç kimseye gücünün yetmediği bir şeyi yüklemez.", "Bakara Sûresi, 286"),
+                  a("Doğruluk", "Hakkı bâtıl ile karıştırmayın; bile bile hakkı gizlemeyin.", "Bakara Sûresi, 42"),
+                  a("Hayırda Yarış", "Hayırlarda birbirinizle yarışın.", "Bakara Sûresi, 148"),
+                  a("Komşuluk", "Anne babaya, akrabaya, yetimlere, yoksullara, yakın komşuya, uzak komşuya, yanınızdaki arkadaşa, yolda kalmışa iyilik edin. Allah kendini beğenip böbürlenen kimseyi sevmez.", "Nisâ Sûresi, 36"),
+                  a("Emanet", "Allah size, emanetleri ehline vermenizi ve insanlar arasında hükmettiğinizde adaletle hükmetmenizi emreder.", "Nisâ Sûresi, 58"),
+                  a("Selam", "Bir selamla selamlandığınızda, ondan daha güzeliyle ya da aynısıyla karşılık verin.", "Nisâ Sûresi, 86"),
+                  a("Adalet", "Ey iman edenler! Kendiniz, anne babanız ve yakınlarınız aleyhine de olsa, Allah için şahitlik eden adalet savunucuları olun.", "Nisâ Sûresi, 135"),
+                  a("Barış", "Gizli konuşmalarının çoğunda hayır yoktur; ancak sadaka vermeyi, iyiliği ya da insanların arasını düzeltmeyi öğütleyenlerinki başka.", "Nisâ Sûresi, 114"),
+                  a("Adalet", "Bir topluluğa olan kininiz sizi adaletsizliğe sürüklemesin. Adaletli olun; bu, takvaya daha yakındır.", "Mâide Sûresi, 8"),
+                  a("Yardımlaşma", "İyilik ve takva üzerinde yardımlaşın; günah ve düşmanlık üzerinde yardımlaşmayın.", "Mâide Sûresi, 2"),
+                  a("Hayatın Değeri", "Kim bir canı kurtarırsa, bütün insanları kurtarmış gibi olur.", "Mâide Sûresi, 32"),
+                  a("Affetmek", "Sen affı esas al, iyiliği emret ve cahillerden yüz çevir.", "A'râf Sûresi, 199"),
+                  a("Ölçülülük", "Yiyin, için; fakat israf etmeyin. Çünkü Allah israf edenleri sevmez.", "A'râf Sûresi, 31"),
+                  a("İhsan", "Şüphesiz Allah'ın rahmeti iyilik yapanlara çok yakındır.", "A'râf Sûresi, 56"),
+                  a("Tevazu", "Rahmân'ın kulları, yeryüzünde alçakgönüllülükle yürüyen kimselerdir. Cahiller onlara laf attığında \"Selâm!\" der geçerler.", "Furkân Sûresi, 63"),
+                  a("Ölçülülük", "Onlar harcadıkları zaman ne israf ne de cimrilik ederler; ikisi arasında orta bir yol tutarlar.", "Furkân Sûresi, 67"),
+                  a("Vakar", "Onlar yalan yere şahitlik etmezler; boş sözle karşılaştıklarında da onurlu bir şekilde geçip giderler.", "Furkân Sûresi, 72"),
+                  a("Huzur", "Müminler gerçekten kurtuluşa ermiştir. Onlar namazlarında huşû içindedirler ve boş şeylerden yüz çevirirler.", "Mü'minûn Sûresi, 1-3"),
+                  a("Güzel Davranış", "Kötülüğü en güzel olanla sav.", "Mü'minûn Sûresi, 96"),
+                  a("Affetmek", "Affetsinler, hoş görsünler. Allah'ın sizi bağışlamasını istemez misiniz? Allah çok bağışlayan, çok merhamet edendir.", "Nûr Sûresi, 22"),
+                  a("Affetmek", "Kim sabreder ve bağışlarsa, şüphesiz bu, kararlılık gerektiren işlerdendir.", "Şûrâ Sûresi, 43"),
+                  a("Barış", "Kötülüğün karşılığı ona denk bir kötülüktür. Ama kim affeder ve barışı sağlarsa, onun ödülü Allah'a aittir.", "Şûrâ Sûresi, 40"),
+                  a("İstişare", "Onların işleri aralarında danışma iledir; kendilerine verdiğimiz rızıktan da harcarlar.", "Şûrâ Sûresi, 38"),
+                  a("İhlas", "Onlar, kendileri ihtiyaç duydukları halde yemeği yoksula, yetime ve esire yedirirler. \"Biz sizi yalnızca Allah rızası için doyuruyoruz; sizden ne bir karşılık ne de bir teşekkür bekliyoruz.\"", "İnsân Sûresi, 8-9"),
+                  a("Merhamet", "Öyleyse sakın yetimi ezme. İsteyeni de azarlama.", "Duhâ Sûresi, 9-10"),
+                  a("Merhamet", "Dini yalanlayanı gördün mü? İşte o, yetimi itip kakar ve yoksulu doyurmaya teşvik etmez.", "Mâûn Sûresi, 1-3"),
+                  a("Hayat", "Asra andolsun ki insan gerçekten ziyandadır. Ancak iman edip salih ameller işleyenler, birbirlerine hakkı ve sabrı tavsiye edenler başka.", "Asr Sûresi, 1-3"),
+                  a("Sorumluluk", "Kim zerre ağırlığınca bir hayır işlerse onu görür. Kim de zerre ağırlığınca bir kötülük işlerse onu görür.", "Zilzâl Sûresi, 7-8"),
+                  a("Dil ve Kalp", "Arkadan çekiştirip yüze karşı alay eden herkesin vay haline!", "Hümeze Sûresi, 1"),
+                  a("Dürüstlük", "Ölçüde ve tartıda hile yapanların vay haline! Onlar insanlardan alırken tam alırlar; onlara ölçüp tarttıklarında ise eksik verirler.", "Mutaffifîn Sûresi, 1-3"),
+                  a("Söz ve Amel", "Ey iman edenler! Yapmayacağınız şeyleri niçin söylüyorsunuz? Yapmayacağınız şeyleri söylemeniz Allah katında büyük bir öfke sebebidir.", "Saf Sûresi, 2-3"),
+                  a("Doğruluk", "Ey iman edenler! Allah'tan sakının ve doğru söz söyleyin.", "Ahzâb Sûresi, 70"),
+                  a("Doğruluk", "Ey iman edenler! Allah'tan sakının ve doğrularla beraber olun.", "Tevbe Sûresi, 119"),
+                  a("İhsan", "Allah sana nasıl iyilik ettiyse sen de öyle iyilik et; yeryüzünde bozgunculuk peşinde olma.", "Kasas Sûresi, 77"),
+                  a("Güzel Ahlak", "Ve şüphesiz sen yüce bir ahlak üzerindesin.", "Kalem Sûresi, 4"),
+                  a("Güzel Davranış", "Onlar Rablerinin rızasını isteyerek sabrederler, Allah yolunda harcarlar ve kötülüğü iyilikle savarlar.", "Ra'd Sûresi, 22"),
+                  a("Değişim", "Bir topluluk kendinde olanı değiştirmedikçe Allah onların durumunu değiştirmez.", "Ra'd Sûresi, 11"),
+                  a("İhsan", "İyiliğin karşılığı ancak iyilik değil midir?", "Rahmân Sûresi, 60"),
+                  a("Umut", "Şüphesiz güçlükle beraber bir kolaylık vardır. Gerçekten, güçlükle beraber bir kolaylık vardır.", "İnşirâh Sûresi, 5-6"),
+                  a("Sabır", "Sabret; çünkü Allah iyilik yapanların ecrini asla zayi etmez.", "Hûd Sûresi, 115"),
+                  a("Emek", "İnsan için ancak çalıştığının karşılığı vardır.", "Necm Sûresi, 39"),
+                  a("Güzel Söz", "Ona yumuşak söz söyleyin; belki öğüt alır ya da içi titrer.", "Tâhâ Sûresi, 44"),
+              };
+          }
+          AYET_EOF
+          mkdir -p "$(dirname 'src/com/halil/ayetvakti/Engine.java')"
+          cat > 'src/com/halil/ayetvakti/Engine.java' <<'AYET_EOF'
+          package com.halil.ayetvakti;
+
+          import android.app.AlarmManager;
+          import android.app.PendingIntent;
+          import android.app.WallpaperManager;
+          import android.content.Context;
+          import android.content.Intent;
+          import android.content.SharedPreferences;
+          import android.graphics.Bitmap;
+          import android.graphics.Point;
+          import android.hardware.display.DisplayManager;
+          import android.os.Build;
+          import android.util.DisplayMetrics;
+          import android.view.Display;
+
+          import java.io.IOException;
+          import java.util.Calendar;
+          import java.util.Random;
+
+          /** Sıradaki ayeti seçer, kilit ekranına uygular ve saat başı alarmını kurar. */
+          final class Engine {
+              private Engine() {}
+
+              static final String ACTION_TICK = "com.halil.ayetvakti.TICK";
+              private static int[] order;
+
+              static SharedPreferences prefs(Context c) { return c.getSharedPreferences("ayet", Context.MODE_PRIVATE); }
+              static boolean isActive(Context c) { return prefs(c).getBoolean("active", false); }
+              static int theme(Context c) { return prefs(c).getInt("theme", 0); }
+
+              /** Ayetler karışık bir sırayla döner; her saat bir sonrakine geçilir, liste bitmeden tekrar etmez. */
+              private static synchronized int[] order() {
+                  if (order == null) {
+                      int n = AyetData.ALL.length;
+                      order = new int[n];
+                      for (int i = 0; i < n; i++) order[i] = i;
+                      Random r = new Random(1453);
+                      for (int i = n - 1; i > 0; i--) {
+                          int j = r.nextInt(i + 1);
+                          int tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+                      }
+                  }
+                  return order;
+              }
+
+              static AyetData.Ayet current(Context c) {
+                  long hour = System.currentTimeMillis() / 3_600_000L;
+                  int n = AyetData.ALL.length;
+                  long pos = Math.floorMod(hour + prefs(c).getInt("offset", 0), (long) n);
+                  return AyetData.ALL[order()[(int) pos]];
+              }
+
+              static Point screenSize(Context c) {
+                  DisplayManager dm = (DisplayManager) c.getSystemService(Context.DISPLAY_SERVICE);
+                  Display d = dm.getDisplay(Display.DEFAULT_DISPLAY);
+                  DisplayMetrics m = new DisplayMetrics();
+                  d.getRealMetrics(m);
+                  int w = Math.min(m.widthPixels, m.heightPixels);
+                  int h = Math.max(m.widthPixels, m.heightPixels);
+                  return new Point(w, h);
+              }
+
+              static void applyNow(Context c) throws IOException {
+                  Point s = screenSize(c);
+                  Bitmap b = Renderer.render(current(c), theme(c), s.x, s.y);
+                  try {
+                      WallpaperManager.getInstance(c).setBitmap(b, null, true, WallpaperManager.FLAG_LOCK);
+                  } finally {
+                      b.recycle();
+                  }
+              }
+
+              static long nextHour() {
+                  Calendar cal = Calendar.getInstance();
+                  cal.add(Calendar.HOUR_OF_DAY, 1);
+                  cal.set(Calendar.MINUTE, 0);
+                  cal.set(Calendar.SECOND, 2);
+                  cal.set(Calendar.MILLISECOND, 0);
+                  return cal.getTimeInMillis();
+              }
+
+              private static PendingIntent tickIntent(Context c) {
+                  Intent i = new Intent(c, TickReceiver.class).setAction(ACTION_TICK);
+                  return PendingIntent.getBroadcast(c, 7, i, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+              }
+
+              static void scheduleNext(Context c) {
+                  AlarmManager am = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
+                  PendingIntent pi = tickIntent(c);
+                  long at = nextHour();
+                  try {
+                      if (Build.VERSION.SDK_INT >= 31 && !am.canScheduleExactAlarms()) {
+                          am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
+                      } else {
+                          am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
+                      }
+                  } catch (SecurityException e) {
+                      am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
+                  }
+              }
+
+              static void cancel(Context c) {
+                  AlarmManager am = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
+                  am.cancel(tickIntent(c));
+              }
+          }
+          AYET_EOF
+          mkdir -p "$(dirname 'src/com/halil/ayetvakti/MainActivity.java')"
+          cat > 'src/com/halil/ayetvakti/MainActivity.java' <<'AYET_EOF'
+          package com.halil.ayetvakti;
+
+          import android.app.Activity;
+          import android.content.ActivityNotFoundException;
+          import android.content.Intent;
+          import android.graphics.Bitmap;
+          import android.graphics.Outline;
+          import android.graphics.Point;
+          import android.graphics.Typeface;
+          import android.graphics.drawable.GradientDrawable;
+          import android.net.Uri;
+          import android.os.Bundle;
+          import android.os.Handler;
+          import android.os.Looper;
+          import android.os.PowerManager;
+          import android.provider.Settings;
+          import android.view.Gravity;
+          import android.view.View;
+          import android.view.ViewOutlineProvider;
+          import android.view.Window;
+          import android.widget.FrameLayout;
+          import android.widget.ImageView;
+          import android.widget.LinearLayout;
+          import android.widget.ScrollView;
+          import android.widget.TextView;
+          import android.widget.Toast;
+
+          import java.text.SimpleDateFormat;
+          import java.util.Date;
+          import java.util.Locale;
+
+          public class MainActivity extends Activity {
+              private final Handler ui = new Handler(Looper.getMainLooper());
+              private float dp;
+              private ScrollView scroll;
+              private ImageView preview;
+              private TextView title, subtitle, status, mainBtn, nextBtn, batteryBtn, themeLabel, note;
+              private LinearLayout chips;
+              private int previewSeq = 0;
+
+              @Override
+              protected void onCreate(Bundle b) {
+                  super.onCreate(b);
+                  dp = getResources().getDisplayMetrics().density;
+                  buildUi();
+                  refresh();
+              }
+
+              @Override
+              protected void onResume() {
+                  super.onResume();
+                  refresh();
+              }
+
+              private void buildUi() {
+                  scroll = new ScrollView(this);
+                  scroll.setFillViewport(true);
+                  LinearLayout root = new LinearLayout(this);
+                  root.setOrientation(LinearLayout.VERTICAL);
+                  root.setGravity(Gravity.CENTER_HORIZONTAL);
+                  root.setPadding(px(22), px(36), px(22), px(28));
+                  scroll.addView(root, new FrameLayout.LayoutParams(-1, -2));
+
+                  title = text("Ayet Vakti", 30, true);
+                  title.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
+                  root.addView(title);
+
+                  subtitle = text("Her saat başı kilit ekranında,\ngüzel ahlak üzerine bir ayet.", 15, false);
+                  subtitle.setPadding(0, px(6), 0, px(22));
+                  root.addView(subtitle);
+
+                  Point s = Engine.screenSize(this);
+                  int pw = (int) (getResources().getDisplayMetrics().widthPixels * 0.62f);
+                  int ph = (int) (pw * (s.y / (float) s.x));
+                  preview = new ImageView(this);
+                  preview.setScaleType(ImageView.ScaleType.FIT_XY);
+                  preview.setOutlineProvider(new ViewOutlineProvider() {
+                      @Override
+                      public void getOutline(View v, Outline o) {
+                          o.setRoundRect(0, 0, v.getWidth(), v.getHeight(), px(26));
+                      }
+                  });
+                  preview.setClipToOutline(true);
+                  preview.setElevation(px(10));
+                  LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(pw, ph);
+                  lp.bottomMargin = px(18);
+                  root.addView(preview, lp);
+
+                  status = text("", 14, false);
+                  status.setPadding(0, 0, 0, px(16));
+                  root.addView(status);
+
+                  mainBtn = button();
+                  mainBtn.setOnClickListener(v -> toggle());
+                  root.addView(mainBtn, btnLp(0));
+
+                  nextBtn = button();
+                  nextBtn.setText("Başka bir ayet göster");
+                  nextBtn.setOnClickListener(v -> next());
+                  root.addView(nextBtn, btnLp(10));
+
+                  themeLabel = text("Tema", 13, true);
+                  themeLabel.setLetterSpacing(0.2f);
+                  themeLabel.setPadding(0, px(26), 0, px(10));
+                  root.addView(themeLabel);
+
+                  chips = new LinearLayout(this);
+                  chips.setOrientation(LinearLayout.HORIZONTAL);
+                  chips.setGravity(Gravity.CENTER);
+                  for (int i = 0; i < Renderer.THEMES.length; i++) {
+                      final int idx = i;
+                      View chip = new View(this);
+                      chip.setContentDescription(Renderer.THEME_NAMES[i]);
+                      chip.setOnClickListener(v -> setThemeIdx(idx));
+                      LinearLayout.LayoutParams cp = new LinearLayout.LayoutParams(px(44), px(44));
+                      cp.leftMargin = px(7);
+                      cp.rightMargin = px(7);
+                      chips.addView(chip, cp);
+                  }
+                  root.addView(chips);
+
+                  batteryBtn = button();
+                  batteryBtn.setText("Pil kısıtlamasını kaldır (önerilir)");
+                  batteryBtn.setOnClickListener(v -> askBattery());
+                  root.addView(batteryBtn, btnLp(28));
+
+                  note = text("Ayet her saat başı yalnızca kilit ekranı duvar kâğıdına yazılır; ana ekranınız değişmez.\n\n"
+                          + "Samsung'da: Ayarlar › Kilit ekranı'nda \"Dinamik kilit ekranı\" veya \"Kilit ekranı duvar kâğıdı servisleri\" açıksa kapatın; yoksa ayetin üstüne yazabilir.\n\n"
+                          + "Mealler anlam aktarımıdır; bazı ayetlerin yalnızca bir bölümü verilmiştir.", 12.5f, false);
+                  note.setPadding(px(6), px(22), px(6), 0);
+                  note.setLineSpacing(0, 1.15f);
+                  root.addView(note);
+
+                  setContentView(scroll);
+              }
+
+              private void refresh() {
+                  int th = Engine.theme(this);
+                  int[] t = Renderer.THEMES[th];
+                  boolean light = Renderer.isLight(th);
+                  boolean active = Engine.isActive(this);
+
+                  GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{t[0], t[1]});
+                  scroll.setBackground(bg);
+                  Window w = getWindow();
+                  w.setStatusBarColor(t[0]);
+                  w.setNavigationBarColor(t[1]);
+                  int sysFlags = 0;
+                  if (light) sysFlags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+                  w.getDecorView().setSystemUiVisibility(sysFlags);
+
+                  title.setTextColor(t[3]);
+                  subtitle.setTextColor(Renderer.alpha(t[3], 190));
+                  status.setTextColor(Renderer.alpha(t[3], 220));
+                  themeLabel.setTextColor(t[2]);
+                  note.setTextColor(Renderer.alpha(t[3], 150));
+
+                  if (active) {
+                      String at = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date(Engine.nextHour()));
+                      status.setText("● Açık  ·  sıradaki ayet " + at + "'de");
+                      mainBtn.setText("Durdur");
+                      styleSecondary(mainBtn, t);
+                  } else {
+                      status.setText("○ Kapalı");
+                      mainBtn.setText("Kilit ekranına uygula ve başlat");
+                      stylePrimary(mainBtn, t);
+                  }
+                  styleSecondary(nextBtn, t);
+                  styleSecondary(batteryBtn, t);
+                  PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+                  batteryBtn.setVisibility(pm.isIgnoringBatteryOptimizations(getPackageName()) ? View.GONE : View.VISIBLE);
+
+                  for (int i = 0; i < chips.getChildCount(); i++) {
+                      int[] c = Renderer.THEMES[i];
+                      GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{c[0], c[1]});
+                      g.setShape(GradientDrawable.OVAL);
+                      g.setStroke(px(i == th ? 3 : 1), i == th ? t[2] : Renderer.alpha(t[3], 70));
+                      chips.getChildAt(i).setBackground(g);
+                  }
+                  renderPreview();
+              }
+
+              private void renderPreview() {
+                  final int seq = ++previewSeq;
+                  final AyetData.Ayet a = Engine.current(this);
+                  final int th = Engine.theme(this);
+                  final Point s = Engine.screenSize(this);
+                  new Thread(() -> {
+                      final Bitmap bmp = Renderer.render(a, th, s.x / 2, s.y / 2);
+                      ui.post(() -> {
+                          if (seq == previewSeq) preview.setImageBitmap(bmp);
+                      });
+                  }).start();
+              }
+
+              private void toggle() {
+                  if (Engine.isActive(this)) {
+                      Engine.prefs(this).edit().putBoolean("active", false).apply();
+                      Engine.cancel(this);
+                      toast("Durduruldu. Kilit ekranındaki son ayet yerinde kalır.");
+                      refresh();
+                  } else {
+                      Engine.prefs(this).edit().putBoolean("active", true).apply();
+                      applyInBackground("Kilit ekranı güncellendi. Her saat başı yeni ayet gelecek.");
+                      refresh();
+                  }
+              }
+
+              private void next() {
+                  int off = Engine.prefs(this).getInt("offset", 0);
+                  Engine.prefs(this).edit().putInt("offset", off + 1).apply();
+                  refresh();
+                  if (Engine.isActive(this)) applyInBackground("Kilit ekranı güncellendi.");
+              }
+
+              private void setThemeIdx(int i) {
+                  if (i == Engine.theme(this)) return;
+                  Engine.prefs(this).edit().putInt("theme", i).apply();
+                  refresh();
+                  if (Engine.isActive(this)) applyInBackground("Tema: " + Renderer.THEME_NAMES[i]);
+              }
+
+              private void applyInBackground(final String okMsg) {
+                  final android.content.Context app = getApplicationContext();
+                  new Thread(() -> {
+                      String msg = okMsg;
+                      try {
+                          Engine.applyNow(app);
+                          Engine.scheduleNext(app);
+                      } catch (Throwable e) {
+                          msg = "Duvar kâğıdı ayarlanamadı: " + e.getMessage();
+                      }
+                      final String m = msg;
+                      ui.post(() -> toast(m));
+                  }).start();
+              }
+
+              private void askBattery() {
+                  try {
+                      startActivity(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                              Uri.parse("package:" + getPackageName())));
+                  } catch (ActivityNotFoundException e) {
+                      try {
+                          startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+                      } catch (ActivityNotFoundException ignored) {
+                          toast("Ayarlar › Uygulamalar › Ayet Vakti › Pil › Kısıtlanmamış");
+                      }
+                  }
+              }
+
+              // --- küçük yardımcılar ---
+
+              private TextView text(String s, float sp, boolean bold) {
+                  TextView tv = new TextView(this);
+                  tv.setText(s);
+                  tv.setTextSize(sp);
+                  tv.setGravity(Gravity.CENTER);
+                  if (bold) tv.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+                  return tv;
+              }
+
+              private TextView button() {
+                  TextView b = new TextView(this);
+                  b.setGravity(Gravity.CENTER);
+                  b.setTextSize(16);
+                  b.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+                  b.setPadding(px(18), px(15), px(18), px(15));
+                  b.setClickable(true);
+                  b.setFocusable(true);
+                  return b;
+              }
+
+              private LinearLayout.LayoutParams btnLp(int topDp) {
+                  LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1, -2);
+                  lp.topMargin = px(topDp);
+                  return lp;
+              }
+
+              private void stylePrimary(TextView b, int[] t) {
+                  GradientDrawable g = new GradientDrawable();
+                  g.setCornerRadius(px(30));
+                  g.setColor(t[2]);
+                  b.setBackground(g);
+                  b.setTextColor(t[0]);
+              }
+
+              private void styleSecondary(TextView b, int[] t) {
+                  GradientDrawable g = new GradientDrawable();
+                  g.setCornerRadius(px(30));
+                  g.setColor(Renderer.alpha(t[3], 18));
+                  g.setStroke(px(1), Renderer.alpha(t[2], 150));
+                  b.setBackground(g);
+                  b.setTextColor(t[3]);
+              }
+
+              private int px(float v) { return Math.round(v * dp); }
+
+              private void toast(String s) { Toast.makeText(this, s, Toast.LENGTH_LONG).show(); }
+          }
+          AYET_EOF
+          mkdir -p "$(dirname 'src/com/halil/ayetvakti/Renderer.java')"
+          cat > 'src/com/halil/ayetvakti/Renderer.java' <<'AYET_EOF'
+          package com.halil.ayetvakti;
+
+          import android.graphics.Bitmap;
+          import android.graphics.Canvas;
+          import android.graphics.Color;
+          import android.graphics.LinearGradient;
+          import android.graphics.Paint;
+          import android.graphics.Path;
+          import android.graphics.RadialGradient;
+          import android.graphics.Shader;
+          import android.graphics.Typeface;
+          import android.text.Layout;
+          import android.text.StaticLayout;
+          import android.text.TextPaint;
+
+          import java.util.Locale;
+
+          /** Ayeti, kilit ekranı duvar kâğıdı olarak çizer. */
+          final class Renderer {
+              private Renderer() {}
+
+              // üst renk, alt renk, vurgu (altın), metin, desen
+              static final int[][] THEMES = {
+                  {0xFF0A1128, 0xFF1C2B57, 0xFFD9B26A, 0xFFF5EDDF, 0xFFD9B26A}, // Gece
+                  {0xFF06231E, 0xFF12503F, 0xFFE6C47F, 0xFFF0F5EE, 0xFFE6C47F}, // Zümrüt
+                  {0xFFF7F0E3, 0xFFE8D9BE, 0xFF8E5F28, 0xFF2A2018, 0xFF8E5F28}, // Şafak
+                  {0xFF221019, 0xFF4A2337, 0xFFEBB8A2, 0xFFF8ECE8, 0xFFEBB8A2}, // Gül
+                  {0xFF0E0E10, 0xFF1E1E22, 0xFFC9A66B, 0xFFEDEDED, 0xFFC9A66B}, // Siyah
+              };
+              static final String[] THEME_NAMES = {"Gece", "Zümrüt", "Şafak", "Gül", "Siyah"};
+
+              static boolean isLight(int theme) { return theme == 2; }
+
+              static Bitmap render(AyetData.Ayet a, int theme, int w, int h) {
+                  int[] t = THEMES[Math.floorMod(theme, THEMES.length)];
+                  boolean light = isLight(theme);
+                  Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+                  Canvas cv = new Canvas(bmp);
+                  Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+                  // Arka plan
+                  p.setShader(new LinearGradient(0, 0, 0, h, t[0], t[1], Shader.TileMode.CLAMP));
+                  cv.drawRect(0, 0, w, h, p);
+
+                  float cy = h * 0.575f;
+                  p.setShader(new RadialGradient(w / 2f, cy, w * 0.85f,
+                          alpha(t[2], light ? 50 : 38), alpha(t[2], 0), Shader.TileMode.CLAMP));
+                  cv.drawRect(0, 0, w, h, p);
+                  p.setShader(null);
+
+                  drawPattern(cv, w, h, cy, t[4], light);
+
+                  // Yazı ayarları
+                  float margin = w * 0.10f;
+                  int tw = (int) (w - 2 * margin);
+
+                  TextPaint label = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                  label.setColor(t[2]);
+                  label.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+                  label.setTextSize(w * 0.029f);
+                  label.setLetterSpacing(0.28f);
+                  label.setTextAlign(Paint.Align.CENTER);
+
+                  TextPaint body = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                  body.setColor(t[3]);
+                  body.setTypeface(Typeface.create(Typeface.SERIF, Typeface.NORMAL));
+                  if (!light) body.setShadowLayer(w * 0.008f, 0, w * 0.002f, 0x66000000);
+
+                  TextPaint ref = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                  ref.setColor(t[2]);
+                  ref.setTypeface(Typeface.create(Typeface.SERIF, Typeface.ITALIC));
+                  ref.setTextSize(w * 0.036f);
+                  ref.setTextAlign(Paint.Align.CENTER);
+
+                  String txt = "“" + a.text + "”";
+                  float size = w * 0.058f;
+                  StaticLayout lay;
+                  while (true) {
+                      body.setTextSize(size);
+                      lay = StaticLayout.Builder.obtain(txt, 0, txt.length(), body, tw)
+                              .setAlignment(Layout.Alignment.ALIGN_CENTER)
+                              .setLineSpacing(0f, 1.2f)
+                              .setIncludePad(false)
+                              .setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY)
+                              .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_NONE)
+                              .build();
+                      if (lay.getHeight() <= h * 0.36f || size <= w * 0.034f) break;
+                      size *= 0.95f;
+                  }
+
+                  String topic = a.topic.toUpperCase(new Locale("tr", "TR"));
+                  float labelH = -label.ascent() + label.descent();
+                  float refH = -ref.ascent() + ref.descent();
+                  float ornH = w * 0.03f;
+                  float gap = w * 0.042f;
+                  float total = labelH + gap + ornH + gap * 1.2f + lay.getHeight() + gap * 1.2f + ornH + gap + refH;
+                  float y = cy - total / 2f;
+
+                  cv.drawText(topic, w / 2f, y - label.ascent(), label);
+                  y += labelH + gap;
+                  drawOrnament(cv, w / 2f, y + ornH / 2f, w * 0.20f, w * 0.012f, t[2]);
+                  y += ornH + gap * 1.2f;
+
+                  cv.save();
+                  cv.translate(margin, y);
+                  lay.draw(cv);
+                  cv.restore();
+                  y += lay.getHeight() + gap * 1.2f;
+
+                  drawOrnament(cv, w / 2f, y + ornH / 2f, w * 0.12f, w * 0.009f, t[2]);
+                  y += ornH + gap;
+                  cv.drawText(a.ref, w / 2f, y - ref.ascent(), ref);
+
+                  return bmp;
+              }
+
+              /** Hafif, sekiz köşeli yıldız deseni; yazının çevresinde solar. */
+              private static void drawPattern(Canvas cv, int w, int h, float cy, int color, boolean light) {
+                  Paint s = new Paint(Paint.ANTI_ALIAS_FLAG);
+                  s.setStyle(Paint.Style.STROKE);
+                  s.setStrokeWidth(Math.max(1f, w * 0.0016f));
+                  float step = w / 4.5f;
+                  float r = step * 0.30f;
+                  int base = light ? 34 : 26;
+                  Path star = new Path();
+                  for (float yy = step * 0.25f; yy < h + step; yy += step * 0.86f) {
+                      boolean odd = Math.round(yy / (step * 0.86f)) % 2 == 1;
+                      float dist = Math.min(1f, Math.abs(yy - cy) / (h * 0.5f));
+                      int al = (int) (base * (0.15f + 0.85f * dist));
+                      s.setColor(alpha(color, al));
+                      for (float xx = odd ? step / 2f : 0f; xx < w + step; xx += step) {
+                          star.reset();
+                          star.addRect(xx - r, yy - r, xx + r, yy + r, Path.Direction.CW);
+                          float d = r * 1.4142f;
+                          star.moveTo(xx, yy - d);
+                          star.lineTo(xx + d, yy);
+                          star.lineTo(xx, yy + d);
+                          star.lineTo(xx - d, yy);
+                          star.close();
+                          cv.drawPath(star, s);
+                          cv.drawCircle(xx, yy, r * 0.45f, s);
+                      }
+                  }
+              }
+
+              private static void drawOrnament(Canvas cv, float cx, float cy, float half, float dm, int color) {
+                  Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+                  p.setColor(alpha(color, 200));
+                  p.setStrokeWidth(Math.max(1f, dm * 0.18f));
+                  float inner = dm * 2.4f;
+                  cv.drawLine(cx - half, cy, cx - inner, cy, p);
+                  cv.drawLine(cx + inner, cy, cx + half, cy, p);
+                  Path d = new Path();
+                  d.moveTo(cx, cy - dm);
+                  d.lineTo(cx + dm, cy);
+                  d.lineTo(cx, cy + dm);
+                  d.lineTo(cx - dm, cy);
+                  d.close();
+                  p.setStyle(Paint.Style.FILL);
+                  cv.drawPath(d, p);
+                  cv.drawCircle(cx - half - dm * 0.8f, cy, dm * 0.28f, p);
+                  cv.drawCircle(cx + half + dm * 0.8f, cy, dm * 0.28f, p);
+              }
+
+              static int alpha(int c, int a) { return Color.argb(Math.max(0, Math.min(255, a)), Color.red(c), Color.green(c), Color.blue(c)); }
+          }
+          AYET_EOF
+          mkdir -p "$(dirname 'src/com/halil/ayetvakti/TickReceiver.java')"
+          cat > 'src/com/halil/ayetvakti/TickReceiver.java' <<'AYET_EOF'
+          package com.halil.ayetvakti;
+
+          import android.content.BroadcastReceiver;
+          import android.content.Context;
+          import android.content.Intent;
+
+          /** Saat başı alarmı, telefon açılışı ve saat değişikliklerinde ayeti yeniler. */
+          public class TickReceiver extends BroadcastReceiver {
+              @Override
+              public void onReceive(Context context, Intent intent) {
+                  final Context c = context.getApplicationContext();
+                  if (!Engine.isActive(c)) return;
+                  final PendingResult result = goAsync();
+                  new Thread(() -> {
+                      try {
+                          Engine.applyNow(c);
+                      } catch (Throwable ignored) {
+                      } finally {
+                          try { Engine.scheduleNext(c); } catch (Throwable ignored) {}
+                          result.finish();
+                      }
+                  }).start();
+              }
+          }
+          AYET_EOF
+
+      - name: APK derle
+        run: |
+          set -e
+          BT="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
+          PLAT="$ANDROID_HOME/platforms/$(ls "$ANDROID_HOME/platforms" | sort -V | tail -1)/android.jar"
+          echo "build-tools: $BT"; echo "platform: $PLAT"
+          VC=${{ github.run_number }}
+          mkdir -p build/classes build/dex
+          "$BT/aapt2" compile --dir res -o build/res.zip
+          "$BT/aapt2" link -o build/base.apk -I "$PLAT" --manifest AndroidManifest.xml \
+            --min-sdk-version 26 --target-sdk-version 34 \
+            --version-code "$VC" --version-name "1.$VC" build/res.zip
+          javac -encoding UTF-8 -source 11 -target 11 -Xlint:-options -classpath "$PLAT" \
+            -d build/classes $(find src -name '*.java')
+          "$BT/d8" --release --min-api 26 --lib "$PLAT" --output build/dex $(find build/classes -name '*.class')
+          (cd build/dex && zip -q -u ../base.apk classes.dex)
+          "$BT/zipalign" -f -p 4 build/base.apk build/aligned.apk
+          echo "$KS_B64" | base64 -d > build/ks.p12
+          "$BT/apksigner" sign --ks build/ks.p12 --ks-type PKCS12 --ks-pass pass:ayetvakti --key-pass pass:ayetvakti \
+            --out build/AyetVakti.apk build/aligned.apk
+          "$BT/apksigner" verify build/AyetVakti.apk
+          ls -l build/AyetVakti.apk
+
+      - name: APK'yı Releases'e koy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "ayet-vakti-v${{ github.run_number }}" build/AyetVakti.apk \
+            --repo "${{ github.repository }}" \
+            --title "Ayet Vakti 1.${{ github.run_number }}" \
+            --notes "Telefona yüklemek için aşağıdaki AyetVakti.apk dosyasına dokunun."
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AyetVakti
+          path: build/AyetVakti.apk
