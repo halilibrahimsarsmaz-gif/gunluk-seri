@@ -40,26 +40,30 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .prog{height:3px;background:var(--line);border-radius:3px;margin-top:6px;overflow:hidden}
 .prog i{display:block;height:100%;background:var(--fg);border-radius:3px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
 
-.stage{flex:1;position:relative;touch-action:none;display:flex;flex-direction:column;justify-content:center;gap:28px;min-height:0;overflow:hidden}
-.item{font-family:var(--display);font-weight:800;letter-spacing:-.035em;line-height:.95;overflow-wrap:anywhere;text-wrap:balance;will-change:transform}
-.item.cur{color:hsl(var(--h) var(--sat) var(--strong-l));font-size:var(--fs)}
-.item.next{color:var(--faint);font-size:calc(var(--fs) * .42);font-weight:500;letter-spacing:-.02em;line-height:1.05}
-.item.next2{color:var(--faint);font-size:calc(var(--fs) * .3);font-weight:500;opacity:.6;line-height:1.05}
-.item.rise{animation:rise .55s cubic-bezier(.2,.9,.25,1) both}
-@keyframes rise{from{transform:translateY(60px) scale(.9);opacity:.2}to{transform:none;opacity:1}}
-.item.next.rise,.item.next2.rise{animation-duration:.6s}
-.meta{font-size:13px;color:var(--muted);display:flex;gap:14px;margin-top:-12px}
-.meta b{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}
+/* makara: üç satır görünür, 3B silindir üzerinde döner */
+.stage{flex:1;position:relative;touch-action:none;min-height:0;overflow:hidden;perspective:1100px;
+  -webkit-mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent)}
+.reel{position:absolute;inset:0;transform-style:preserve-3d}
+.row{position:absolute;left:0;right:0;top:50%;will-change:transform,opacity;backface-visibility:hidden;-webkit-backface-visibility:hidden;cursor:pointer}
+.row .t{font-family:var(--display);font-weight:800;font-size:var(--fs);letter-spacing:-.035em;line-height:1.02;overflow-wrap:anywhere;
+  color:hsl(var(--h) var(--sat) var(--strong-l));
+  background:linear-gradient(currentColor,currentColor) no-repeat 0 56%/0% .085em;-webkit-box-decoration-break:clone;box-decoration-break:clone;
+  transition:background-size .45s cubic-bezier(.6,0,.2,1)}
+.row.done .t{background-size:100% .085em}
+.row .sub{display:flex;gap:14px;margin-top:10px;font-size:13px;color:var(--muted)}
+.row .sub b{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}
+.row .sub .ok{color:hsl(var(--h) var(--sat) var(--strong-l));font-weight:600}
 
-.hint{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;font-size:13px;color:var(--muted)}
+.hint{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;font-size:13px;color:var(--muted);min-height:44px}
 .hint .up{display:flex;align-items:center;gap:8px;color:var(--fg);font-weight:600;padding:10px 0}
 .hint .up svg{width:18px;height:18px;animation:nudge 1.8s ease-in-out infinite}
 @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-.hint .later{padding:10px 0}
+.hint .open{color:var(--fg);font-weight:600;text-decoration:underline;text-underline-offset:4px;padding:10px 0}
+.hint .back{padding:10px 0}
 
-.done h1,.empty h1{font-family:var(--display);font-weight:800;font-size:clamp(46px,15vw,92px);line-height:.92;letter-spacing:-.04em;margin:0;text-wrap:balance}
-.done p,.empty p{color:var(--muted);margin:14px 0 0;font-size:15px;line-height:1.5;max-width:30ch}
-.done .open{margin-top:22px;font-weight:600;text-decoration:underline;text-underline-offset:4px;padding:6px 0}
+.empty h1{font-family:var(--display);font-weight:800;font-size:clamp(46px,15vw,92px);line-height:.92;letter-spacing:-.04em;margin:0;text-wrap:balance}
+.empty p{color:var(--muted);margin:14px 0 0;font-size:15px;line-height:1.5;max-width:30ch}
+.empty{display:flex;flex-direction:column;justify-content:center;-webkit-mask-image:none;mask-image:none;touch-action:auto}
 .empty form{margin-top:26px;display:flex;flex-direction:column;gap:14px}
 .sugs{display:flex;flex-wrap:wrap;gap:8px}
 .sugs button{border:1px solid var(--line);border-radius:99px;padding:9px 14px;font-size:14px}
@@ -138,74 +142,100 @@ function streak(h){let d=today();if(!h.days[key(d)])d=addDays(d,-1);let n=0;whil
 function best(h){const ks=Object.keys(h.days).sort();let b=0,r=0,prev=null;for(const k of ks){const d=new Date(k+"T00:00");r=prev&&key(addDays(prev,1))===k?r+1:1;b=Math.max(b,r);prev=d}return b}
 function weekCount(h){const t=today(),mon=addDays(t,-((t.getDay()+6)%7));let n=0;for(let i=0;i<7;i++)if(h.days[key(addDays(mon,i))])n++;return n}
 function pct(h,n){let c=0;for(let i=0;i<n;i++)if(h.days[key(addDays(today(),-i))])c++;return Math.round(c/n*100)}
-function pending(){const tk=key(today());return state.habits.filter(h=>!h.days[tk]).sort((a,b)=>skipped.indexOf(a.id)-skipped.indexOf(b.id))}
-function fs(name){const L=name.length;return L<=10?"min(17vw,120px)":L<=18?"min(13vw,92px)":L<=30?"min(10vw,72px)":"min(8vw,56px)"}
+function fs(name){const L=name.length;return L<=12?"min(13vw,84px)":L<=22?"min(10.5vw,66px)":"min(8.2vw,50px)"}
+function allDone(){const tk=key(today());return state.habits.length>0&&state.habits.every(h=>h.days[tk])}
+function firstOpen(){const tk=key(today()),i=state.habits.findIndex(h=>!h.days[tk]);return i<0?Math.max(0,state.habits.length-1):i}
 
-/* ---------- ana ekran ---------- */
-function renderMain(animate){
-  const app=document.getElementById("app"),H=state.habits,P=pending(),tk=key(today());
-  const doneN=H.length-P.length,date=today().toLocaleDateString("tr-TR",{weekday:"long",day:"numeric",month:"long"});
-  const [d1,...dr]=date.split(" ");
+/* ---------- ana ekran: makara ---------- */
+let idx=-1,off=0,R=160,STEP=.62,tween=0;
+function renderMain(){
+  const app=document.getElementById("app"),H=state.habits;
+  const date=today().toLocaleDateString("tr-TR",{weekday:"long",day:"numeric",month:"long"}),[d1,...dr]=date.split(" ");
+  if(idx<0||idx>H.length-1)idx=firstOpen();off=idx;
   let mid;
   if(!H.length){
-    mid=`<div class="stage empty"><h1>İlk alışkanlığını yaz.</h1><p>Her gün yapmak istediğin tek bir şey. Yaptığında yukarı kaydırırsın, o gün için kaybolur.</p>
+    mid=`<div class="stage empty"><h1>İlk alışkanlığını yaz.</h1><p>Her gün yapmak istediğin tek bir şey. Yaptığında yukarı kaydırırsın, makara döner ve üstü çizilir.</p>
     <form id="firstForm"><input type="text" id="firstName" maxlength="40" placeholder="ör. 10 sayfa kitap oku" autocomplete="off" enterkeyhint="done">
     <div class="sugs">${["10 sayfa kitap oku","2 litre su iç","20 dk yürüyüş","Erken yat"].map(s=>`<button type="button" data-sug="${s}">${s}</button>`).join("")}</div>
     <button class="primary" type="submit">Ekle</button></form></div>`;
-  }else if(!P.length){
-    const top=H.map(h=>streak(h)).reduce((a,b)=>Math.max(a,b),0);
-    mid=`<div class="stage done"><h1>Bugün hepsi tamam.</h1><p>${H.length} alışkanlığın ${H.length} tanesini bitirdin.${top>1?` En uzun serin şu an ${top} gün.`:""}</p><button class="open" data-open>Raporu aç</button></div>`;
   }else{
-    const [c,n1,n2]=P;
-    mid=`<div class="stage" id="stage" style="--fs:${fs(c.name)}">
-      <div class="item cur${animate?" rise":""}" id="cur" style="--h:${c.h}">${esc(c.name)}</div>
-      <div class="meta"><span><b>${streak(c)}</b> gün seri</span><span>bu hafta <b>${weekCount(c)}/7</b></span></div>
-      ${n1?`<div class="item next${animate?" rise":""}">${esc(n1.name)}</div>`:""}
-      ${n2?`<div class="item next2${animate?" rise":""}">${esc(n2.name)}</div>`:""}
-    </div>
-    <div class="hint"><button class="up" data-done><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg>Yaptıysan yukarı kaydır</button>${P.length>1?`<button class="later" data-later>Sonra ↓</button>`:""}</div>`;
+    mid=`<div class="stage" id="stage"><div class="reel" id="reel">${H.map((h,i)=>`
+      <div class="row" data-row="${i}" style="--h:${h.h};--fs:${fs(h.name)}"><div><span class="t">${esc(h.name)}</span></div><div class="sub"></div></div>`).join("")}</div></div>
+      <div class="hint" id="hint"></div>`;
   }
   app.innerHTML=`<div class="top"><div class="date"><b>${esc(d1)}</b> ${esc(dr.join(" "))}</div>
     <button class="menu" data-open aria-label="Raporu aç">Rapor<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 19V11M12 19V5M19 19v-5"/></svg></button></div>
-    ${H.length?`<div class="prog" aria-label="${doneN}/${H.length} tamam"><i style="width:${H.length?doneN/H.length*100:0}%"></i></div>`:""}
-    ${mid}`;
-  bindGesture();
+    ${H.length?`<div class="prog"><i id="progBar"></i></div>`:""}${mid}`;
+  if(H.length){refresh();measure();layout();bindGesture()}
   setBars();
 }
-
-function bindGesture(){
-  const stage=document.getElementById("stage"),cur=document.getElementById("cur");if(!stage||!cur)return;
-  let y0=0,t0=0,dy=0,active=false;
-  stage.onpointerdown=e=>{active=true;y0=e.clientY;t0=performance.now();dy=0;cur.style.transition="none";stage.setPointerCapture(e.pointerId)};
-  stage.onpointermove=e=>{if(!active)return;dy=e.clientY-y0;const v=dy<0?dy:dy*.35;
-    cur.style.transform=`translateY(${v}px) rotate(${v*-.01}deg)`;cur.style.opacity=String(1-Math.min(Math.abs(dy)/500,.6))};
-  const end=()=>{if(!active)return;active=false;const vel=dy/Math.max(1,performance.now()-t0);
-    if(dy<-90||(dy<-30&&vel<-.6))complete();else if(dy>110&&pending().length>1)later();
-    else{cur.style.transition="transform .35s cubic-bezier(.2,.9,.3,1.3),opacity .3s";cur.style.transform="";cur.style.opacity=""}};
-  stage.onpointerup=end;stage.onpointercancel=end;
+function measure(){const st=document.getElementById("stage");if(st)R=Math.max(110,Math.min(st.clientHeight*.36,210))}
+function refresh(){
+  const H=state.habits,tk=key(today()),n=H.filter(h=>h.days[tk]).length;
+  document.querySelectorAll(".row").forEach((el,i)=>{const h=H[i],on=!!h.days[tk];el.classList.toggle("done",on);
+    el.querySelector(".sub").innerHTML=on?`<span class="ok">Bugün tamam</span><span><b>${streak(h)}</b> gün seri</span>`:`<span><b>${streak(h)}</b> gün seri</span><span>bu hafta <b>${weekCount(h)}/7</b></span>`});
+  const pb=document.getElementById("progBar");if(pb)pb.style.width=(H.length?n/H.length*100:0)+"%";
+  const hint=document.getElementById("hint");if(!hint)return;
+  const cur=H[idx],up=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg>`;
+  hint.innerHTML=allDone()?`<span>Bugün hepsi tamam. ${n}/${H.length}</span><button class="open" data-open>Raporu aç</button>`
+    :cur&&!cur.days[tk]?`<button class="up" data-done>${up}Yaptıysan yukarı kaydır</button>${idx>0?`<button class="back" data-back>Önceki ↓</button>`:""}`
+    :`<button class="up" data-next>${up}Sıradakine geç</button>${idx>0?`<button class="back" data-back>Önceki ↓</button>`:""}`;
 }
+function layout(){
+  document.querySelectorAll(".row").forEach((el,i)=>{
+    const p=i-off,a=p*STEP;
+    if(Math.abs(p)>2.3){el.style.visibility="hidden";return}
+    el.style.visibility="";
+    const y=R*Math.sin(a),z=R*(Math.cos(a)-1);
+    let o=p<0?(p>=-1?1+.5*p:.5*(2+p)):(p<=1?1-.75*p:.25*(2-p));
+    el.style.opacity=Math.max(0,o).toFixed(3);
+    el.style.transform=`translateY(calc(-50% + ${y.toFixed(1)}px)) translateZ(${z.toFixed(1)}px) rotateX(${(-a).toFixed(4)}rad)`;
+    el.querySelector(".sub").style.opacity=Math.max(0,1-Math.abs(p)*2.2).toFixed(2);
+    el.style.pointerEvents=Math.abs(p)<1.5?"":"none";
+  });
+}
+function rollTo(t){
+  cancelAnimationFrame(tween);const from=off,to=t,d=reduce?1:520,t0=performance.now();
+  const ease=x=>{const c1=1.2,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+  const step=now=>{const k=Math.min(1,(now-t0)/d);off=from+(to-from)*ease(k);layout();if(k<1)tween=requestAnimationFrame(step)};
+  tween=requestAnimationFrame(step);
+}
+function setDone(h,on){const k=key(today());if(on)h.days[k]=true;else delete h.days[k];save()}
 function complete(){
-  const c=pending()[0],el=document.getElementById("cur");if(!c)return;
-  try{navigator.vibrate&&navigator.vibrate(18)}catch(e){}
-  c.days[key(today())]=true;lastDone=c.id;skipped=skipped.filter(x=>x!==c.id);save();
-  showToast(`“${c.name}” tamamlandı`);
-  if(el&&!reduce){el.style.transition="transform .45s cubic-bezier(.5,0,.7,.4),opacity .45s";el.style.transform="translateY(-110vh) rotate(-4deg)";el.style.opacity="0";
-    document.querySelectorAll(".stage .meta,.stage .next,.stage .next2").forEach(n=>{n.style.transition="opacity .2s";n.style.opacity="0"});
-    setTimeout(()=>renderMain(true),380)}else renderMain(false);
+  const H=state.habits,h=H[idx];if(!h)return;
+  if(!h.days[key(today())]){setDone(h,true);lastDone=h.id;try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}showToast(`“${h.name}” tamamlandı`)}
+  if(idx<H.length-1)idx++;
+  refresh();rollTo(idx);
 }
-function later(){
-  const c=pending()[0],el=document.getElementById("cur");if(!c)return;
-  skipped=skipped.filter(x=>x!==c.id);skipped.push(c.id);
-  if(el&&!reduce){el.style.transition="transform .35s ease-in,opacity .35s";el.style.transform="translateY(60vh)";el.style.opacity="0";setTimeout(()=>renderMain(true),300)}else renderMain(false);
+function goTo(i){idx=Math.max(0,Math.min(state.habits.length-1,i));refresh();rollTo(idx)}
+function bindGesture(){
+  const st=document.getElementById("stage");if(!st)return;
+  let y0=0,t0=0,o0=0,active=false,moved=false;
+  st.onpointerdown=e=>{active=true;moved=false;y0=e.clientY;t0=performance.now();cancelAnimationFrame(tween);o0=off;st.setPointerCapture(e.pointerId)};
+  st.onpointermove=e=>{if(!active)return;const dy=e.clientY-y0;if(Math.abs(dy)>6)moved=true;
+    let o=o0-dy/(R*Math.sin(STEP));const max=state.habits.length-1;
+    if(o<0)o=o*.35;else if(o>max)o=max+(o-max)*.35;off=o;layout()};
+  const end=e=>{if(!active)return;active=false;
+    if(!moved){const row=e.target.closest&&e.target.closest(".row");
+      if(row){const i=+row.dataset.row;if(i===idx){const h=state.habits[i],on=!h.days[key(today())];setDone(h,on);if(on){lastDone=h.id;showToast(`“${h.name}” tamamlandı`)}refresh()}else goTo(i)}
+      else rollTo(idx);return}
+    const dlt=off-o0,v=(off-o0)/Math.max(1,performance.now()-t0)*1000;
+    if(dlt>.28||v>2.2){
+      const steps=Math.max(1,Math.round(dlt));
+      if(steps===1)complete();else goTo(idx+steps);
+    }else if(dlt<-.28||v<-2.2)goTo(idx+Math.min(-1,Math.round(dlt)));
+    else rollTo(idx)};
+  st.onpointerup=end;st.onpointercancel=end;
 }
+addEventListener("resize",()=>{measure();layout()});
 function showToast(t){const el=document.getElementById("toast");document.getElementById("toastText").textContent=t;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("show"),4000)}
-document.getElementById("undo").onclick=()=>{const h=state.habits.find(x=>x.id===lastDone);if(h){delete h.days[key(today())];skipped=skipped.filter(x=>x!==h.id);save();renderMain(true);if(sheetOpen())renderSheet()}document.getElementById("toast").classList.remove("show")};
+document.getElementById("undo").onclick=()=>{const i=state.habits.findIndex(x=>x.id===lastDone);if(i>=0){setDone(state.habits[i],false);if(sheetOpen())renderSheet();idx=i;refresh();rollTo(i)}document.getElementById("toast").classList.remove("show")};
 
 /* ---------- rapor ---------- */
 const sheet=document.getElementById("sheet");
 const sheetOpen=()=>sheet.classList.contains("open");
 function openSheet(t){if(t)tab=t;renderSheet();sheet.classList.add("open");sheet.setAttribute("aria-hidden","false");setBars()}
-function closeSheet(){sheet.classList.remove("open");sheet.setAttribute("aria-hidden","true");pendingDel=null;renderMain(false)}
+function closeSheet(){sheet.classList.remove("open");sheet.setAttribute("aria-hidden","true");pendingDel=null;renderMain()}
 
 function chartSVG(){
   const H=state.habits,N=14,W=300,CH=90,bw=W/N,t=today();let s="";
@@ -262,8 +292,9 @@ document.addEventListener("click",e=>{
   if("open" in d)openSheet("ozet");
   else if("close" in d)closeSheet();
   else if("done" in d)complete();
-  else if("later" in d)later();
-  else if(d.sug){addHabit(d.sug);renderMain(true)}
+  else if("next" in d)goTo(idx+1);
+  else if("back" in d)goTo(idx-1);
+  else if(d.sug){addHabit(d.sug);renderMain()}
   else if(d.tab){tab=d.tab;pendingDel=null;renderSheet()}
   else if(d.k){const h=state.habits[+d.i];h.days[d.k]?delete h.days[d.k]:h.days[d.k]=true;save();const sc=document.getElementById("sheetBody").scrollTop;renderSheet();document.getElementById("sheetBody").scrollTop=sc}
   else if(d.del!=null){pendingDel=state.habits[+d.del].id;const sc=document.getElementById("sheetBody").scrollTop;renderSheet();document.getElementById("sheetBody").scrollTop=sc}
@@ -279,7 +310,7 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("submit",e=>{
   e.preventDefault();
-  if(e.target.id==="firstForm"){if(addHabit(document.getElementById("firstName").value))renderMain(true)}
+  if(e.target.id==="firstForm"){if(addHabit(document.getElementById("firstName").value))renderMain()}
   else if(e.target.id==="addForm"){const inp=document.getElementById("newName");if(addHabit(inp.value,newHue)){inp.value="";tab="ozet";renderSheet();showToast("Eklendi, ana ekranda sırada")}}
 });
 
@@ -291,9 +322,9 @@ function setBars(){try{if(window.App&&App.setBars){const cs=getComputedStyle(doc
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change",setBars);
 
 /* gün değişince ekranı yenile */
-document.addEventListener("visibilitychange",()=>{if(!document.hidden&&key(today())!==dayStamp){dayStamp=key(today());skipped=[];renderMain(true);if(sheetOpen())renderSheet()}});
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&key(today())!==dayStamp){dayStamp=key(today());idx=-1;renderMain();if(sheetOpen())renderSheet()}});
 
-renderMain(true);
+renderMain();
 </script>
 </body>
 </html>
