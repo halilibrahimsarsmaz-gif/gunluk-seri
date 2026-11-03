@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.provider.Settings;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -54,6 +58,24 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (web != null) web.evaluateJavascript("window.onNativeResume && window.onNativeResume()", null);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int code, String[] perms, int[] res) {
+        super.onRequestPermissionsResult(code, perms, res);
+        if (web != null) web.evaluateJavascript("window.onNativeResume && window.onNativeResume()", null);
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         web.saveState(outState);
@@ -77,6 +99,44 @@ public class MainActivity extends Activity {
                         }
                     }
                 } catch (Exception ignored) { }
+            });
+        }
+
+        @JavascriptInterface
+        public void sync(String remindersJson, String date, String doneIds) {
+            Reminders.sync(MainActivity.this, remindersJson, date, doneIds);
+        }
+
+        @JavascriptInterface
+        public String takeDone() {
+            return Reminders.takePending(MainActivity.this);
+        }
+
+        @JavascriptInterface
+        public boolean notifOk() {
+            if (android.os.Build.VERSION.SDK_INT >= 33
+                && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return false;
+            android.app.NotificationManager nm = getSystemService(android.app.NotificationManager.class);
+            return nm.areNotificationsEnabled();
+        }
+
+        @JavascriptInterface
+        public void askNotif() {
+            runOnUiThread(() -> {
+                if (android.os.Build.VERSION.SDK_INT >= 33
+                    && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 7);
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void openNotifSettings() {
+            runOnUiThread(() -> {
+                Intent i = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                    .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+                try { startActivity(i); }
+                catch (Exception e) { startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()))); }
             });
         }
 

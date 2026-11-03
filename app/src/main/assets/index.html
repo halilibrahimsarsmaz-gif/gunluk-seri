@@ -37,6 +37,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .date b{color:var(--fg);font-weight:600}
 .menu{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;padding:10px 0 10px 12px}
 .menu svg{width:20px;height:20px}
+.acts{display:flex;align-items:center;gap:4px}
+.plus{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--fg);color:var(--bg)}
+.plus svg{width:22px;height:22px}
 .prog{height:3px;background:var(--line);border-radius:3px;margin-top:6px;overflow:hidden}
 .prog i{display:block;height:100%;background:var(--fg);border-radius:3px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
 
@@ -50,7 +53,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
   background:linear-gradient(currentColor,currentColor) no-repeat 0 56%/0% .085em;-webkit-box-decoration-break:clone;box-decoration-break:clone;
   transition:background-size .45s cubic-bezier(.6,0,.2,1)}
 .row.done .t{background-size:100% .085em}
-.row .sub{display:flex;gap:14px;margin-top:10px;font-size:13px;color:var(--muted)}
+.row .line{display:flex;gap:14px;align-items:flex-start}
+.tick{flex:none;width:40px;height:40px;border-radius:50%;border:2.5px solid hsl(var(--h) var(--sat) var(--strong-l));color:transparent;display:grid;place-items:center;
+  margin-top:calc((var(--fs) * 1.02 - 40px) / 2);transition:background .25s,color .25s,transform .15s}
+.tick svg{width:22px;height:22px}
+.tick:active{transform:scale(.88)}
+.row.done .tick{background:hsl(var(--h) var(--sat) var(--strong-l));color:var(--bg)}
+.row .sub{display:flex;gap:14px;margin-top:10px;margin-left:54px;font-size:13px;color:var(--muted);align-items:center}
+.row .sub .bell{display:inline-flex;align-items:center;gap:4px}
+.row .sub svg{width:13px;height:13px}
 .row .sub b{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}
 .row .sub .ok{color:hsl(var(--h) var(--sat) var(--strong-l));font-weight:600}
 
@@ -72,6 +83,21 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .toast.show{transform:none}
 .toast span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .toast button{font-weight:600;color:var(--bg);text-decoration:underline;text-underline-offset:3px;flex:none;padding:4px}
+
+/* ---------- hızlı ekleme ---------- */
+.qa-back{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s;z-index:30}
+.qa-back.open{opacity:1;pointer-events:auto}
+.qa{position:fixed;left:0;right:0;bottom:0;z-index:31;background:var(--panel);border-radius:22px 22px 0 0;padding:10px 22px 22px;display:flex;flex-direction:column;gap:16px;
+  transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.8,.2,1);box-shadow:0 -10px 40px rgba(0,0,0,.12);margin:0}
+.qa.open{transform:none}
+.qa .grab{width:40px;height:4px;border-radius:4px;background:var(--line);align-self:center}
+.qa h3{font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:-.02em;margin:0}
+.qa .lab{font-size:13px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.qa .lab svg{width:14px;height:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);border-radius:99px;padding:9px 14px;font-size:14px;font-weight:600;position:relative;display:inline-flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--panel);border-color:var(--fg)}
+.chip input[type=time]{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
 
 /* ---------- rapor paneli ---------- */
 .sheet{position:fixed;inset:0;background:var(--panel);z-index:10;transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;user-select:text;-webkit-user-select:text}
@@ -101,6 +127,12 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .day.on{background:hsl(var(--h) var(--sat) var(--strong-l));color:var(--panel)}
 .day.today{box-shadow:inset 0 0 0 2px var(--fg)}
 .day.future{visibility:hidden}
+.rem{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.rem svg{width:15px;height:15px}
+.rem input[type=time]{font:600 14px var(--body);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-variant-numeric:tabular-nums}
+.rem .off{text-decoration:underline;text-underline-offset:3px;padding:4px 0}
+.warn{background:hsl(30 90% 55% / .14);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.45;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.warn button{font-weight:600;text-decoration:underline;text-underline-offset:3px;flex:none}
 .del{font-size:13px;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:4px 0;flex:none}
 .confirm{display:flex;gap:14px;font-size:13px;align-items:center;flex:none}
 .confirm button{font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:4px 0}
@@ -120,6 +152,15 @@ textarea{font-size:12px;font-family:ui-monospace,monospace;min-height:90px;resiz
 <body>
 <div class="app" id="app"></div>
 <section class="sheet" id="sheet" aria-label="Rapor" aria-hidden="true"></section>
+<div class="qa-back" id="qaBack" data-qa-close></div>
+<form class="qa" id="qa" aria-label="Yeni alışkanlık" aria-hidden="true">
+  <div class="grab"></div>
+  <h3>Yeni alışkanlık</h3>
+  <input type="text" id="qaName" maxlength="40" placeholder="Her gün ne yapmak istiyorsun?" autocomplete="off" enterkeyhint="done">
+  <div><div class="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 21h4"/></svg>Hatırlatma</div>
+    <div class="chips" id="qaChips"></div></div>
+  <button class="primary" type="submit">Ekle</button>
+</form>
 <div class="toast" id="toast" role="status"><span id="toastText"></span><button id="undo">Geri al</button></div>
 
 <script>
@@ -137,7 +178,12 @@ let state={habits:[]};
 try{const s=JSON.parse(localStorage.getItem(LS)||"null");if(s&&Array.isArray(s.habits))state=s}catch(e){}
 let skipped=[],lastDone=null,toastT=0,tab="ozet",pendingDel=null,newHue=HUES[0],dayStamp=key(today());
 
-function save(){try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}}
+function save(){try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}syncNative()}
+function syncNative(){try{if(window.App&&App.sync){const tk=key(today());
+  App.sync(JSON.stringify(state.habits.filter(h=>h.rem).map(h=>({id:h.id,name:h.name,time:h.rem}))),tk,state.habits.filter(h=>h.days[tk]).map(h=>h.id).join(","))}}catch(e){}}
+const notifOk=()=>{try{return !window.App||!App.notifOk||App.notifOk()}catch(e){return true}};
+const BELL=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 21h4"/></svg>`;
+const CHECK=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
 function streak(h){let d=today();if(!h.days[key(d)])d=addDays(d,-1);let n=0;while(h.days[key(d)]){n++;d=addDays(d,-1)}return n}
 function best(h){const ks=Object.keys(h.days).sort();let b=0,r=0,prev=null;for(const k of ks){const d=new Date(k+"T00:00");r=prev&&key(addDays(prev,1))===k?r+1:1;b=Math.max(b,r);prev=d}return b}
 function weekCount(h){const t=today(),mon=addDays(t,-((t.getDay()+6)%7));let n=0;for(let i=0;i<7;i++)if(h.days[key(addDays(mon,i))])n++;return n}
@@ -160,11 +206,11 @@ function renderMain(){
     <button class="primary" type="submit">Ekle</button></form></div>`;
   }else{
     mid=`<div class="stage" id="stage"><div class="reel" id="reel">${H.map((h,i)=>`
-      <div class="row" data-row="${i}" style="--h:${h.h};--fs:${fs(h.name)}"><div><span class="t">${esc(h.name)}</span></div><div class="sub"></div></div>`).join("")}</div></div>
+      <div class="row" data-row="${i}" style="--h:${h.h};--fs:${fs(h.name)}"><div class="line"><button class="tick" aria-label="Tamamlandı olarak işaretle">${CHECK}</button><div><span class="t">${esc(h.name)}</span></div></div><div class="sub"></div></div>`).join("")}</div></div>
       <div class="hint" id="hint"></div>`;
   }
   app.innerHTML=`<div class="top"><div class="date"><b>${esc(d1)}</b> ${esc(dr.join(" "))}</div>
-    <button class="menu" data-open aria-label="Raporu aç">Rapor<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 19V11M12 19V5M19 19v-5"/></svg></button></div>
+    <div class="acts"><button class="menu" data-open aria-label="Raporu aç">Rapor<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 19V11M12 19V5M19 19v-5"/></svg></button>${H.length?`<button class="plus" data-qa aria-label="Alışkanlık ekle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>`:""}</div></div>
     ${H.length?`<div class="prog"><i id="progBar"></i></div>`:""}${mid}`;
   if(H.length){refresh();measure();layout();bindGesture()}
   setBars();
@@ -173,7 +219,8 @@ function measure(){const st=document.getElementById("stage");if(st)R=Math.max(11
 function refresh(){
   const H=state.habits,tk=key(today()),n=H.filter(h=>h.days[tk]).length;
   document.querySelectorAll(".row").forEach((el,i)=>{const h=H[i],on=!!h.days[tk];el.classList.toggle("done",on);
-    el.querySelector(".sub").innerHTML=on?`<span class="ok">Bugün tamam</span><span><b>${streak(h)}</b> gün seri</span>`:`<span><b>${streak(h)}</b> gün seri</span><span>bu hafta <b>${weekCount(h)}/7</b></span>`});
+    const bell=h.rem?`<span class="bell">${BELL}${h.rem}</span>`:"";
+    el.querySelector(".sub").innerHTML=on?`<span class="ok">Bugün tamam</span><span><b>${streak(h)}</b> gün seri</span>${bell}`:`<span><b>${streak(h)}</b> gün seri</span><span>bu hafta <b>${weekCount(h)}/7</b></span>${bell}`});
   const pb=document.getElementById("progBar");if(pb)pb.style.width=(H.length?n/H.length*100:0)+"%";
   const hint=document.getElementById("hint");if(!hint)return;
   const cur=H[idx],up=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg>`;
@@ -203,21 +250,27 @@ function rollTo(t){
 function setDone(h,on){const k=key(today());if(on)h.days[k]=true;else delete h.days[k];save()}
 function complete(){
   const H=state.habits,h=H[idx];if(!h)return;
-  if(!h.days[key(today())]){setDone(h,true);lastDone=h.id;try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}showToast(`“${h.name}” tamamlandı`)}
+  if(!h.days[key(today())]){setDone(h,true);lastDone=h.id;try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}showToast(`“${h.name}” tamamlandı`,true)}
   if(idx<H.length-1)idx++;
   refresh();rollTo(idx);
 }
 function goTo(i){idx=Math.max(0,Math.min(state.habits.length-1,i));refresh();rollTo(idx)}
 function bindGesture(){
   const st=document.getElementById("stage");if(!st)return;
-  let y0=0,t0=0,o0=0,active=false,moved=false;
-  st.onpointerdown=e=>{active=true;moved=false;y0=e.clientY;t0=performance.now();cancelAnimationFrame(tween);o0=off;st.setPointerCapture(e.pointerId)};
+  let y0=0,t0=0,o0=0,active=false,moved=false,tgt=null;
+  st.onpointerdown=e=>{tgt=e.target;active=true;moved=false;y0=e.clientY;t0=performance.now();cancelAnimationFrame(tween);o0=off;st.setPointerCapture(e.pointerId)};
   st.onpointermove=e=>{if(!active)return;const dy=e.clientY-y0;if(Math.abs(dy)>6)moved=true;
     let o=o0-dy/(R*Math.sin(STEP));const max=state.habits.length-1;
     if(o<0)o=o*.35;else if(o>max)o=max+(o-max)*.35;off=o;layout()};
   const end=e=>{if(!active)return;active=false;
-    if(!moved){const row=e.target.closest&&e.target.closest(".row");
-      if(row){const i=+row.dataset.row;if(i===idx){const h=state.habits[i],on=!h.days[key(today())];setDone(h,on);if(on){lastDone=h.id;showToast(`“${h.name}” tamamlandı`)}refresh()}else goTo(i)}
+    if(!moved){const row=tgt&&tgt.closest&&tgt.closest(".row");
+      if(row){const i=+row.dataset.row;
+        if(i!==idx){goTo(i);return}
+        const h=state.habits[i],on=!h.days[key(today())];
+        if(!tgt.closest(".tick")&&!on){rollTo(idx);return}
+        setDone(h,on);refresh();
+        if(on){lastDone=h.id;try{navigator.vibrate&&navigator.vibrate(15)}catch(_){}showToast(`“${h.name}” tamamlandı`,true);
+          setTimeout(()=>{if(idx===i&&h.days[key(today())]&&i<state.habits.length-1){idx++;refresh();rollTo(idx)}},520)}}
       else rollTo(idx);return}
     const dlt=off-o0,v=(off-o0)/Math.max(1,performance.now()-t0)*1000;
     if(dlt>.28||v>2.2){
@@ -228,7 +281,7 @@ function bindGesture(){
   st.onpointerup=end;st.onpointercancel=end;
 }
 addEventListener("resize",()=>{measure();layout()});
-function showToast(t){const el=document.getElementById("toast");document.getElementById("toastText").textContent=t;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("show"),4000)}
+function showToast(t,undo){const el=document.getElementById("toast");document.getElementById("toastText").textContent=t;document.getElementById("undo").hidden=!undo;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("show"),4000)}
 document.getElementById("undo").onclick=()=>{const i=state.habits.findIndex(x=>x.id===lastDone);if(i>=0){setDone(state.habits[i],false);if(sheetOpen())renderSheet();idx=i;refresh();rollTo(i)}document.getElementById("toast").classList.remove("show")};
 
 /* ---------- rapor ---------- */
@@ -261,14 +314,17 @@ function renderSheet(){
   let body="";
   if(tab==="ozet"){
     body=H.length?`
+    <button class="primary" data-qa>+ Alışkanlık ekle</button>
     <div class="sec kpis"><div class="kpi"><b>${doneT}/${H.length}</b><small>bugün</small></div><div class="kpi"><b>%${wkPct}</b><small>bu hafta</small></div><div class="kpi"><b>${topBest}</b><small>en uzun seri</small></div></div>
     <div class="sec chart"><h3>Son 14 gün</h3>${chartSVG()}</div>
     ${H.map((h,i)=>`<div class="hab" style="--h:${h.h}">
       <div class="name"><strong>${esc(h.name)}</strong>${pendingDel===h.id?`<span class="confirm"><button data-del-yes="${i}">Sil</button><button data-del-no>Vazgeç</button></span>`:`<button class="del" data-del="${i}">Sil</button>`}</div>
       <div class="stats"><span><b>${streak(h)}</b> gün seri</span><span>en iyi <b>${best(h)}</b></span><span>30 gün <b>%${pct(h,30)}</b></span></div>
+      <div class="rem">${BELL}<span>Hatırlatma</span><input type="time" id="rem-${h.id}" data-rem="${i}" value="${h.rem||""}" aria-label="Hatırlatma saati">${h.rem?`<button class="off" data-remoff="${i}">Kapat</button>`:`<span>kapalı</span>`}</div>
       <div class="grid">${gridHTML(h,i)}</div></div>`).join("")}
     <p class="note">Geçmiş bir günü unuttuysan takvimde o güne dokun.</p>`
-    :`<p class="note">Henüz alışkanlık yok. “Ekle” sekmesinden ilkini ekleyebilirsin.</p>`;
+    :`<p class="note">Henüz alışkanlık yok. Ana ekrandaki + ile ilkini ekleyebilirsin.</p>`;
+    if(H.some(h=>h.rem)&&!notifOk())body=`<div class="warn"><span>Bildirimler kapalı, hatırlatmalar gelmez.</span><button data-notif>Aç</button></div>`+body;
   }else if(tab==="ekle"){
     body=`<form id="addForm" class="sec" style="display:flex;flex-direction:column;gap:18px">
       <div class="field"><label for="newName">Alışkanlık adı</label><input type="text" id="newName" maxlength="40" placeholder="ör. 5 dk meditasyon" autocomplete="off" enterkeyhint="done"></div>
@@ -281,15 +337,40 @@ function renderSheet(){
       <div class="sec field"><h3>Yedekten geri yükle</h3><textarea id="imp" placeholder="Kaydettiğin yedek metnini buraya yapıştır"></textarea><button class="ghost" id="impBtn">Geri yükle</button><p class="note" id="impMsg"></p></div>`;
   }
   sheet.innerHTML=`<header><h2>Rapor</h2><button class="close" data-close>Kapat</button></header>
-   <div class="tabs" role="tablist">${[["ozet","Özet"],["ekle","Ekle"],["yedek","Yedek"]].map(([k,l])=>`<button role="tab" data-tab="${k}" aria-selected="${tab===k}">${l}</button>`).join("")}</div>
+   <div class="tabs" role="tablist">${[["ozet","Özet"],["yedek","Yedek"]].map(([k,l])=>`<button role="tab" data-tab="${k}" aria-selected="${tab===k}">${l}</button>`).join("")}</div>
    <div class="body" id="sheetBody">${body}</div>`;
 }
 
-function addHabit(name,h){name=name.trim();if(!name)return false;state.habits.push({id:uid(),name,h:h??HUES[state.habits.length%HUES.length],days:{}});save();newHue=HUES[state.habits.length%HUES.length];return true}
+function addHabit(name,h,rem){name=name.trim();if(!name)return false;
+  const used=new Set(state.habits.map(x=>x.h));const hue=h??(HUES.find(x=>!used.has(x))??HUES[state.habits.length%HUES.length]);
+  state.habits.push({id:uid(),name,h:hue,days:{},rem:rem||""});save();if(rem)askNotif();return true}
+function askNotif(){try{if(window.App&&App.askNotif&&!App.notifOk())App.askNotif()}catch(e){}}
+
+/* hızlı ekleme */
+const qa=document.getElementById("qa"),qaBack=document.getElementById("qaBack");let qaRem="";
+const qaOpen=()=>qa.classList.contains("open");
+function renderChips(){
+  const pre=["","08:00","12:00","20:00"],custom=qaRem&&!pre.includes(qaRem);
+  document.getElementById("qaChips").innerHTML=pre.map(t=>`<button type="button" class="chip" data-qrem="${t}" aria-pressed="${qaRem===t}">${t||"Yok"}</button>`).join("")
+   +`<label class="chip" aria-pressed="${custom}">${custom?qaRem:"Saat seç"}<input type="time" id="qaTime" value="${custom?qaRem:""}" aria-label="Özel saat"></label>`;
+}
+function openQA(){qaRem="";renderChips();document.getElementById("qaName").value="";qa.classList.add("open");qaBack.classList.add("open");qa.setAttribute("aria-hidden","false");
+  setTimeout(()=>document.getElementById("qaName").focus(),60)}
+function closeQA(){qa.classList.remove("open");qaBack.classList.remove("open");qa.setAttribute("aria-hidden","true");document.getElementById("qaName").blur()}
+qaBack.onclick=closeQA;
+document.addEventListener("change",e=>{
+  if(e.target.id==="qaTime"&&e.target.value){qaRem=e.target.value;renderChips()}
+  else if(e.target.dataset&&e.target.dataset.rem!=null){const h=state.habits[+e.target.dataset.rem];h.rem=e.target.value||"";save();if(h.rem){askNotif();showToast(`Her gün ${h.rem}'da hatırlatılacak`)}
+    const sc=document.getElementById("sheetBody").scrollTop;renderSheet();document.getElementById("sheetBody").scrollTop=sc}
+});
 
 document.addEventListener("click",e=>{
   const b=e.target.closest("button");if(!b)return;const d=b.dataset;
-  if("open" in d)openSheet("ozet");
+  if("qa" in d){openQA()}
+  else if(d.qrem!=null){qaRem=d.qrem;renderChips()}
+  else if("notif" in d){try{App.askNotif();setTimeout(()=>{if(!notifOk())App.openNotifSettings()},400)}catch(e){}}
+  else if(d.remoff!=null){state.habits[+d.remoff].rem="";save();const sc=document.getElementById("sheetBody").scrollTop;renderSheet();document.getElementById("sheetBody").scrollTop=sc}
+  else if("open" in d)openSheet("ozet");
   else if("close" in d)closeSheet();
   else if("done" in d)complete();
   else if("next" in d)goTo(idx+1);
@@ -310,12 +391,21 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("submit",e=>{
   e.preventDefault();
+  if(e.target.id==="qa"){const name=document.getElementById("qaName").value;if(!name.trim()){document.getElementById("qaName").focus();return}
+    addHabit(name,null,qaRem);closeQA();idx=state.habits.length-1;
+    if(sheetOpen())renderSheet();renderMain();showToast(qaRem?`Eklendi · her gün ${qaRem}'da hatırlatılacak`:"Eklendi");return}
   if(e.target.id==="firstForm"){if(addHabit(document.getElementById("firstName").value))renderMain()}
   else if(e.target.id==="addForm"){const inp=document.getElementById("newName");if(addHabit(inp.value,newHue)){inp.value="";tab="ozet";renderSheet();showToast("Eklendi, ana ekranda sırada")}}
 });
 
 /* Android geri tuşu: önce paneli kapat */
-window.onBack=()=>{if(sheetOpen()){closeSheet();return true}return false};
+window.onBack=()=>{if(qaOpen()){closeQA();return true}if(sheetOpen()){closeSheet();return true}return false};
+/* uygulama öne gelince: bildirimden "Yaptım" denenleri işle */
+window.onNativeResume=()=>{let ch=false;
+  try{const s=window.App&&App.takeDone?App.takeDone():"";if(s)s.split(",").forEach(x=>{const [d,id]=x.split("|");const h=state.habits.find(y=>y.id===id);if(h&&d){h.days[d]=true;ch=true}})}catch(e){}
+  if(key(today())!==dayStamp){dayStamp=key(today());idx=-1;ch=true}
+  if(ch){save();if(idx>=0&&state.habits[idx]&&state.habits[idx].days[key(today())])idx=firstOpen();renderMain()}
+  if(sheetOpen())renderSheet()};
 
 /* sistem çubuklarının rengi temaya uysun */
 function setBars(){try{if(window.App&&App.setBars){const cs=getComputedStyle(document.documentElement);const c=(sheetOpen()?cs.getPropertyValue("--panel"):cs.getPropertyValue("--bg")).trim();App.setBars(c,!matchMedia("(prefers-color-scheme: dark)").matches)}}catch(e){}}
@@ -324,6 +414,7 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change",setBars);
 /* gün değişince ekranı yenile */
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&key(today())!==dayStamp){dayStamp=key(today());idx=-1;renderMain();if(sheetOpen())renderSheet()}});
 
+syncNative();
 renderMain();
 </script>
 </body>
