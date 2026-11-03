@@ -30,6 +30,8 @@ jobs:
               <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
               <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
               <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+              <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+              <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
               <application
                   android:label="Ayet Vakti"
@@ -48,6 +50,15 @@ jobs:
                       </intent-filter>
                   </activity>
 
+                  <service
+                      android:name=".ScreenService"
+                      android:exported="false"
+                      android:foregroundServiceType="specialUse">
+                      <property
+                          android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                          android:value="Ekran kapandiginda kilit ekrani ayetini yeniler" />
+                  </service>
+
                   <receiver android:name=".TickReceiver" android:exported="true">
                       <intent-filter>
                           <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -58,22 +69,6 @@ jobs:
                   </receiver>
               </application>
           </manifest>
-          AYET_EOF
-          mkdir -p "$(dirname 'res/values/colors.xml')"
-          cat > 'res/values/colors.xml' <<'AYET_EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <resources>
-              <color name="ic_bg">#0F1A3A</color>
-          </resources>
-          AYET_EOF
-          mkdir -p "$(dirname 'res/mipmap-anydpi-v26/ic_launcher.xml')"
-          cat > 'res/mipmap-anydpi-v26/ic_launcher.xml' <<'AYET_EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-              <background android:drawable="@color/ic_bg" />
-              <foreground android:drawable="@drawable/ic_fg" />
-              <monochrome android:drawable="@drawable/ic_fg" />
-          </adaptive-icon>
           AYET_EOF
           mkdir -p "$(dirname 'res/drawable/ic_fg.xml')"
           cat > 'res/drawable/ic_fg.xml' <<'AYET_EOF'
@@ -86,6 +81,32 @@ jobs:
               <path android:fillColor="#0F1A3A" android:pathData="M44,54 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0 Z" />
               <path android:fillColor="#D9B26A" android:pathData="M49.5,54 a4.5,4.5 0 1,0 9,0 a4.5,4.5 0 1,0 -9,0 Z" />
           </vector>
+          AYET_EOF
+          mkdir -p "$(dirname 'res/drawable/ic_stat.xml')"
+          cat > 'res/drawable/ic_stat.xml' <<'AYET_EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="24dp" android:height="24dp"
+              android:viewportWidth="24" android:viewportHeight="24">
+              <path android:fillColor="#FFFFFFFF" android:pathData="M6,6 H18 V18 H6 Z" />
+              <path android:fillColor="#FFFFFFFF" android:pathData="M12,3.5 L20.5,12 L12,20.5 L3.5,12 Z" />
+          </vector>
+          AYET_EOF
+          mkdir -p "$(dirname 'res/mipmap-anydpi-v26/ic_launcher.xml')"
+          cat > 'res/mipmap-anydpi-v26/ic_launcher.xml' <<'AYET_EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+              <background android:drawable="@color/ic_bg" />
+              <foreground android:drawable="@drawable/ic_fg" />
+              <monochrome android:drawable="@drawable/ic_fg" />
+          </adaptive-icon>
+          AYET_EOF
+          mkdir -p "$(dirname 'res/values/colors.xml')"
+          cat > 'res/values/colors.xml' <<'AYET_EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <color name="ic_bg">#0F1A3A</color>
+          </resources>
           AYET_EOF
           mkdir -p "$(dirname 'src/com/halil/ayetvakti/AyetData.java')"
           cat > 'src/com/halil/ayetvakti/AyetData.java' <<'AYET_EOF'
@@ -178,6 +199,224 @@ jobs:
                   a("Sabır", "Sabret; çünkü Allah iyilik yapanların ecrini asla zayi etmez.", "Hûd Sûresi, 115"),
                   a("Emek", "İnsan için ancak çalıştığının karşılığı vardır.", "Necm Sûresi, 39"),
                   a("Güzel Söz", "Ona yumuşak söz söyleyin; belki öğüt alır ya da içi titrer.", "Tâhâ Sûresi, 44"),
+
+                  // --- Bakara ---
+                  a("Sabır", "Sabır ve namazla yardım dileyin. Şüphesiz bu, gönülden saygıyla boyun eğenlerden başkasına ağır gelir.", "Bakara Sûresi, 45"),
+                  a("Söz ve Amel", "İnsanlara iyiliği emredip kendinizi unutuyor musunuz? Hiç aklınızı kullanmaz mısınız?", "Bakara Sûresi, 44"),
+                  a("Sabır", "Andolsun sizi biraz korku, açlık, mallardan, canlardan ve ürünlerden eksiltme ile deneriz. Sabredenleri müjdele. Onlar başlarına bir musibet geldiğinde \"Biz Allah'a aidiz ve O'na döneceğiz\" derler.", "Bakara Sûresi, 155-156"),
+                  a("Şükür", "Siz beni anın ki ben de sizi anayım. Bana şükredin, nankörlük etmeyin.", "Bakara Sûresi, 152"),
+                  a("Dua", "Kullarım beni sana sorduklarında bilsinler ki ben çok yakınım. Bana dua ettiğinde, dua edenin dileğine karşılık veririm.", "Bakara Sûresi, 186"),
+                  a("Dürüstlük", "Mallarınızı aranızda haksız yollarla yemeyin.", "Bakara Sûresi, 188"),
+                  a("Tevekkül", "Hoşunuza gitmeyen bir şey sizin için hayırlı olabilir; hoşunuza giden bir şey de sizin için kötü olabilir. Allah bilir, siz bilmezsiniz.", "Bakara Sûresi, 216"),
+                  a("Fazilet", "Bağışlamanız takvaya daha yakındır. Aranızdaki iyiliği ve fazileti unutmayın.", "Bakara Sûresi, 237"),
+                  a("Hoşgörü", "Dinde zorlama yoktur.", "Bakara Sûresi, 256"),
+                  a("Cömertlik", "Mallarını Allah yolunda harcayanların durumu, yedi başak bitiren ve her başakta yüz tane bulunan bir tohum gibidir. Allah dilediğine kat kat verir.", "Bakara Sûresi, 261"),
+                  a("İhlas", "Sadakaları açıktan verirseniz ne güzel! Eğer onları gizleyerek yoksullara verirseniz bu sizin için daha hayırlıdır.", "Bakara Sûresi, 271"),
+                  a("İffet", "Onlar onurlarından dolayı bilmeyene zengin görünürler; sen onları yüzlerinden tanırsın. İnsanlardan yüzsüzce bir şey istemezler.", "Bakara Sûresi, 273"),
+                  a("Cömertlik", "Mallarını gece ve gündüz, gizli ve açık harcayanların ödülleri Rableri katındadır. Onlara korku yoktur, üzülmeyecekler de.", "Bakara Sûresi, 274"),
+                  a("Kolaylık", "Eğer borçlu darlık içindeyse, ona eli genişleyinceye kadar süre verin. Borcu bağışlamanız ise, bilirseniz sizin için daha hayırlıdır.", "Bakara Sûresi, 280"),
+                  a("Doğruluk", "Şahitliği gizlemeyin. Kim onu gizlerse, kalbi günahkârdır.", "Bakara Sûresi, 283"),
+                  a("Barış", "Yeminlerinizi iyilik yapmanıza, takvalı olmanıza ve insanların arasını düzeltmenize engel kılmayın.", "Bakara Sûresi, 224"),
+                  a("Barış", "Ey iman edenler! Hep birlikte barış ve teslimiyete girin; şeytanın adımlarına uymayın.", "Bakara Sûresi, 208"),
+                  a("Takva", "Azık edinin; şüphesiz azığın en hayırlısı takvadır.", "Bakara Sûresi, 197"),
+                  a("Dua", "Rabbimiz! Bize dünyada da iyilik ver, ahirette de iyilik ver ve bizi ateş azabından koru.", "Bakara Sûresi, 201"),
+                  a("Hayır", "Kendiniz için önceden ne hayır gönderirseniz, Allah katında onu bulursunuz.", "Bakara Sûresi, 110"),
+                  a("Cömertlik", "Sana neyi harcayacaklarını sorarlar. De ki: \"İhtiyaçtan artanı.\"", "Bakara Sûresi, 219"),
+                  a("Cömertlik", "Hayır olarak ne harcarsanız, anne baba, yakınlar, yetimler, yoksullar ve yolda kalmışlar içindir. Hayırdan ne yaparsanız, şüphesiz Allah onu bilir.", "Bakara Sûresi, 215"),
+                  a("Dua", "Rabbimiz! Üzerimize sabır yağdır, ayaklarımızı sağlam bastır.", "Bakara Sûresi, 250"),
+                  a("Tövbe", "Şüphesiz Allah çok tövbe edenleri ve temizlenenleri sever.", "Bakara Sûresi, 222"),
+
+                  // --- Âl-i İmrân ---
+                  a("Dua", "Rabbimiz! Bizi doğru yola ilettikten sonra kalplerimizi kaydırma; bize katından rahmet bağışla.", "Âl-i İmrân Sûresi, 8"),
+                  a("Güzel Ahlak", "Onlar sabredenler, doğru sözlüler, gönülden itaat edenler, Allah yolunda harcayanlar ve seher vakitlerinde bağışlanma dileyenlerdir.", "Âl-i İmrân Sûresi, 17"),
+                  a("Birlik", "Hep birlikte Allah'ın ipine sımsıkı sarılın, parçalanıp ayrılmayın. Allah'ın size olan nimetini hatırlayın: Hani siz düşmanlardınız da O kalplerinizi birleştirmişti.", "Âl-i İmrân Sûresi, 103"),
+                  a("İyiliğe Çağrı", "Siz insanlar için çıkarılmış en hayırlı ümmetsiniz; iyiliği emreder, kötülükten alıkoyar ve Allah'a inanırsınız.", "Âl-i İmrân Sûresi, 110"),
+                  a("Hayırda Yarış", "Rabbinizin bağışlamasına ve genişliği göklerle yer kadar olan cennete koşun.", "Âl-i İmrân Sûresi, 133"),
+                  a("Tövbe", "Onlar çirkin bir iş yaptıklarında ya da kendilerine kötülük ettiklerinde Allah'ı anıp günahlarının bağışlanmasını dilerler ve yaptıklarında bile bile ısrar etmezler.", "Âl-i İmrân Sûresi, 135"),
+                  a("Umut", "Gevşemeyin, üzülmeyin; eğer inanıyorsanız üstün olan sizsiniz.", "Âl-i İmrân Sûresi, 139"),
+                  a("Sabır", "Sabreder ve Allah'tan sakınırsanız, şüphesiz bu, kararlılık gerektiren işlerdendir.", "Âl-i İmrân Sûresi, 186"),
+                  a("Tefekkür", "Göklerin ve yerin yaratılışında, gece ile gündüzün birbiri ardınca gelişinde akıl sahipleri için deliller vardır. Onlar ayakta, otururken ve yatarken Allah'ı anarlar.", "Âl-i İmrân Sûresi, 190-191"),
+                  a("Sözünde Durmak", "Kim sözünü yerine getirir ve Allah'tan sakınırsa bilsin ki Allah sakınanları sever.", "Âl-i İmrân Sûresi, 76"),
+                  a("Tevekkül", "Allah bize yeter; O ne güzel vekildir.", "Âl-i İmrân Sûresi, 173"),
+                  a("Sabır", "Allah yolunda başlarına gelenlerden dolayı gevşemediler, zayıflık göstermediler, boyun eğmediler. Allah sabredenleri sever.", "Âl-i İmrân Sûresi, 146"),
+
+                  // --- Nisâ ---
+                  a("Akrabalık", "Ey insanlar! Sizi tek bir candan yaratan Rabbinizden sakının. Adını anarak birbirinizden dilekte bulunduğunuz Allah'tan ve akrabalık bağlarını koparmaktan sakının.", "Nisâ Sûresi, 1"),
+                  a("Güzel Söz", "Miras taksiminde akrabalar, yetimler ve yoksullar hazır bulunursa, ondan onlara da verin ve onlara güzel söz söyleyin.", "Nisâ Sûresi, 8"),
+                  a("Aile", "Eşlerinizle iyilikle geçinin. Eğer onlardan hoşlanmazsanız, olabilir ki hoşlanmadığınız bir şeyde Allah birçok hayır takdir etmiştir.", "Nisâ Sûresi, 19"),
+                  a("Merhamet", "Allah sizin yükünüzü hafifletmek ister; çünkü insan zayıf yaratılmıştır.", "Nisâ Sûresi, 28"),
+                  a("Kıskançlık", "Allah'ın kiminizi kiminize üstün kıldığı şeylere göz dikmeyin. Allah'tan O'nun lütfunu isteyin.", "Nisâ Sûresi, 32"),
+                  a("Aracılık", "Kim güzel bir işe aracılık ederse, ondan onun da bir payı olur. Kim kötü bir işe aracılık ederse, ondan onun da bir payı olur.", "Nisâ Sûresi, 85"),
+                  a("Barış", "Barış daha hayırlıdır. İyilik eder ve sakınırsanız, şüphesiz Allah yaptıklarınızdan haberdardır.", "Nisâ Sûresi, 128"),
+                  a("Dil ve Kalp", "Allah, kötü sözün açıkça söylenmesini sevmez; ancak zulme uğrayan başka.", "Nisâ Sûresi, 148"),
+                  a("Affetmek", "Bir iyiliği açığa vurur ya da gizlerseniz veya bir kötülüğü affederseniz, bilin ki Allah çok affedicidir, her şeye gücü yetendir.", "Nisâ Sûresi, 149"),
+                  a("Dürüstlük", "Ey iman edenler! Mallarınızı aranızda haksız yollarla yemeyin; ancak karşılıklı rızaya dayanan ticaret başka.", "Nisâ Sûresi, 29"),
+                  a("Emanet", "Yetimlere mallarını verin; temizi pis olanla değiştirmeyin.", "Nisâ Sûresi, 2"),
+                  a("Saygı", "Size selam verene, dünya hayatının geçici menfaatini arayarak \"Sen mümin değilsin\" demeyin.", "Nisâ Sûresi, 94"),
+                  a("İhsan", "Şüphesiz Allah zerre kadar zulmetmez. Bir iyilik olursa onu kat kat artırır ve kendi katından büyük bir ödül verir.", "Nisâ Sûresi, 40"),
+                  a("Tövbe", "Kim bir kötülük yapar ya da kendine zulmeder, sonra Allah'tan bağışlanma dilerse, Allah'ı çok bağışlayan, çok merhametli bulur.", "Nisâ Sûresi, 110"),
+                  a("Dürüstlük", "Kim bir hata ya da günah işler de sonra onu suçsuz birinin üzerine atarsa, büyük bir iftira ve açık bir günah yüklenmiş olur.", "Nisâ Sûresi, 112"),
+
+                  // --- Mâide, En'âm, A'râf, Enfâl, Tevbe ---
+                  a("Sözünde Durmak", "Ey iman edenler! Sözleşmelerinizi yerine getirin.", "Mâide Sûresi, 1"),
+                  a("Adalet", "Eğer hükmedersen aralarında adaletle hükmet. Şüphesiz Allah adaletli olanları sever.", "Mâide Sûresi, 42"),
+                  a("Hayırda Yarış", "Hayırlarda yarışın. Hepinizin dönüşü Allah'adır.", "Mâide Sûresi, 48"),
+                  a("Kötü Alışkanlık", "Ey iman edenler! İçki, kumar, dikili taşlar ve fal okları şeytan işi birer pisliktir. Bunlardan uzak durun ki kurtuluşa eresiniz.", "Mâide Sûresi, 90"),
+                  a("Doğruluk", "De ki: Kötünün çokluğu hoşuna gitse bile, kötü ile iyi bir olmaz.", "Mâide Sûresi, 100"),
+                  a("Alçakgönüllülük", "Allah'ın sevdiği ve O'nu seven bir topluluk; müminlere karşı alçakgönüllü, kınayanın kınamasından korkmayan kimseler.", "Mâide Sûresi, 54"),
+                  a("Saygı", "Allah'tan başkasına tapanlara sövmeyin; sonra onlar da bilmeyerek Allah'a söverler.", "En'âm Sûresi, 108"),
+                  a("Adalet", "Konuştuğunuz zaman, yakınınız da olsa adaletli olun ve Allah'a verdiğiniz sözü yerine getirin.", "En'âm Sûresi, 152"),
+                  a("İhsan", "Kim bir iyilikle gelirse ona bunun on katı vardır.", "En'âm Sûresi, 160"),
+                  a("Sorumluluk", "Hiçbir günahkâr başkasının günah yükünü taşımaz.", "En'âm Sûresi, 164"),
+                  a("Dua", "Rabbinize yalvararak ve gizlice dua edin. Şüphesiz O, haddi aşanları sevmez.", "A'râf Sûresi, 55"),
+                  a("Dürüstlük", "İnsanların eşyalarını eksik vermeyin; düzeltildikten sonra yeryüzünde bozgunculuk yapmayın.", "A'râf Sûresi, 85"),
+                  a("Huşu", "Kur'an okunduğu zaman onu dinleyin ve susun ki size merhamet edilsin.", "A'râf Sûresi, 204"),
+                  a("Zikir", "Rabbini içinden, yalvararak ve korkarak, yüksek olmayan bir sesle sabah akşam an; gafillerden olma.", "A'râf Sûresi, 205"),
+                  a("Tövbe", "Rabbimiz! Biz kendimize zulmettik. Eğer bizi bağışlamaz ve bize merhamet etmezsen elbette kaybedenlerden oluruz.", "A'râf Sûresi, 23"),
+                  a("Birlik", "Birbirinizle çekişmeyin; sonra gevşersiniz ve gücünüz gider. Sabredin; şüphesiz Allah sabredenlerle beraberdir.", "Enfâl Sûresi, 46"),
+                  a("Barış", "Eğer onlar barışa yanaşırlarsa sen de ona yanaş ve Allah'a tevekkül et.", "Enfâl Sûresi, 61"),
+                  a("Emanet", "Ey iman edenler! Allah'a ve Resule ihanet etmeyin; bile bile emanetlerinize de ihanet etmeyin.", "Enfâl Sûresi, 27"),
+                  a("Dostluk", "Mümin erkekler ve mümin kadınlar birbirlerinin dostlarıdır. İyiliği emreder, kötülükten alıkoyarlar.", "Tevbe Sûresi, 71"),
+                  a("Merhamet", "Andolsun size içinizden öyle bir peygamber gelmiştir ki, sıkıntıya uğramanız ona çok ağır gelir; size çok düşkündür, müminlere karşı şefkatli ve merhametlidir.", "Tevbe Sûresi, 128"),
+                  a("Tevekkül", "Üzülme, şüphesiz Allah bizimle beraberdir.", "Tevbe Sûresi, 40"),
+                  a("Emek", "De ki: Çalışın! Yaptıklarınızı Allah da, Resulü de, müminler de görecek.", "Tevbe Sûresi, 105"),
+
+                  // --- Yûnus, Hûd, Yûsuf, Ra'd, İbrâhîm, Hicr ---
+                  a("Adalet", "Şüphesiz Allah insanlara hiçbir şekilde zulmetmez; fakat insanlar kendilerine zulmederler.", "Yûnus Sûresi, 44"),
+                  a("Şifa", "Ey insanlar! Size Rabbinizden bir öğüt, gönüllerdeki dertlere bir şifa, müminler için bir hidayet ve rahmet gelmiştir.", "Yûnus Sûresi, 57"),
+                  a("Huzur", "Bilesiniz ki Allah'ın dostlarına korku yoktur, onlar üzülmeyeceklerdir de.", "Yûnus Sûresi, 62"),
+                  a("İyilik", "Şüphesiz iyilikler kötülükleri giderir. Bu, öğüt alanlar için bir öğüttür.", "Hûd Sûresi, 114"),
+                  a("Dürüstlük", "Ölçüyü ve tartıyı adaletle tam yapın; insanların eşyalarını eksik vermeyin.", "Hûd Sûresi, 85"),
+                  a("Islah", "Gücüm yettiğince düzeltmekten başka bir şey istemiyorum. Başarım ancak Allah'ın yardımıyladır.", "Hûd Sûresi, 88"),
+                  a("Tövbe", "Rabbinizden bağışlanma dileyin, sonra O'na tövbe edin. Şüphesiz Rabbim çok merhametlidir, çok sevendir.", "Hûd Sûresi, 90"),
+                  a("Sabır", "Bana düşen güzel bir sabırdır.", "Yûsuf Sûresi, 18"),
+                  a("Umut", "Allah'ın rahmetinden ümidinizi kesmeyin.", "Yûsuf Sûresi, 87"),
+                  a("Affetmek", "Bugün size bir kınama yok. Allah sizi bağışlasın; O, merhamet edenlerin en merhametlisidir.", "Yûsuf Sûresi, 92"),
+                  a("Nefis", "Ben nefsimi temize çıkarmam. Çünkü nefis, Rabbimin merhamet ettiği hariç, kötülüğü emreder.", "Yûsuf Sûresi, 53"),
+                  a("Sabır", "Kim Allah'tan sakınır ve sabrederse, şüphesiz Allah iyilik yapanların ecrini zayi etmez.", "Yûsuf Sûresi, 90"),
+                  a("Huzur", "Bilesiniz ki kalpler ancak Allah'ı anmakla huzur bulur.", "Ra'd Sûresi, 28"),
+                  a("Sözünde Durmak", "Onlar Allah'a verdikleri sözü yerine getirirler, antlaşmayı bozmazlar ve Allah'ın gözetilmesini emrettiği bağları gözetirler.", "Ra'd Sûresi, 20-21"),
+                  a("Şükür", "Eğer şükrederseniz, elbette size nimetimi artırırım.", "İbrâhîm Sûresi, 7"),
+                  a("Güzel Söz", "Güzel bir söz, kökü sağlam, dalları göğe uzanan güzel bir ağaç gibidir. O ağaç Rabbinin izniyle her zaman meyvesini verir.", "İbrâhîm Sûresi, 24-25"),
+                  a("Anne Baba", "Rabbimiz! Hesabın görüleceği gün beni, anne babamı ve müminleri bağışla.", "İbrâhîm Sûresi, 41"),
+                  a("Cömertlik", "İman eden kullarıma söyle, namazı kılsınlar ve kendilerine verdiğimiz rızıktan gizli ve açık harcasınlar.", "İbrâhîm Sûresi, 31"),
+                  a("Hoşgörü", "Sen onlara güzel bir şekilde hoşgörü göster.", "Hicr Sûresi, 85"),
+                  a("Şefkat", "Müminlere şefkat kanatlarını ger.", "Hicr Sûresi, 88"),
+
+                  // --- Nahl, İsrâ, Kehf, Meryem, Tâhâ, Enbiyâ, Hac ---
+                  a("Sözünde Durmak", "Antlaştığınız zaman Allah'ın ahdini yerine getirin; yeminlerinizi sağlamlaştırdıktan sonra bozmayın.", "Nahl Sûresi, 91"),
+                  a("İhsan", "Şüphesiz Allah, sakınanlarla ve iyilik yapanlarla beraberdir.", "Nahl Sûresi, 128"),
+                  a("Şükür", "Allah'ın nimetini saymaya kalksanız sayamazsınız.", "Nahl Sûresi, 18"),
+                  a("Sabır", "Sabret; senin sabrın ancak Allah'ın yardımıyladır. Onlar için üzülme, kurdukları tuzaklardan dolayı da sıkıntıya düşme.", "Nahl Sûresi, 127"),
+                  a("Şükür", "Allah'ın size verdiği rızıktan helal ve temiz olarak yiyin; Allah'ın nimetine şükredin.", "Nahl Sûresi, 114"),
+                  a("İyilik", "İyilik ederseniz kendinize iyilik etmiş olursunuz; kötülük ederseniz o da kendinizedir.", "İsrâ Sûresi, 7"),
+                  a("Güzel Söz", "Eğer onlardan yüz çevirmek zorunda kalırsan, onlara yumuşak bir söz söyle.", "İsrâ Sûresi, 28"),
+                  a("Dua", "Rabbim! Gireceğim yere doğrulukla girdir, çıkacağım yerden doğrulukla çıkar.", "İsrâ Sûresi, 80"),
+                  a("Sabır", "İnsan hayra dua eder gibi şerre de dua eder. İnsan pek acelecidir.", "İsrâ Sûresi, 11"),
+                  a("Tövbe", "Rabbiniz içinizde olanı en iyi bilendir. Eğer iyi kimseler olursanız, şüphesiz O, tövbe ederek kendisine yönelenleri çok bağışlayandır.", "İsrâ Sûresi, 25"),
+                  a("Dostluk", "Sabah akşam Rablerinin rızasını isteyerek O'na dua edenlerle birlikte sabret; gözlerini onlardan ayırma.", "Kehf Sûresi, 28"),
+                  a("Kalıcı Olan", "Mal ve oğullar dünya hayatının süsüdür. Kalıcı olan salih ameller ise Rabbinin katında sevapça daha hayırlı, umut bağlamaya da daha lâyıktır.", "Kehf Sûresi, 46"),
+                  a("Tevazu", "Hiçbir şey için \"Bunu yarın yapacağım\" deme; ancak \"Allah dilerse\" de.", "Kehf Sûresi, 23-24"),
+                  a("Dua", "Rabbimiz! Bize katından rahmet ver ve işimizde bize doğruyu kolaylaştır.", "Kehf Sûresi, 10"),
+                  a("Sevgi", "İman edip salih ameller işleyenler için Rahmân, gönüllerde bir sevgi yaratacaktır.", "Meryem Sûresi, 96"),
+                  a("Anne Baba", "Beni anneme iyi davranan biri kıldı; beni zorba ve isyankâr kılmadı.", "Meryem Sûresi, 32"),
+                  a("Güzel Söz", "Selâm sana! Rabbimden senin için bağışlanma dileyeceğim.", "Meryem Sûresi, 47"),
+                  a("Dua", "Rabbim! Göğsümü genişlet, işimi bana kolaylaştır, dilimdeki düğümü çöz ki sözümü anlasınlar.", "Tâhâ Sûresi, 25-28"),
+                  a("İlim", "Rabbim, ilmimi artır.", "Tâhâ Sûresi, 114"),
+                  a("Kanaat", "Onlardan bazı gruplara dünya hayatının süsü olarak verdiğimiz şeylere gözlerini dikme.", "Tâhâ Sûresi, 131"),
+                  a("Tevekkül", "Korkmayın; ben sizinle beraberim, işitirim ve görürüm.", "Tâhâ Sûresi, 46"),
+                  a("Merhamet", "Seni ancak âlemlere rahmet olarak gönderdik.", "Enbiyâ Sûresi, 107"),
+                  a("Hayırda Yarış", "Onlar hayırlarda yarışırlar, umarak ve korkarak bize dua ederlerdi; bize karşı derin saygı içindeydiler.", "Enbiyâ Sûresi, 90"),
+                  a("Salih Amel", "Ey iman edenler! Rükû edin, secde edin, Rabbinize kulluk edin ve hayır işleyin ki kurtuluşa eresiniz.", "Hac Sûresi, 77"),
+                  a("İhlas", "Onların ne etleri ne de kanları Allah'a ulaşır; fakat O'na sizin takvanız ulaşır.", "Hac Sûresi, 37"),
+                  a("Kalp", "Asıl kör olan gözler değil, göğüslerdeki kalplerdir.", "Hac Sûresi, 46"),
+                  a("Doğruluk", "Yalan sözden kaçının.", "Hac Sûresi, 30"),
+
+                  // --- Mü'minûn, Nûr, Furkân, Şuarâ, Neml, Kasas, Ankebût, Rûm ---
+                  a("Emanet", "Onlar emanetlerine ve sözlerine riayet ederler.", "Mü'minûn Sûresi, 8"),
+                  a("Hayırda Yarış", "Onlar Rablerine dönecekleri için kalpleri ürpererek verdiklerini verirler. İşte onlar hayırlarda koşuşurlar.", "Mü'minûn Sûresi, 60-61"),
+                  a("Dua", "Rabbim! Bağışla, merhamet et; sen merhamet edenlerin en hayırlısısın.", "Mü'minûn Sûresi, 118"),
+                  a("Hüsnüzan", "Bu sözü işittiğinizde mümin erkekler ve kadınların, kendi vicdanlarıyla iyi zanda bulunup \"Bu apaçık bir iftiradır\" demeleri gerekmez miydi?", "Nûr Sûresi, 12"),
+                  a("Dil ve Kalp", "Bilmediğiniz bir şeyi ağızlarınızla söylüyor ve onu önemsiz sanıyordunuz; oysa o Allah katında büyüktür. Onu işittiğinizde \"Bunu konuşmak bize yakışmaz\" demeniz gerekmez miydi?", "Nûr Sûresi, 15-16"),
+                  a("Mahremiyet", "Ey iman edenler! Kendi evlerinizden başka evlere, izin alıp ev halkına selam vermeden girmeyin.", "Nûr Sûresi, 27"),
+                  a("İffet", "Mümin erkeklere söyle, gözlerini haramdan sakınsınlar ve iffetlerini korusunlar. Bu onlar için daha temizdir.", "Nûr Sûresi, 30"),
+                  a("Selam", "Evlere girdiğinizde birbirinize Allah katından bereketli ve güzel bir esenlik dileği olarak selam verin.", "Nûr Sûresi, 61"),
+                  a("Aile", "Rabbimiz! Bize eşlerimizden ve çocuklarımızdan göz aydınlığı olacak nesiller bağışla ve bizi takva sahiplerine önder kıl.", "Furkân Sûresi, 74"),
+                  a("Dua", "Rabbim! Bana hikmet ver ve beni iyiler arasına kat. Sonra gelecekler arasında beni doğrulukla anılanlardan eyle.", "Şuarâ Sûresi, 83-84"),
+                  a("Dürüstlük", "Ölçüyü tam yapın, eksik verenlerden olmayın. Doğru terazi ile tartın. İnsanların eşyalarını eksik vermeyin.", "Şuarâ Sûresi, 181-183"),
+                  a("Tevazu", "Sana uyan müminlere alçakgönüllülükle kanat ger.", "Şuarâ Sûresi, 215"),
+                  a("Şükür", "Rabbim! Bana ve anne babama verdiğin nimete şükretmemi ve razı olacağın salih ameller işlememi bana ilham et.", "Neml Sûresi, 19"),
+                  a("Şükür", "Kim şükrederse ancak kendisi için şükreder.", "Neml Sûresi, 40"),
+                  a("Vakar", "Boş sözü işittiklerinde ondan yüz çevirirler ve \"Bizim işlerimiz bize, sizin işleriniz size. Size selam olsun, biz cahilleri istemeyiz\" derler.", "Kasas Sûresi, 55"),
+                  a("Güvenilirlik", "Çalıştırdığın kimselerin en hayırlısı, güçlü ve güvenilir olandır.", "Kasas Sûresi, 26"),
+                  a("Tevazu", "O ahiret yurdunu, yeryüzünde büyüklük taslamak ve bozgunculuk çıkarmak istemeyenlere veririz. Güzel sonuç sakınanlarındır.", "Kasas Sûresi, 83"),
+                  a("Anne Baba", "Biz insana anne babasına iyi davranmasını emrettik.", "Ankebût Sûresi, 8"),
+                  a("Huzur", "Şüphesiz namaz hayâsızlıktan ve kötülükten alıkoyar. Allah'ı anmak ise elbette en büyük ibadettir.", "Ankebût Sûresi, 45"),
+                  a("Güzel Söz", "Kitap ehli ile en güzel şekilde tartışın.", "Ankebût Sûresi, 46"),
+                  a("Gayret", "Bizim uğrumuzda çaba gösterenleri elbette yollarımıza ileteceğiz. Şüphesiz Allah iyilik yapanlarla beraberdir.", "Ankebût Sûresi, 69"),
+                  a("Aile", "O'nun ayetlerinden biri de, kendileriyle huzur bulmanız için size kendi türünüzden eşler yaratması ve aranıza sevgi ve merhamet koymasıdır.", "Rûm Sûresi, 21"),
+                  a("Farklılık", "Göklerin ve yerin yaratılması, dillerinizin ve renklerinizin farklı olması da O'nun ayetlerindendir.", "Rûm Sûresi, 22"),
+                  a("Cömertlik", "Akrabaya, yoksula ve yolda kalmışa hakkını ver.", "Rûm Sûresi, 38"),
+
+                  // --- Lokmân, Ahzâb, Zümer, Mü'min, Fussilet, Şûrâ, Câsiye, Ahkâf ---
+                  a("Anne Baba", "Biz insana anne babasına iyi davranmasını emrettik. Annesi onu zayıflık üstüne zayıflıkla karnında taşımıştır. Bana ve anne babana şükret.", "Lokmân Sûresi, 14"),
+                  a("Anne Baba", "Dünyada onlarla iyi geçin ve bana yönelenin yoluna uy.", "Lokmân Sûresi, 15"),
+                  a("Şükür", "Kim şükrederse ancak kendisi için şükretmiş olur.", "Lokmân Sûresi, 12"),
+                  a("Örnek", "Andolsun, Allah'a ve ahiret gününe kavuşmayı umanlar ve Allah'ı çok ananlar için Allah'ın Resulünde güzel bir örnek vardır.", "Ahzâb Sûresi, 21"),
+                  a("Güzel Ahlak", "Doğru sözlü erkekler ve kadınlar, sabreden erkekler ve kadınlar, sadaka veren erkekler ve kadınlar, Allah'ı çok anan erkekler ve kadınlar; Allah bunlar için bağışlanma ve büyük bir ödül hazırlamıştır.", "Ahzâb Sûresi, 35"),
+                  a("Kul Hakkı", "Mümin erkeklere ve kadınlara, yapmadıkları bir şeyden dolayı eziyet edenler, iftira ve açık bir günah yüklenmişlerdir.", "Ahzâb Sûresi, 58"),
+                  a("Zikir", "Ey iman edenler! Allah'ı çokça anın; O'nu sabah akşam tesbih edin.", "Ahzâb Sûresi, 41-42"),
+                  a("İlim", "De ki: Hiç bilenlerle bilmeyenler bir olur mu?", "Zümer Sûresi, 9"),
+                  a("Sabır", "Bu dünyada iyilik yapanlara iyilik vardır. Sabredenlere ecirleri hesapsız ödenecektir.", "Zümer Sûresi, 10"),
+                  a("Umut", "De ki: Ey kendilerinin aleyhine aşırı giden kullarım! Allah'ın rahmetinden ümidinizi kesmeyin. Şüphesiz Allah bütün günahları bağışlar.", "Zümer Sûresi, 53"),
+                  a("Güzel Söz", "Onlar sözü dinleyip en güzeline uyarlar.", "Zümer Sûresi, 18"),
+                  a("Dua", "Rabbiniz şöyle dedi: Bana dua edin, size karşılık vereyim.", "Mü'min Sûresi, 60"),
+                  a("İstikamet", "\"Rabbimiz Allah'tır\" deyip sonra dosdoğru olanlara melekler iner: \"Korkmayın, üzülmeyin\" derler.", "Fussilet Sûresi, 30"),
+                  a("Güzel Söz", "Allah'a çağıran, salih amel işleyen ve \"Ben Müslümanlardanım\" diyenden daha güzel sözlü kim vardır?", "Fussilet Sûresi, 33"),
+                  a("Sabır", "Kötülüğü iyilikle savmak ancak sabredenlere verilir.", "Fussilet Sûresi, 35"),
+                  a("Sorumluluk", "Kim salih bir amel işlerse kendi lehinedir; kim kötülük ederse kendi aleyhinedir. Rabbin kullara zulmedici değildir.", "Fussilet Sûresi, 46"),
+                  a("Öfke", "Onlar büyük günahlardan ve hayâsızlıklardan kaçınırlar; öfkelendiklerinde de bağışlarlar.", "Şûrâ Sûresi, 37"),
+                  a("Kalıcı Olan", "Size verilen her şey dünya hayatının geçici bir faydasıdır. Allah katında olan ise, iman edip Rablerine tevekkül edenler için daha hayırlı ve kalıcıdır.", "Şûrâ Sûresi, 36"),
+                  a("Hoşgörü", "İman edenlere söyle, Allah'ın günlerini ummayanları bağışlasınlar.", "Câsiye Sûresi, 14"),
+                  a("Anne Baba", "Rabbim! Bana ve anne babama verdiğin nimete şükretmemi ve razı olacağın salih ameller yapmamı bana ilham et; benim için soyumu da iyi kıl.", "Ahkâf Sûresi, 15"),
+
+                  // --- Muhammed'den sona ---
+                  a("Gayret", "Eğer siz Allah'ın dinine yardım ederseniz, O da size yardım eder ve ayaklarınızı sağlam bastırır.", "Muhammed Sûresi, 7"),
+                  a("Barış", "Müminlerden iki topluluk çatışırsa aralarını düzeltin. Adaletli davranın; şüphesiz Allah adaletli davrananları sever.", "Hucurât Sûresi, 9"),
+                  a("Dil ve Kalp", "İnsan hiçbir söz söylemez ki yanında onu gözetleyen hazır bir melek bulunmasın.", "Kâf Sûresi, 18"),
+                  a("Yardımlaşma", "Onların mallarında isteyen ve yoksun olanlar için bir hak vardır.", "Zâriyât Sûresi, 19"),
+                  a("Öğüt", "Öğüt ver; çünkü öğüt müminlere fayda verir.", "Zâriyât Sûresi, 55"),
+                  a("Tevazu", "Kendinizi temize çıkarmayın; O, kimin sakındığını en iyi bilendir.", "Necm Sûresi, 32"),
+                  a("Dürüstlük", "Tartıyı adaletle yapın, teraziyi eksik tutmayın.", "Rahmân Sûresi, 9"),
+                  a("Kanaat", "Elinizden çıkana üzülmeyesiniz, Allah'ın size verdiğiyle de şımarmayasınız diye. Allah kendini beğenip övüneni sevmez.", "Hadîd Sûresi, 23"),
+                  a("Cömertlik", "Allah'ın sizi tasarrufunda bulundurduğu mallardan harcayın.", "Hadîd Sûresi, 7"),
+                  a("Kalp", "İman edenlerin Allah'ı anmaktan dolayı kalplerinin yumuşama vakti gelmedi mi?", "Hadîd Sûresi, 16"),
+                  a("Dil ve Kalp", "Gizli konuştuğunuzda günah, düşmanlık ve isyan üzerine değil, iyilik ve takva üzerine konuşun.", "Mücâdele Sûresi, 9"),
+                  a("Nezaket", "Size \"Meclislerde yer açın\" denildiğinde yer açın ki Allah da size genişlik versin. Allah iman edenleri ve kendilerine ilim verilenleri derecelerle yükseltir.", "Mücâdele Sûresi, 11"),
+                  a("Fedakârlık", "Kendileri ihtiyaç içinde olsalar bile onları kendilerine tercih ederler. Kim nefsinin cimriliğinden korunursa, işte onlar kurtuluşa erenlerdir.", "Haşr Sûresi, 9"),
+                  a("Kardeşlik", "Rabbimiz! Bizi ve bizden önce iman eden kardeşlerimizi bağışla. Kalplerimizde iman edenlere karşı hiçbir kin bırakma.", "Haşr Sûresi, 10"),
+                  a("Muhasebe", "Ey iman edenler! Allah'tan sakının; herkes yarın için ne hazırladığına baksın.", "Haşr Sûresi, 18"),
+                  a("Adalet", "Din konusunda sizinle savaşmayan ve sizi yurtlarınızdan çıkarmayanlara iyilik etmenizi ve adil davranmanızı Allah yasaklamaz. Allah adaletli olanları sever.", "Mümtehine Sûresi, 8"),
+                  a("Cömertlik", "Herhangi birinize ölüm gelip de \"Rabbim! Beni biraz erteleseydin de sadaka verseydim\" demeden önce, size verdiğimiz rızıktan harcayın.", "Münâfikûn Sûresi, 10"),
+                  a("Affetmek", "Eğer affeder, hoş görür ve bağışlarsanız, bilin ki Allah çok bağışlayan, çok merhamet edendir.", "Teğâbün Sûresi, 14"),
+                  a("Cömertlik", "Gücünüz yettiğince Allah'tan sakının; dinleyin, itaat edin ve kendi iyiliğiniz için harcayın. Kim nefsinin cimriliğinden korunursa, işte onlar kurtuluşa erenlerdir.", "Teğâbün Sûresi, 16"),
+                  a("Tevekkül", "Kim Allah'tan sakınırsa, Allah ona bir çıkış yolu açar ve onu ummadığı yerden rızıklandırır. Kim Allah'a tevekkül ederse, O ona yeter.", "Talâk Sûresi, 2-3"),
+                  a("Umut", "Allah hiç kimseye verdiğinden fazlasını yüklemez. Allah bir güçlükten sonra bir kolaylık yaratacaktır.", "Talâk Sûresi, 7"),
+                  a("Tövbe", "Ey iman edenler! Allah'a içtenlikle tövbe edin.", "Tahrîm Sûresi, 8"),
+                  a("Dil ve Kalp", "Çokça yemin eden, aşağılık, ayıplayıp duran, laf getirip götüren kimseye boyun eğme.", "Kalem Sûresi, 10-11"),
+                  a("Sabır", "Güzel bir sabırla sabret.", "Meâric Sûresi, 5"),
+                  a("Emanet", "Onlar emanetlerine ve sözlerine riayet ederler; şahitliklerini dosdoğru yaparlar.", "Meâric Sûresi, 32-33"),
+                  a("Vakar", "Onların söylediklerine sabret ve onlardan güzellikle ayrıl.", "Müzzemmil Sûresi, 10"),
+                  a("Hayır", "Kendiniz için önceden ne iyilik gönderirseniz, onu Allah katında daha hayırlı ve ödülce daha büyük olarak bulursunuz.", "Müzzemmil Sûresi, 20"),
+                  a("İhlas", "Yaptığın iyiliği çok görerek başa kakma.", "Müddessir Sûresi, 6"),
+                  a("Merhamet", "Sarp yokuş nedir bilir misin? Bir köleyi özgürlüğe kavuşturmak ya da açlık gününde yakını olan bir yetimi veya yoksul düşmüş birini doyurmaktır. Sonra birbirlerine sabrı ve merhameti tavsiye edenlerden olmaktır.", "Beled Sûresi, 12-17"),
+                  a("Nefis", "Nefsini arındıran kurtuluşa ermiştir. Onu kötülüklere gömen ise ziyana uğramıştır.", "Şems Sûresi, 9-10"),
+                  a("Cömertlik", "Kim verir, Allah'tan sakınır ve en güzeli de doğrularsa, biz de onu en kolaya hazırlarız.", "Leyl Sûresi, 5-7"),
+                  a("Şükür", "Rabbinin nimetini an.", "Duhâ Sûresi, 11"),
+                  a("İlim", "Yaratan Rabbinin adıyla oku!", "Alak Sûresi, 1"),
+                  a("Salih Amel", "İman edip salih ameller işleyenler, işte onlar yaratılmışların en hayırlısıdır.", "Beyyine Sûresi, 7"),
+                  a("Kanaat", "Çokluk yarışı sizi oyaladı; kabirleri ziyaret edinceye kadar.", "Tekâsür Sûresi, 1-2"),
+                  a("Dua", "Yalnız sana kulluk eder, yalnız senden yardım dileriz. Bizi dosdoğru yola ilet.", "Fâtiha Sûresi, 5-6"),
               };
           }
           AYET_EOF
@@ -228,11 +467,34 @@ jobs:
                   return order;
               }
 
+              static boolean onScreen(Context c) { return prefs(c).getBoolean("onScreen", true); }
+
+              /** Sıradaki ayetin konumu; her değişimde bir ilerler, liste bitmeden aynı ayet gelmez. */
               static AyetData.Ayet current(Context c) {
-                  long hour = System.currentTimeMillis() / 3_600_000L;
                   int n = AyetData.ALL.length;
-                  long pos = Math.floorMod(hour + prefs(c).getInt("offset", 0), (long) n);
-                  return AyetData.ALL[order()[(int) pos]];
+                  int pos = Math.floorMod(prefs(c).getInt("pos", 0), n);
+                  return AyetData.ALL[order()[pos]];
+              }
+
+              static synchronized void advance(Context c) {
+                  SharedPreferences p = prefs(c);
+                  p.edit().putInt("pos", p.getInt("pos", 0) + 1).commit();
+              }
+
+              /** Bir sonraki ayete geç ve kilit ekranına yaz. */
+              static void advanceAndApply(Context c) throws IOException {
+                  advance(c);
+                  applyNow(c);
+              }
+
+              /** Ekran kapanınca ayet değiştiren arka plan servisini açar ya da kapatır. */
+              static void syncService(Context c) {
+                  Intent i = new Intent(c, ScreenService.class);
+                  if (isActive(c) && onScreen(c)) {
+                      try { c.startForegroundService(i); } catch (Throwable ignored) {}
+                  } else {
+                      c.stopService(i);
+                  }
               }
 
               static Point screenSize(Context c) {
@@ -328,7 +590,7 @@ jobs:
               private float dp;
               private ScrollView scroll;
               private ImageView preview;
-              private TextView title, subtitle, status, mainBtn, nextBtn, batteryBtn, themeLabel, note;
+              private TextView title, subtitle, status, mainBtn, nextBtn, modeBtn, batteryBtn, themeLabel, note;
               private LinearLayout chips;
               private int previewSeq = 0;
 
@@ -359,7 +621,7 @@ jobs:
                   title.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
                   root.addView(title);
 
-                  subtitle = text("Her saat başı kilit ekranında,\ngüzel ahlak üzerine bir ayet.", 15, false);
+                  subtitle = text("Ekranı her açışınızda kilit ekranında,\ngüzel ahlak üzerine yeni bir ayet.", 15, false);
                   subtitle.setPadding(0, px(6), 0, px(22));
                   root.addView(subtitle);
 
@@ -393,6 +655,11 @@ jobs:
                   nextBtn.setOnClickListener(v -> next());
                   root.addView(nextBtn, btnLp(10));
 
+                  modeBtn = button();
+                  modeBtn.setTextSize(14);
+                  modeBtn.setOnClickListener(v -> toggleMode());
+                  root.addView(modeBtn, btnLp(10));
+
                   themeLabel = text("Tema", 13, true);
                   themeLabel.setLetterSpacing(0.2f);
                   themeLabel.setPadding(0, px(26), 0, px(10));
@@ -418,7 +685,9 @@ jobs:
                   batteryBtn.setOnClickListener(v -> askBattery());
                   root.addView(batteryBtn, btnLp(28));
 
-                  note = text("Ayet her saat başı yalnızca kilit ekranı duvar kâğıdına yazılır; ana ekranınız değişmez.\n\n"
+                  note = text("Ayet yalnızca kilit ekranı duvar kâğıdına yazılır; ana ekranınız değişmez. "
+                          + "Ekran kapandığında sıradaki ayet hazırlanır, ekranı açtığınızda o karşılar. "
+                          + "Toplam " + AyetData.ALL.length + " ayet var; hepsi bitmeden aynısı tekrar gelmez.\n\n"
                           + "Samsung'da: Ayarlar › Kilit ekranı'nda \"Dinamik kilit ekranı\" veya \"Kilit ekranı duvar kâğıdı servisleri\" açıksa kapatın; yoksa ayetin üstüne yazabilir.\n\n"
                           + "Mealler anlam aktarımıdır; bazı ayetlerin yalnızca bir bölümü verilmiştir.", 12.5f, false);
                   note.setPadding(px(6), px(22), px(6), 0);
@@ -450,8 +719,12 @@ jobs:
                   note.setTextColor(Renderer.alpha(t[3], 150));
 
                   if (active) {
-                      String at = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date(Engine.nextHour()));
-                      status.setText("● Açık  ·  sıradaki ayet " + at + "'de");
+                      if (Engine.onScreen(this)) {
+                          status.setText("● Açık  ·  ekranı her açışınızda yeni ayet");
+                      } else {
+                          String at = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date(Engine.nextHour()));
+                          status.setText("● Açık  ·  sıradaki ayet " + at + "'de");
+                      }
                       mainBtn.setText("Durdur");
                       styleSecondary(mainBtn, t);
                   } else {
@@ -460,6 +733,10 @@ jobs:
                       stylePrimary(mainBtn, t);
                   }
                   styleSecondary(nextBtn, t);
+                  styleSecondary(modeBtn, t);
+                  modeBtn.setText(Engine.onScreen(this)
+                          ? "Değişim: her ekran açılışında ✓  (dokun: sadece saat başı)"
+                          : "Değişim: sadece saat başı ✓  (dokun: her ekran açılışında)");
                   styleSecondary(batteryBtn, t);
                   PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
                   batteryBtn.setVisibility(pm.isIgnoringBatteryOptimizations(getPackageName()) ? View.GONE : View.VISIBLE);
@@ -491,20 +768,29 @@ jobs:
                   if (Engine.isActive(this)) {
                       Engine.prefs(this).edit().putBoolean("active", false).apply();
                       Engine.cancel(this);
+                      Engine.syncService(this);
                       toast("Durduruldu. Kilit ekranındaki son ayet yerinde kalır.");
                       refresh();
                   } else {
                       Engine.prefs(this).edit().putBoolean("active", true).apply();
-                      applyInBackground("Kilit ekranı güncellendi. Her saat başı yeni ayet gelecek.");
+                      Engine.syncService(this);
+                      applyInBackground("Kilit ekranı güncellendi. Ekranı kapatıp açınca yeni ayet gelecek.");
                       refresh();
                   }
               }
 
               private void next() {
-                  int off = Engine.prefs(this).getInt("offset", 0);
-                  Engine.prefs(this).edit().putInt("offset", off + 1).apply();
+                  Engine.advance(this);
                   refresh();
                   if (Engine.isActive(this)) applyInBackground("Kilit ekranı güncellendi.");
+              }
+
+              private void toggleMode() {
+                  boolean on = !Engine.onScreen(this);
+                  Engine.prefs(this).edit().putBoolean("onScreen", on).apply();
+                  Engine.syncService(this);
+                  refresh();
+                  toast(on ? "Ekranı her açışınızda yeni ayet gelecek." : "Ayet sadece saat başı değişecek.");
               }
 
               private void setThemeIdx(int i) {
@@ -761,6 +1047,103 @@ jobs:
               static int alpha(int c, int a) { return Color.argb(Math.max(0, Math.min(255, a)), Color.red(c), Color.green(c), Color.blue(c)); }
           }
           AYET_EOF
+          mkdir -p "$(dirname 'src/com/halil/ayetvakti/ScreenService.java')"
+          cat > 'src/com/halil/ayetvakti/ScreenService.java' <<'AYET_EOF'
+          package com.halil.ayetvakti;
+
+          import android.app.Notification;
+          import android.app.NotificationChannel;
+          import android.app.NotificationManager;
+          import android.app.PendingIntent;
+          import android.app.Service;
+          import android.content.BroadcastReceiver;
+          import android.content.Context;
+          import android.content.Intent;
+          import android.content.IntentFilter;
+          import android.content.pm.ServiceInfo;
+          import android.os.Build;
+          import android.os.IBinder;
+          import android.os.SystemClock;
+
+          import java.util.concurrent.ExecutorService;
+          import java.util.concurrent.Executors;
+          import java.util.concurrent.atomic.AtomicBoolean;
+
+          /**
+           * Ekran her kapandığında bir sonraki ayeti kilit ekranına yazar;
+           * böylece ekranı her açışınızda yeni bir ayet karşılar.
+           */
+          public class ScreenService extends Service {
+              private static final String CHANNEL = "ayet_servis";
+              private final ExecutorService worker = Executors.newSingleThreadExecutor();
+              private final AtomicBoolean busy = new AtomicBoolean(false);
+              private long lastRun = 0;
+
+              private final BroadcastReceiver screenReceiver = new BroadcastReceiver() {
+                  @Override
+                  public void onReceive(Context context, Intent intent) {
+                      if (!Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) return;
+                      long now = SystemClock.elapsedRealtime();
+                      if (now - lastRun < 1500 || !busy.compareAndSet(false, true)) return;
+                      lastRun = now;
+                      final Context app = getApplicationContext();
+                      worker.execute(() -> {
+                          try {
+                              if (Engine.isActive(app)) Engine.advanceAndApply(app);
+                          } catch (Throwable ignored) {
+                          } finally {
+                              busy.set(false);
+                          }
+                      });
+                  }
+              };
+
+              @Override
+              public void onCreate() {
+                  super.onCreate();
+                  NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                  NotificationChannel ch = new NotificationChannel(CHANNEL, "Ayet yenileme", NotificationManager.IMPORTANCE_MIN);
+                  ch.setShowBadge(false);
+                  nm.createNotificationChannel(ch);
+
+                  PendingIntent open = PendingIntent.getActivity(this, 0,
+                          new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
+                  int icon = getResources().getIdentifier("ic_stat", "drawable", getPackageName());
+                  Notification n = new Notification.Builder(this, CHANNEL)
+                          .setSmallIcon(icon)
+                          .setContentTitle("Ayet Vakti")
+                          .setContentText("Ekranı her açışınızda yeni bir ayet")
+                          .setContentIntent(open)
+                          .setOngoing(true)
+                          .build();
+                  if (Build.VERSION.SDK_INT >= 34) {
+                      startForeground(1, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
+                  } else {
+                      startForeground(1, n);
+                  }
+                  registerReceiver(screenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+              }
+
+              @Override
+              public int onStartCommand(Intent intent, int flags, int startId) {
+                  if (!Engine.isActive(this) || !Engine.onScreen(this)) {
+                      stopSelf();
+                      return START_NOT_STICKY;
+                  }
+                  return START_STICKY;
+              }
+
+              @Override
+              public void onDestroy() {
+                  try { unregisterReceiver(screenReceiver); } catch (Throwable ignored) {}
+                  worker.shutdown();
+                  super.onDestroy();
+              }
+
+              @Override
+              public IBinder onBind(Intent intent) { return null; }
+          }
+          AYET_EOF
           mkdir -p "$(dirname 'src/com/halil/ayetvakti/TickReceiver.java')"
           cat > 'src/com/halil/ayetvakti/TickReceiver.java' <<'AYET_EOF'
           package com.halil.ayetvakti;
@@ -778,10 +1161,12 @@ jobs:
                   final PendingResult result = goAsync();
                   new Thread(() -> {
                       try {
-                          Engine.applyNow(c);
+                          if (Engine.ACTION_TICK.equals(intent.getAction())) Engine.advanceAndApply(c);
+                          else Engine.applyNow(c);
                       } catch (Throwable ignored) {
                       } finally {
                           try { Engine.scheduleNext(c); } catch (Throwable ignored) {}
+                          Engine.syncService(c);
                           result.finish();
                       }
                   }).start();

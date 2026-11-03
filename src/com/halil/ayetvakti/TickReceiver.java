@@ -13,10 +13,12 @@ public class TickReceiver extends BroadcastReceiver {
         final PendingResult result = goAsync();
         new Thread(() -> {
             try {
-                Engine.applyNow(c);
+                if (Engine.ACTION_TICK.equals(intent.getAction())) Engine.advanceAndApply(c);
+                else Engine.applyNow(c);
             } catch (Throwable ignored) {
             } finally {
                 try { Engine.scheduleNext(c); } catch (Throwable ignored) {}
+                Engine.syncService(c);
                 result.finish();
             }
         }).start();

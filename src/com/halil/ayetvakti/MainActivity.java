@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
     private float dp;
     private ScrollView scroll;
     private ImageView preview;
-    private TextView title, subtitle, status, mainBtn, nextBtn, batteryBtn, themeLabel, note;
+    private TextView title, subtitle, status, mainBtn, nextBtn, modeBtn, batteryBtn, themeLabel, note;
     private LinearLayout chips;
     private int previewSeq = 0;
 
@@ -65,7 +65,7 @@ public class MainActivity extends Activity {
         title.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
         root.addView(title);
 
-        subtitle = text("Her saat başı kilit ekranında,\ngüzel ahlak üzerine bir ayet.", 15, false);
+        subtitle = text("Ekranı her açışınızda kilit ekranında,\ngüzel ahlak üzerine yeni bir ayet.", 15, false);
         subtitle.setPadding(0, px(6), 0, px(22));
         root.addView(subtitle);
 
@@ -99,6 +99,11 @@ public class MainActivity extends Activity {
         nextBtn.setOnClickListener(v -> next());
         root.addView(nextBtn, btnLp(10));
 
+        modeBtn = button();
+        modeBtn.setTextSize(14);
+        modeBtn.setOnClickListener(v -> toggleMode());
+        root.addView(modeBtn, btnLp(10));
+
         themeLabel = text("Tema", 13, true);
         themeLabel.setLetterSpacing(0.2f);
         themeLabel.setPadding(0, px(26), 0, px(10));
@@ -124,7 +129,9 @@ public class MainActivity extends Activity {
         batteryBtn.setOnClickListener(v -> askBattery());
         root.addView(batteryBtn, btnLp(28));
 
-        note = text("Ayet her saat başı yalnızca kilit ekranı duvar kâğıdına yazılır; ana ekranınız değişmez.\n\n"
+        note = text("Ayet yalnızca kilit ekranı duvar kâğıdına yazılır; ana ekranınız değişmez. "
+                + "Ekran kapandığında sıradaki ayet hazırlanır, ekranı açtığınızda o karşılar. "
+                + "Toplam " + AyetData.ALL.length + " ayet var; hepsi bitmeden aynısı tekrar gelmez.\n\n"
                 + "Samsung'da: Ayarlar › Kilit ekranı'nda \"Dinamik kilit ekranı\" veya \"Kilit ekranı duvar kâğıdı servisleri\" açıksa kapatın; yoksa ayetin üstüne yazabilir.\n\n"
                 + "Mealler anlam aktarımıdır; bazı ayetlerin yalnızca bir bölümü verilmiştir.", 12.5f, false);
         note.setPadding(px(6), px(22), px(6), 0);
@@ -156,8 +163,12 @@ public class MainActivity extends Activity {
         note.setTextColor(Renderer.alpha(t[3], 150));
 
         if (active) {
-            String at = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date(Engine.nextHour()));
-            status.setText("● Açık  ·  sıradaki ayet " + at + "'de");
+            if (Engine.onScreen(this)) {
+                status.setText("● Açık  ·  ekranı her açışınızda yeni ayet");
+            } else {
+                String at = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date(Engine.nextHour()));
+                status.setText("● Açık  ·  sıradaki ayet " + at + "'de");
+            }
             mainBtn.setText("Durdur");
             styleSecondary(mainBtn, t);
         } else {
@@ -166,6 +177,10 @@ public class MainActivity extends Activity {
             stylePrimary(mainBtn, t);
         }
         styleSecondary(nextBtn, t);
+        styleSecondary(modeBtn, t);
+        modeBtn.setText(Engine.onScreen(this)
+                ? "Değişim: her ekran açılışında ✓  (dokun: sadece saat başı)"
+                : "Değişim: sadece saat başı ✓  (dokun: her ekran açılışında)");
         styleSecondary(batteryBtn, t);
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
         batteryBtn.setVisibility(pm.isIgnoringBatteryOptimizations(getPackageName()) ? View.GONE : View.VISIBLE);
@@ -197,20 +212,29 @@ public class MainActivity extends Activity {
         if (Engine.isActive(this)) {
             Engine.prefs(this).edit().putBoolean("active", false).apply();
             Engine.cancel(this);
+            Engine.syncService(this);
             toast("Durduruldu. Kilit ekranındaki son ayet yerinde kalır.");
             refresh();
         } else {
             Engine.prefs(this).edit().putBoolean("active", true).apply();
-            applyInBackground("Kilit ekranı güncellendi. Her saat başı yeni ayet gelecek.");
+            Engine.syncService(this);
+            applyInBackground("Kilit ekranı güncellendi. Ekranı kapatıp açınca yeni ayet gelecek.");
             refresh();
         }
     }
 
     private void next() {
-        int off = Engine.prefs(this).getInt("offset", 0);
-        Engine.prefs(this).edit().putInt("offset", off + 1).apply();
+        Engine.advance(this);
         refresh();
         if (Engine.isActive(this)) applyInBackground("Kilit ekranı güncellendi.");
+    }
+
+    private void toggleMode() {
+        boolean on = !Engine.onScreen(this);
+        Engine.prefs(this).edit().putBoolean("onScreen", on).apply();
+        Engine.syncService(this);
+        refresh();
+        toast(on ? "Ekranı her açışınızda yeni ayet gelecek." : "Ayet sadece saat başı değişecek.");
     }
 
     private void setThemeIdx(int i) {

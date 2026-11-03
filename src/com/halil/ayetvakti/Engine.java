@@ -43,11 +43,34 @@ final class Engine {
         return order;
     }
 
+    static boolean onScreen(Context c) { return prefs(c).getBoolean("onScreen", true); }
+
+    /** Sıradaki ayetin konumu; her değişimde bir ilerler, liste bitmeden aynı ayet gelmez. */
     static AyetData.Ayet current(Context c) {
-        long hour = System.currentTimeMillis() / 3_600_000L;
         int n = AyetData.ALL.length;
-        long pos = Math.floorMod(hour + prefs(c).getInt("offset", 0), (long) n);
-        return AyetData.ALL[order()[(int) pos]];
+        int pos = Math.floorMod(prefs(c).getInt("pos", 0), n);
+        return AyetData.ALL[order()[pos]];
+    }
+
+    static synchronized void advance(Context c) {
+        SharedPreferences p = prefs(c);
+        p.edit().putInt("pos", p.getInt("pos", 0) + 1).commit();
+    }
+
+    /** Bir sonraki ayete geç ve kilit ekranına yaz. */
+    static void advanceAndApply(Context c) throws IOException {
+        advance(c);
+        applyNow(c);
+    }
+
+    /** Ekran kapanınca ayet değiştiren arka plan servisini açar ya da kapatır. */
+    static void syncService(Context c) {
+        Intent i = new Intent(c, ScreenService.class);
+        if (isActive(c) && onScreen(c)) {
+            try { c.startForegroundService(i); } catch (Throwable ignored) {}
+        } else {
+            c.stopService(i);
+        }
     }
 
     static Point screenSize(Context c) {
