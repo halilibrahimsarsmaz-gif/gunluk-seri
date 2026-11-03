@@ -18,11 +18,22 @@ jobs:
         with:
           gradle-version: '8.11.1'
       - name: İmza anahtarını hazırla
-        run: echo "${{ secrets.KEYSTORE_B64 }}" | base64 -d > $RUNNER_TEMP/release.jks
+        env:
+          KS_B64: ${{ secrets.KEYSTORE_B64 }}
+          KS_PASS_SECRET: ${{ secrets.KEYSTORE_PASS }}
+        run: |
+          if [ -n "$KS_B64" ] && [ -n "$KS_PASS_SECRET" ]; then
+            echo "$KS_B64" | base64 -d > $RUNNER_TEMP/release.jks
+            echo "KS_PASS=$KS_PASS_SECRET" >> $GITHUB_ENV
+          else
+            P=$(openssl rand -hex 16)
+            echo "::add-mask::$P"
+            keytool -genkeypair -keystore $RUNNER_TEMP/release.jks -storetype PKCS12 -alias gunlukseri -keyalg RSA -keysize 2048 -validity 10000 -storepass "$P" -keypass "$P" -dname "CN=Gunluk Seri"
+            echo "KS_PASS=$P" >> $GITHUB_ENV
+          fi
       - name: Derle
         env:
           KS_PATH: ${{ runner.temp }}/release.jks
-          KS_PASS: ${{ secrets.KEYSTORE_PASS }}
           VERSION_CODE: ${{ github.run_number }}
         run: gradle --no-daemon assembleRelease
       - name: Sürüm yayınla
