@@ -2,6 +2,9 @@ name: APK derle
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'kilo-hedefim/**'
+      - '.github/workflows/kilo-hedefim-apk.yml'
   workflow_dispatch:
 permissions:
   contents: write
