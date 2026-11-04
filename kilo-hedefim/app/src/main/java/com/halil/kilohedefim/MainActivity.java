@@ -542,12 +542,14 @@ public class MainActivity extends Activity {
 
     void fillFoods(LinearLayout list, List<FoodDb.Food> foods, String q) {
         list.removeAllViews();
-        String query = q.trim().toLowerCase(TR);
+        String[] words = FoodDb.norm(q.trim()).split("\\s+");
         String lastCat = null;
         LinearLayout c = null;
         int shown = 0;
         for (FoodDb.Food f : foods) {
-            if (!query.isEmpty() && !f.name.toLowerCase(TR).contains(query)) continue;
+            boolean ok = true;
+            for (String w : words) if (!w.isEmpty() && !f.key.contains(w)) { ok = false; break; }
+            if (!ok) continue;
             if (!f.cat.equals(lastCat)) {
                 c = card(list);
                 c.addView(h2(f.cat));
