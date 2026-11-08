@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -2031,10 +2031,13 @@ jobs:
             sleep 3
             adb exec-out screencap -p > shot2.png
             adb logcat -d -s AndroidRuntime:E > crash.txt || true
-      - uses: actions/upload-artifact@v4
+      - name: Sonuclari on-surume koy
         if: always()
-        with:
-          name: preview
-          path: |
-            shot*.png
-            crash.txt
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ls -l
+          gh release create "ayet-vakti-ci-${{ github.run_number }}" --prerelease \
+            --repo "${{ github.repository }}" --target "${{ github.sha }}" \
+            --title "Ayet Vakti deneme ${{ github.run_number }}" --notes "Otomatik deneme derlemesi (imzasız)." \
+            AyetVakti-unsigned.apk $(ls shot*.png crash.txt 2>/dev/null)
