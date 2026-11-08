@@ -1451,7 +1451,7 @@ jobs:
 
                   drawPattern(cv, w, h, cy, t[4], light);
                   if (info != null) {
-                      float mx = w * 0.065f, r = w * 0.05f;
+                      float mx = w * 0.055f, r = w * 0.05f;
                       Paint bg = new Paint(Paint.ANTI_ALIAS_FLAG);
                       bg.setColor(light ? 0x78FFFFFF : 0x52000000);
                       cv.drawRoundRect(mx, cardTop, w - mx, cardBottom, r, r, bg);
@@ -1485,7 +1485,7 @@ jobs:
                   ref.setTextSize(w * 0.035f);
                   ref.setTextAlign(Paint.Align.CENTER);
 
-                  String txt = "\u201C" + a.text + "\u201D";
+                  String txt = "\u201C" + innerQuotes(a.text) + "\u201D";
                   float labelH = -label.ascent() + label.descent();
                   float refH = -ref.ascent() + ref.descent();
                   float ornH = w * 0.026f;
@@ -1531,30 +1531,41 @@ jobs:
 
               static final Locale TR = new Locale("tr", "TR");
 
+              /** Ayetin içindeki düz tırnakları tek tırnağa çevirir; dıştaki çift tırnakla karışmasın. */
+              private static String innerQuotes(String s) {
+                  StringBuilder b = new StringBuilder(s.length());
+                  boolean open = true;
+                  for (char ch : s.toCharArray()) {
+                      if (ch == '"') { b.append(open ? '\u2018' : '\u2019'); open = !open; }
+                      else b.append(ch);
+                  }
+                  return b.toString();
+              }
+
               /**
                * Hava durumu + namaz vakitleri kartı. measureOnly=true ise sadece yüksekliği hesaplar.
                * Kartın alt kenarının y değerini döndürür.
                */
               private static float drawInfoCard(Canvas cv, int w, int h, float top, int[] t, boolean light,
                                                 Data.Now n, boolean measureOnly) {
-                  float mx = w * 0.065f;
+                  float mx = w * 0.055f;
                   float left = mx, right = w - mx;
-                  float pad = w * 0.045f;
+                  float pad = w * 0.042f;
                   float inL = left + pad, inR = right - pad;
 
-                  TextPaint big = tp(t[3], w * 0.074f, "sans-serif-light", Paint.Align.LEFT);
-                  TextPaint small = tp(alpha(t[3], 210), w * 0.031f, "sans-serif", Paint.Align.LEFT);
-                  TextPaint tiny = tp(alpha(t[3], 160), w * 0.027f, "sans-serif", Paint.Align.LEFT);
-                  TextPaint goldLbl = tp(t[2], w * 0.027f, "sans-serif-medium", Paint.Align.CENTER);
+                  TextPaint big = tp(t[3], w * 0.082f, "sans-serif-light", Paint.Align.LEFT);
+                  TextPaint small = tp(alpha(t[3], 215), w * 0.035f, "sans-serif", Paint.Align.LEFT);
+                  TextPaint tiny = tp(alpha(t[3], 170), w * 0.030f, "sans-serif", Paint.Align.LEFT);
+                  TextPaint goldLbl = tp(t[2], w * 0.030f, "sans-serif-medium", Paint.Align.CENTER);
                   goldLbl.setLetterSpacing(0.2f);
-                  TextPaint line = tp(t[3], w * 0.041f, "sans-serif", Paint.Align.CENTER);
-                  TextPaint colName = tp(alpha(t[3], 165), w * 0.025f, "sans-serif", Paint.Align.CENTER);
-                  TextPaint colTime = tp(t[3], w * 0.036f, "sans-serif-medium", Paint.Align.CENTER);
+                  TextPaint line = tp(t[3], w * 0.046f, "sans-serif", Paint.Align.CENTER);
+                  TextPaint colName = tp(alpha(t[3], 175), w * 0.028f, "sans-serif", Paint.Align.CENTER);
+                  TextPaint colTime = tp(t[3], w * 0.040f, "sans-serif-medium", Paint.Align.CENTER);
 
                   float y = top + pad;
 
                   // --- 1. satır: hava durumu ---
-                  float rowA = w * 0.085f;
+                  float rowA = w * 0.092f;
                   if (!measureOnly) {
                       Data.Weather wt = n.weather;
                       float midA = y + rowA / 2f;
@@ -1572,10 +1583,10 @@ jobs:
                       } else {
                           cv.drawText("Hava durumu bekleniyor…", x, midA - (small.ascent() + small.descent()) / 2f, small);
                       }
-                      TextPaint city = tp(t[2], w * 0.028f, "sans-serif-medium", Paint.Align.RIGHT);
+                      TextPaint city = tp(t[2], w * 0.031f, "sans-serif-medium", Paint.Align.RIGHT);
                       city.setLetterSpacing(0.18f);
                       cv.drawText(Data.CITY.toUpperCase(TR), inR, midA - w * 0.006f, city);
-                      TextPaint hij = tp(alpha(t[3], 150), w * 0.024f, "sans-serif", Paint.Align.RIGHT);
+                      TextPaint hij = tp(alpha(t[3], 160), w * 0.027f, "sans-serif", Paint.Align.RIGHT);
                       String hijri = n.today.hijri;
                       if (hijri.isEmpty()) hijri = new java.text.SimpleDateFormat("d MMMM EEEE", TR).format(n.now);
                       cv.drawText(fit(hijri, hij, w * 0.30f), inR, midA - hij.ascent() + w * 0.004f, hij);
