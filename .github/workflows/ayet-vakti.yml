@@ -2031,6 +2031,7 @@ jobs:
             sleep 3
             adb exec-out screencap -p > shot2.png
             adb logcat -d -s AndroidRuntime:E > crash.txt || true
+            echo "--- son ---" >> crash.txt
       - name: Sonuclari on-surume koy
         if: always()
         env:
