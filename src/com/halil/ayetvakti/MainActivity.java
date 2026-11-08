@@ -3,12 +3,15 @@ package com.halil.ayetvakti;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Outline;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -34,7 +37,7 @@ public class MainActivity extends Activity {
     private float dp;
     private ScrollView scroll;
     private ImageView preview;
-    private TextView title, subtitle, status, mainBtn, nextBtn, modeBtn, keepBtn, batteryBtn, themeLabel, note;
+    private TextView title, subtitle, status, mainBtn, nextBtn, modeBtn, keepBtn, notifyBtn, batteryBtn, themeLabel, note;
     private LinearLayout chips;
     private int previewSeq = 0;
 
@@ -44,12 +47,26 @@ public class MainActivity extends Activity {
         dp = getResources().getDisplayMetrics().density;
         buildUi();
         refresh();
+        if (Build.VERSION.SDK_INT >= 33
+                && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 5);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         refresh();
+        final android.content.Context app = getApplicationContext();
+        new Thread(() -> {
+            boolean fresh = Engine.refreshData(app, true);
+            if (fresh) {
+                ui.post(this::refresh);
+                if (Engine.isActive(app)) {
+                    try { Engine.applyNow(app); } catch (Throwable ignored) {}
+                }
+            }
+        }).start();
     }
 
     private void buildUi() {
@@ -65,7 +82,7 @@ public class MainActivity extends Activity {
         title.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
         root.addView(title);
 
-        subtitle = text("Ekranı her açışınızda kilit ekranında,\ngüzel ahlak üzerine yeni bir ayet.", 15, false);
+        subtitle = text("Kilit ekranında güzel ahlak üzerine ayetler,\nBursa namaz vakitleri ve hava durumu.", 15, false);
         subtitle.setPadding(0, px(6), 0, px(22));
         root.addView(subtitle);
 
@@ -109,6 +126,11 @@ public class MainActivity extends Activity {
         keepBtn.setOnClickListener(v -> cycleKeep());
         root.addView(keepBtn, btnLp(10));
 
+        notifyBtn = button();
+        notifyBtn.setTextSize(14);
+        notifyBtn.setOnClickListener(v -> toggleNotify());
+        root.addView(notifyBtn, btnLp(10));
+
         themeLabel = text("Tema", 13, true);
         themeLabel.setLetterSpacing(0.2f);
         themeLabel.setPadding(0, px(26), 0, px(10));
@@ -137,6 +159,8 @@ public class MainActivity extends Activity {
         note = text("Ayet yalnızca kilit ekranı duvar kâğıdına yazılır; ana ekranınız değişmez. "
                 + "Ekran kapandığında sıradaki ayet hazırlanır, ekranı açtığınızda o karşılar. "
                 + "Toplam " + AyetData.ALL.length + " ayet var; hepsi bitmeden aynısı tekrar gelmez.\n\n"
+                + "Namaz vakitleri Diyanet'in Bursa (merkez) vakitleridir; ayda bir internetten alınır. "
+                + "Hava durumu saatte bir yenilenir (Open-Meteo).\n\n"
                 + "Samsung'da: Ayarlar › Kilit ekranı'nda \"Dinamik kilit ekranı\" veya \"Kilit ekranı duvar kâğıdı servisleri\" açıksa kapatın; yoksa ayetin üstüne yazabilir.\n\n"
                 + "Mealler anlam aktarımıdır; bazı ayetlerin yalnızca bir bölümü verilmiştir.", 12.5f, false);
         note.setPadding(px(6), px(22), px(6), 0);
@@ -184,6 +208,10 @@ public class MainActivity extends Activity {
         styleSecondary(nextBtn, t);
         styleSecondary(modeBtn, t);
         styleSecondary(keepBtn, t);
+        styleSecondary(notifyBtn, t);
+        notifyBtn.setText(Engine.notify(this)
+                ? "Vakit bildirimleri: açık ✓  (girişte ve çıkışa " + Engine.WARN_MIN + " dk kala)"
+                : "Vakit bildirimleri: kapalı  (dokun: aç)");
         int ks = Engine.keepSeconds(this);
         keepBtn.setText(ks > 0
                 ? "Okuma süresi: ekran " + ks + " sn açık kalır  (dokun: değiştir)"
@@ -211,7 +239,7 @@ public class MainActivity extends Activity {
         final int th = Engine.theme(this);
         final Point s = Engine.screenSize(this);
         new Thread(() -> {
-            final Bitmap bmp = Renderer.render(a, th, s.x / 2, s.y / 2);
+            final Bitmap bmp = Renderer.render(a, th, s.x / 2, s.y / 2, Data.now(getApplicationContext()));
             ui.post(() -> {
                 if (seq == previewSeq) preview.setImageBitmap(bmp);
             });
@@ -249,6 +277,13 @@ public class MainActivity extends Activity {
         toast(next > 0 ? "Kilit ekranı " + next + " saniye açık kalacak." : "Telefonun kendi ekran süresi kullanılacak.");
     }
 
+    private void toggleNotify() {
+        boolean on = !Engine.notify(this);
+        Engine.prefs(this).edit().putBoolean("notify", on).apply();
+        refresh();
+        toast(on ? "Vakit girince ve çıkmasına " + Engine.WARN_MIN + " dk kala haber verilecek." : "Vakit bildirimleri kapatıldı.");
+    }
+
     private void toggleMode() {
         boolean on = !Engine.onScreen(this);
         Engine.prefs(this).edit().putBoolean("onScreen", on).apply();
@@ -269,8 +304,10 @@ public class MainActivity extends Activity {
         new Thread(() -> {
             String msg = okMsg;
             try {
+                Engine.refreshData(app, true);
                 Engine.applyNow(app);
                 Engine.scheduleNext(app);
+                Engine.scheduleVakit(app);
             } catch (Throwable e) {
                 msg = "Duvar kâğıdı ayarlanamadı: " + e.getMessage();
             }

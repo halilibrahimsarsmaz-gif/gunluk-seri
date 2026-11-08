@@ -35,18 +35,31 @@ public class ScreenService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (Intent.ACTION_SCREEN_ON.equals(action)) { holdScreen(); return; }
+            final Context app = getApplicationContext();
+            if (Intent.ACTION_SCREEN_ON.equals(action)) {
+                holdScreen();
+                // kalan süre güncel kalsın: son çizimden bu yana 1 dakikadan fazla geçtiyse yeniden çiz
+                if (System.currentTimeMillis() - Engine.renderedAt(app) > 60_000L && busy.compareAndSet(false, true)) {
+                    worker.execute(() -> {
+                        try { if (Engine.isActive(app)) Engine.applyNow(app); }
+                        catch (Throwable ignored) {}
+                        finally { busy.set(false); }
+                    });
+                }
+                return;
+            }
             if (Intent.ACTION_USER_PRESENT.equals(action)) { releaseScreen(); return; }
             if (!Intent.ACTION_SCREEN_OFF.equals(action)) return;
             releaseScreen();
-            if (!Engine.onScreen(context)) return;
             long now = SystemClock.elapsedRealtime();
             if (now - lastRun < 1500 || !busy.compareAndSet(false, true)) return;
             lastRun = now;
-            final Context app = getApplicationContext();
             worker.execute(() -> {
                 try {
-                    if (Engine.isActive(app)) Engine.advanceAndApply(app);
+                    if (!Engine.isActive(app)) return;
+                    if (Engine.onScreen(app)) Engine.advanceAndApply(app);
+                    else Engine.applyNow(app);
+                    if (Engine.refreshData(app, false)) Engine.applyNow(app);
                 } catch (Throwable ignored) {
                 } finally {
                     busy.set(false);
@@ -69,7 +82,7 @@ public class ScreenService extends Service {
         Notification n = new Notification.Builder(this, CHANNEL)
                 .setSmallIcon(icon)
                 .setContentTitle("Ayet Vakti")
-                .setContentText("Ekranı her açışınızda yeni bir ayet")
+                .setContentText("Kilit ekranında ayet, vakitler ve hava durumu")
                 .setContentIntent(open)
                 .setOngoing(true)
                 .build();

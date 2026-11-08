@@ -1,6 +1,5 @@
-# Ayet Vakti — her saat başı kilit ekranında bir ayet.
-# Bu tek dosya uygulamanın tüm kaynak kodunu içerir; GitHub her kaydedişte APK'yı derleyip
-# depo sayfasındaki "Releases" bölümüne koyar.
+# Ayet Vakti — kilit ekranında ayet, Bursa namaz vakitleri ve hava durumu.
+# Bu dosya uygulamanın tüm kaynak kodunu içerir; GitHub her kaydedişte imzasız APK'yı derler.
 name: Ayet Vakti APK
 
 on:
@@ -9,13 +8,11 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      KS_B64: MIIKAAIBAzCCCaoGCSqGSIb3DQEHAaCCCZsEggmXMIIJkzCCBaoGCSqGSIb3DQEHAaCCBZsEggWXMIIFkzCCBY8GCyqGSIb3DQEMCgECoIIFQDCCBTwwZgYJKoZIhvcNAQUNMFkwOAYJKoZIhvcNAQUMMCsEFAUJJlKeUlUzSH/UVfogEtryJJ76AgInEAIBIDAMBggqhkiG9w0CCQUAMB0GCWCGSAFlAwQBKgQQ7ikWKMHCxML7XV0DpZQmhwSCBNCPdJPEOdeytVHORtqayk0CZeVrx8HSfukMNqfwjVPfEfB127bccdFFBZ6OV3S8l10aMolwExHMFYizTjn0Mj3/3Pd1NVHs4ffy7EzGwG+/6zdFZ+Vx2cwUwJJoTY+kO6XsIJC0S2ts1JoUSutvZgxdf1wdJlImlhXI+XM9XxNtvo4ervahBQQM5H5F6N449SZa9Fh3T79lrjSpdL/SVzkEaFLuWNjMo2ptdJBaVIJ8qjQ5N7Q4k6wXODlmv86eBeFGATnXLDICpdxYOJcMNjbsWG1bZ/bSuTEeTxmILFLNUTTXPQ47TetLVj9wvUCqSOK0BGiLJ2qq4YMLeyguugmhpKO71f2ahy0ar8NmZzSbut/BOnU35Crko9E5MhxEGw+GWEOlBdzH1WVyJQAt8cD5Q/oS1XobPM2LkpIsKq8Zdw2UI5kNiLI/NCniMLq+/AdSJWdY2VpxMga+p0LTIva0n2EQHk6sUJl5b+zVl6UH0c51y5f6i7KeZt5KmPJHPKQbsJnqCmul8RRqEM5r/GFKKl/X9QxvDC34F2lL1ZjDJ0n4g05+RiGlZWA1fJuaipL/fHGOUIhbknq8d0dxlOtNEUpXbXr6s+0DgsbvvNgOWAhjYfwqmI9ln8U9QYnAA+3joSrxqnQALyZB7xC2wiyLsed3/xseLOfvRXub0NXo8OM5o8Fodtsr737K6m9dpAZUWxn0+3IhwCdGFoGmE9+HV4gO2/FLB1Ftb027aLEsSmmZSDGkpnnpymhHgWSpyZvjCHRxEMYGI9rt2hQwfzqZkyw2d5J5gd2EPz9nSQrZd+uaRH2ak1wITTPfa6u2KoeGzE+IuU8dQjM0OJTemycF7GbCga4yf79LX4ec8q3+Ro0RqaHKkLP5IAYhGnFBzzlI5fXTMDG4o37RmKumllewh4+z7MxXZLlg6QtkW0u83jy5xZese6JE4mY4nlRW2NmIvKVcd4R7I+aOkypsN6KzY6U2T39hOXPIJzm9o2HlZxwh/DkItzloclfwyu92YqMHHtamItVh6hsqk/hd/ftM86U31/bTReqE77iP+Jv0BMzNVwuKudgDZGxoOJ6yy2XROltbJWbRZ6AJ/UC8nx6+rU35qgL4ScRVz/6TA7UFwDR+PM+czcNq5F/JgAx05unz2zqx6Ys0tDvxCeakzmJFDIuIMlTEtIVB0yEg86O5mgFLsRfWnwt3FbR8fgi15UN6LfpVAkoKsJdXAPOTd+hZJjjBRTpBPTquBgyYZ+F9Gij2GMaoadE2ri5eufSINfHn91FeXvl3SUKAnryMccPOCHh/sHZVCna4WZSFIyDjN1q5Ek8ZiqFTI9mUdpuTZMqUWGLj+rg9Ivt2Ygf2hrHM1lJqQLT1jlfEpDqlkCG/Pd/se3GVWIVrSnoLnI3QQ5aKneqiC4h+uEgptAhddx7Mt4y9OoCN/sNuq8oZml+8c2UDgaZl89q0qaO43LKeR/RAqYmnE1NuoA++k2nKy/9lugGoLba1oOQqGbcZW4nkAlCymBpa07ZaA9Cr5d8SbBRT89P6Ap9liP302lZkof+V1aO3zI0MkSmcCSghqjVzKdK2NRCKVkdXT3Bk9cnku2azshEInPXhe3s7/6KSOBLR58mkwu67WoFU6jBjz6dtRDE8MBcGCSqGSIb3DQEJFDEKHggAYQB5AGUAdDAhBgkqhkiG9w0BCRUxFAQSVGltZSAxNzkzNzIzMzA0MzM3MIID4QYJKoZIhvcNAQcGoIID0jCCA84CAQAwggPHBgkqhkiG9w0BBwEwZgYJKoZIhvcNAQUNMFkwOAYJKoZIhvcNAQUMMCsEFN+UOcn8tH6ozMjkBvHpyyUGpPV9AgInEAIBIDAMBggqhkiG9w0CCQUAMB0GCWCGSAFlAwQBKgQQmSCXQKHaYJZT5CXkJzGEI4CCA1AAhc+AF3cufmDHLrX/vnGuZOiFCZFqkR81n3uHmjB0f08M7vYnCKa9TQRc44dx2RUXJTQMDhfj7oNe//FaIg7nZfLCUpCFhubI+iX/YCxiX2BSO4WjcuC9Hd2xZghQfcJy5gwAxjVgPt7aRQFvxr3TggqRNIqOGeIcQMubqM0M1ptbWt1Z5G95qD60V1ETcBz/bEFqtCquIxiy5nBdSIjpc4HskxELd9DpO4DzxAuYlDIV7nK34Vqo7HkUP1zbwpZZ+FJ91QuNbyCI4cPkpN4ZCBYfeMuoB1v3qQR+FgHYl6VqmG8hCoJG9xzo33V4l9hMFV44twap6jShiViXeZVIkf+ri0odMdKUapBt4zaeaJs+4QhAQpqqWS1eimLU3cie94TPrdzCRWyBrJ0dzsMDOJjCuEq6rjwacsIHqMvD1e0V8c/w4npwergGOH9ROrDfrx0FQBRSHukdaAPThi9O8hDejNsopo9xCek/X/x0EYPtFxnCUgahn6mF/v8lTHh2fFC5YKvAuKq1BMwWO3PJuovXZxJd+azMSz0skOE7yLpiJycZqOnMRxS9B7HYhg0/sSsI6RBCAUmfQlrjIAULMMF4ZgvnuDEOV2MJZG0FA2DQMMTwZlsyHjDnQiku3inQoeGytaQ9Yk7AC+wymW67NvhELrc0xJTghL7cmnyjNP9Rt+ZjMi+ah8Ub25l9i7EAp9ttu8G3jdQ+BPE1liq0pNCZg1dkqTyQ9zqOU4/gIKpt0PPgo+ZA6IvMsMql1VTcdFcvdJdNcqwuSw0QYOsZWa/WMFV5JU+zGihwWd2P1EIQGrUAR9aDiP+Mh1PCwYF1V3Ia1e0cjilhbGcPu0gCl3Z8Yx3DgkJHz6WqgDzqHFO+pVtHZ/AVg94gki4lOTR0Yge5VR6r+BU7uUmC12gl00gPzBvDr8lG8ecPatzpen31ZROaBxootdRNjgU47D0STINMdCCLCDqEzPju/Nwc72bxZhBPlpkBjXHMxtttIycSYvo6RFG3wQHlySoA1EgiSMk5GwckrLwXhReOGPz0O2XwPtqtVr4CUF2JaGaG/RLPPyU1eF/Q8k9QeTRnIGmoElcO2nHWndJOMKTKYrxriRTW6N7PyIroT56d3gCTUDBNMDEwDQYJYIZIAWUDBAIBBQAEIBzgJWKjz4ybdiM/pjUESJxGn5K6Cbyp6SchcxrCPgaoBBQwVEVGvc4Y7q2rGGzMAUQJCQCUsgICJxA=
     steps:
       - name: Kaynak dosyalarını oluştur
         run: |
@@ -32,6 +29,8 @@ jobs:
               <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
               <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
               <uses-permission android:name="android.permission.WAKE_LOCK" />
+              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
               <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
               <application
@@ -421,6 +420,359 @@ jobs:
               };
           }
           AYET_EOF
+          mkdir -p "$(dirname 'src/com/halil/ayetvakti/Data.java')"
+          cat > 'src/com/halil/ayetvakti/Data.java' <<'AYET_EOF'
+          package com.halil.ayetvakti;
+
+          import android.content.Context;
+          import android.content.SharedPreferences;
+
+          import org.json.JSONArray;
+          import org.json.JSONObject;
+
+          import java.io.ByteArrayOutputStream;
+          import java.io.InputStream;
+          import java.net.HttpURLConnection;
+          import java.net.URL;
+          import java.text.SimpleDateFormat;
+          import java.util.Calendar;
+          import java.util.Locale;
+          import java.util.TimeZone;
+
+          /**
+           * Bursa namaz vakitleri (Diyanet verisi, 30 günlük önbellek) ve hava durumu (Open-Meteo).
+           * İnternet yoksa vakitler yaklaşık olarak telefonda hesaplanır.
+           */
+          final class Data {
+              private Data() {}
+
+              static final String CITY = "Bursa";
+              private static final String DIYANET_URL = "https://ezanvakti.emushaf.net/vakitler/9335"; // Bursa merkez
+              private static final double LAT = 40.1826, LNG = 29.0665;
+              private static final String WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=40.1826&longitude=29.0665"
+                      + "&current=temperature_2m,weather_code,is_day"
+                      + "&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max"
+                      + "&timezone=Europe%2FIstanbul&forecast_days=1";
+
+              static final String[] NAMES = {"İmsak", "Güneş", "Öğle", "İkindi", "Akşam", "Yatsı"};
+
+              static SharedPreferences prefs(Context c) { return c.getSharedPreferences("veri", Context.MODE_PRIVATE); }
+
+              // ---------------- Namaz vakitleri ----------------
+
+              static final class Day {
+                  final int[] min = new int[6]; // gece yarısından itibaren dakika
+                  String hijri = "";
+                  boolean approx;
+              }
+
+              private static String key(Calendar cal) {
+                  SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
+                  f.setTimeZone(cal.getTimeZone());
+                  return f.format(cal.getTime());
+              }
+
+              static Day day(Context c, Calendar cal) {
+                  String raw = prefs(c).getString("v_" + key(cal), null);
+                  if (raw != null) {
+                      try {
+                          String[] p = raw.split("\\|", -1);
+                          Day d = new Day();
+                          for (int i = 0; i < 6; i++) d.min[i] = hm(p[i]);
+                          d.hijri = p.length > 6 ? p[6] : "";
+                          return d;
+                      } catch (Exception ignored) {}
+                  }
+                  return calc(cal);
+              }
+
+              private static int hm(String s) {
+                  s = s.trim();
+                  return Integer.parseInt(s.substring(0, 2)) * 60 + Integer.parseInt(s.substring(3, 5));
+              }
+
+              /** Diyanet verisi eksikse indirir. true dönerse yeni veri geldi. */
+              static boolean refreshPrayer(Context c, boolean force) {
+                  SharedPreferences p = prefs(c);
+                  Calendar in5 = Calendar.getInstance();
+                  in5.add(Calendar.DAY_OF_YEAR, 5);
+                  boolean have = p.contains("v_" + key(Calendar.getInstance())) && p.contains("v_" + key(in5));
+                  long last = p.getLong("v_try", 0);
+                  long now = System.currentTimeMillis();
+                  if (have && !force) return false;
+                  if (!force && now - last < 3 * 3600_000L) return false;
+                  if (force && now - last < 60_000L) return false;
+                  p.edit().putLong("v_try", now).apply();
+                  try {
+                      JSONArray arr = new JSONArray(get(DIYANET_URL));
+                      SharedPreferences.Editor e = p.edit();
+                      // eski günleri temizle
+                      Calendar old = Calendar.getInstance();
+                      old.add(Calendar.DAY_OF_YEAR, -3);
+                      for (String k : p.getAll().keySet()) {
+                          if (k.startsWith("v_") && k.length() == 12) {
+                              try {
+                                  Calendar kc = Calendar.getInstance();
+                                  kc.setTime(new SimpleDateFormat("dd.MM.yyyy", Locale.US).parse(k.substring(2)));
+                                  if (kc.before(old)) e.remove(k);
+                              } catch (Exception ignored) {}
+                          }
+                      }
+                      int n = 0;
+                      for (int i = 0; i < arr.length(); i++) {
+                          JSONObject o = arr.getJSONObject(i);
+                          String date = o.getString("MiladiTarihKisa");
+                          String v = o.getString("Imsak") + "|" + o.getString("Gunes") + "|" + o.getString("Ogle") + "|"
+                                  + o.getString("Ikindi") + "|" + o.getString("Aksam") + "|" + o.getString("Yatsi") + "|"
+                                  + o.optString("HicriTarihUzun", "").replace("|", " ");
+                          for (int j = 0; j < 6; j++) hm(v.split("\\|")[j]); // biçim kontrolü
+                          e.putString("v_" + date, v);
+                          n++;
+                      }
+                      e.apply();
+                      return n > 0;
+                  } catch (Exception ex) {
+                      return false;
+                  }
+              }
+
+              // ---------------- Hava durumu ----------------
+
+              static final class Weather {
+                  int temp, max, min, code, rain = -1;
+                  boolean day = true;
+                  long time;
+              }
+
+              static Weather weather(Context c) {
+                  SharedPreferences p = prefs(c);
+                  long t = p.getLong("w_time", 0);
+                  if (t == 0 || System.currentTimeMillis() - t > 6 * 3600_000L) return null;
+                  Weather w = new Weather();
+                  w.time = t;
+                  w.temp = p.getInt("w_temp", 0);
+                  w.max = p.getInt("w_max", 0);
+                  w.min = p.getInt("w_min", 0);
+                  w.code = p.getInt("w_code", 0);
+                  w.rain = p.getInt("w_rain", -1);
+                  w.day = p.getBoolean("w_day", true);
+                  return w;
+              }
+
+              static boolean refreshWeather(Context c, long maxAgeMs) {
+                  SharedPreferences p = prefs(c);
+                  long now = System.currentTimeMillis();
+                  if (now - p.getLong("w_time", 0) < maxAgeMs) return false;
+                  if (now - p.getLong("w_try", 0) < 5 * 60_000L) return false;
+                  p.edit().putLong("w_try", now).apply();
+                  try {
+                      JSONObject o = new JSONObject(get(WEATHER_URL));
+                      JSONObject cur = o.getJSONObject("current");
+                      JSONObject d = o.getJSONObject("daily");
+                      SharedPreferences.Editor e = p.edit();
+                      e.putInt("w_temp", (int) Math.round(cur.getDouble("temperature_2m")));
+                      e.putInt("w_code", cur.getInt("weather_code"));
+                      e.putBoolean("w_day", cur.optInt("is_day", 1) == 1);
+                      e.putInt("w_max", (int) Math.round(d.getJSONArray("temperature_2m_max").getDouble(0)));
+                      e.putInt("w_min", (int) Math.round(d.getJSONArray("temperature_2m_min").getDouble(0)));
+                      JSONArray pr = d.optJSONArray("precipitation_probability_max");
+                      e.putInt("w_rain", pr != null && !pr.isNull(0) ? pr.getInt(0) : -1);
+                      e.putLong("w_time", now);
+                      e.apply();
+                      return true;
+                  } catch (Exception ex) {
+                      return false;
+                  }
+              }
+
+              static String weatherText(int code) {
+                  switch (code) {
+                      case 0: return "Açık";
+                      case 1: return "Az bulutlu";
+                      case 2: return "Parçalı bulutlu";
+                      case 3: return "Kapalı";
+                      case 45: case 48: return "Sisli";
+                      case 51: case 53: case 55: return "Çisenti";
+                      case 56: case 57: return "Dondurucu çisenti";
+                      case 61: return "Hafif yağmur";
+                      case 63: return "Yağmurlu";
+                      case 65: return "Kuvvetli yağmur";
+                      case 66: case 67: return "Dondurucu yağmur";
+                      case 71: return "Hafif kar";
+                      case 73: return "Karlı";
+                      case 75: return "Yoğun kar";
+                      case 77: return "Kar taneleri";
+                      case 80: return "Hafif sağanak";
+                      case 81: return "Sağanak yağış";
+                      case 82: return "Kuvvetli sağanak";
+                      case 85: case 86: return "Kar sağanağı";
+                      case 95: return "Gök gürültülü";
+                      case 96: case 99: return "Dolu, fırtına";
+                      default: return "";
+                  }
+              }
+
+              /** 0 açık, 1 parçalı, 2 bulut, 3 sis, 4 yağmur, 5 kar, 6 fırtına */
+              static int weatherKind(int code) {
+                  if (code <= 1) return 0;
+                  if (code == 2) return 1;
+                  if (code == 3) return 2;
+                  if (code == 45 || code == 48) return 3;
+                  if ((code >= 71 && code <= 77) || code == 85 || code == 86) return 5;
+                  if (code >= 95) return 6;
+                  return 4;
+              }
+
+              // ---------------- Şu anki vakit ----------------
+
+              static final class Now {
+                  int idx;          // vurgulanacak vakit sütunu (0..5)
+                  boolean prayer;   // true: bir namaz vaktinin içindeyiz; false: güneş doğdu, öğle bekleniyor
+                  long end;         // vaktin çıkış anı (ya da öğlenin girişi)
+                  Day today;
+                  Weather weather;
+                  long now;
+              }
+
+              static long at(Calendar base, int minutes) {
+                  Calendar c = (Calendar) base.clone();
+                  c.set(Calendar.HOUR_OF_DAY, 0);
+                  c.set(Calendar.MINUTE, 0);
+                  c.set(Calendar.SECOND, 0);
+                  c.set(Calendar.MILLISECOND, 0);
+                  c.add(Calendar.MINUTE, minutes);
+                  return c.getTimeInMillis();
+              }
+
+              static Now now(Context c) {
+                  Now n = new Now();
+                  n.now = System.currentTimeMillis();
+                  Calendar today = Calendar.getInstance();
+                  Calendar tomorrow = (Calendar) today.clone();
+                  tomorrow.add(Calendar.DAY_OF_YEAR, 1);
+                  Day d = day(c, today);
+                  n.today = d;
+                  n.weather = weather(c);
+                  long[] t = new long[6];
+                  for (int i = 0; i < 6; i++) t[i] = at(today, d.min[i]);
+                  if (n.now < t[0]) { n.idx = 5; n.prayer = true; n.end = t[0]; }
+                  else if (n.now < t[1]) { n.idx = 0; n.prayer = true; n.end = t[1]; }
+                  else if (n.now < t[2]) { n.idx = 1; n.prayer = false; n.end = t[2]; }
+                  else if (n.now < t[3]) { n.idx = 2; n.prayer = true; n.end = t[3]; }
+                  else if (n.now < t[4]) { n.idx = 3; n.prayer = true; n.end = t[4]; }
+                  else if (n.now < t[5]) { n.idx = 4; n.prayer = true; n.end = t[5]; }
+                  else { n.idx = 5; n.prayer = true; n.end = at(tomorrow, day(c, tomorrow).min[0]); }
+                  return n;
+              }
+
+              static String vakitLabel(int idx) {
+                  switch (idx) {
+                      case 0: return "Sabah namazı vakti";
+                      case 1: return "Sabah vakti çıktı";
+                      case 2: return "Öğle vakti";
+                      case 3: return "İkindi vakti";
+                      case 4: return "Akşam vakti";
+                      default: return "Yatsı vakti";
+                  }
+              }
+
+              static String clock(long ms) {
+                  return new SimpleDateFormat("HH:mm", Locale.US).format(ms);
+              }
+
+              static String clockMin(int m) { return String.format(Locale.US, "%02d:%02d", (m / 60) % 24, m % 60); }
+
+              static String left(long ms) {
+                  long m = Math.max(0, (ms + 59_999) / 60_000);
+                  if (m >= 60) return (m / 60) + " sa " + (m % 60) + " dk";
+                  return m + " dk";
+              }
+
+              static String http(String url) throws Exception { return get(url); }
+
+              private static String get(String url) throws Exception {
+                  HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+                  con.setConnectTimeout(7000);
+                  con.setReadTimeout(9000);
+                  con.setRequestProperty("User-Agent", "AyetVakti/1.0 (Android)");
+                  con.setRequestProperty("Accept", "application/json");
+                  try {
+                      if (con.getResponseCode() != 200) throw new Exception("HTTP " + con.getResponseCode());
+                      InputStream in = con.getInputStream();
+                      ByteArrayOutputStream out = new ByteArrayOutputStream();
+                      byte[] buf = new byte[8192];
+                      int r;
+                      while ((r = in.read(buf)) > 0) out.write(buf, 0, r);
+                      return out.toString("UTF-8");
+                  } finally {
+                      con.disconnect();
+                  }
+              }
+
+              // ---------------- Çevrimdışı yaklaşık hesap ----------------
+              // Diyanet açıları (imsak 18°, yatsı 17°, ikindi gölge 1 misli) ve Bursa için
+              // 2026 Diyanet vakitlerine göre ayarlanmış temkin farkları; sapma genelde ±1 dk.
+
+              private static final double[] TEMKIN = {-0.2, -6.9, 5.0, 4.5, 8.0, 0.9};
+
+              static Day calc(Calendar cal) {
+                  Day d = new Day();
+                  d.approx = true;
+                  Calendar u = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                  u.clear();
+                  u.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+                  double jd = u.getTimeInMillis() / 86400000.0 + 2440587.5 - LNG / 360.0;
+                  double tz = cal.getTimeZone().getOffset(at(cal, 12 * 60)) / 3600000.0;
+                  double[] T = {5 / 24.0, 6 / 24.0, 0.5, 13 / 24.0, 18 / 24.0, 18 / 24.0};
+                  double[] r = new double[6];
+                  for (int it = 0; it < 2; it++) {
+                      r[0] = ha(jd + T[0], 18, true);
+                      r[1] = ha(jd + T[1], 0.833, true);
+                      r[2] = noon(jd + T[2]);
+                      r[3] = asr(jd + T[3]);
+                      r[4] = ha(jd + T[4], 0.833, false);
+                      r[5] = ha(jd + T[5], 17, false);
+                      for (int i = 0; i < 6; i++) T[i] = r[i] / 24.0;
+                  }
+                  for (int i = 0; i < 6; i++) {
+                      double h = r[i] + tz - LNG / 15.0;
+                      d.min[i] = (int) Math.floor(h * 60 + TEMKIN[i] + 0.5);
+                  }
+                  return d;
+              }
+
+              private static double[] sun(double jd) {
+                  double D = jd - 2451545.0;
+                  double g = Math.toRadians(fix(357.529 + 0.98560028 * D, 360));
+                  double q = fix(280.459 + 0.98564736 * D, 360);
+                  double L = Math.toRadians(fix(q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g), 360));
+                  double e = Math.toRadians(23.439 - 0.00000036 * D);
+                  double ra = fix(Math.toDegrees(Math.atan2(Math.cos(e) * Math.sin(L), Math.cos(L))) / 15, 24);
+                  double decl = Math.toDegrees(Math.asin(Math.sin(e) * Math.sin(L)));
+                  double eqt = q / 15 - ra;
+                  eqt = fix(eqt + 12, 24) - 12;
+                  return new double[]{decl, eqt};
+              }
+
+              private static double noon(double jd) { return fix(12 - sun(jd)[1], 24); }
+
+              private static double ha(double jd, double angle, boolean before) {
+                  double decl = Math.toRadians(sun(jd)[0]);
+                  double lat = Math.toRadians(LAT);
+                  double v = (-Math.sin(Math.toRadians(angle)) - Math.sin(decl) * Math.sin(lat)) / (Math.cos(decl) * Math.cos(lat));
+                  double h = Math.toDegrees(Math.acos(Math.max(-1, Math.min(1, v)))) / 15;
+                  return noon(jd) + (before ? -h : h);
+              }
+
+              private static double asr(double jd) {
+                  double decl = sun(jd)[0];
+                  double a = -Math.toDegrees(Math.atan(1 / (1 + Math.tan(Math.toRadians(Math.abs(LAT - decl))))));
+                  return ha(jd, a, false);
+              }
+
+              private static double fix(double a, double b) { a = a - b * Math.floor(a / b); return a < 0 ? a + b : a; }
+          }
+          AYET_EOF
           mkdir -p "$(dirname 'src/com/halil/ayetvakti/Engine.java')"
           cat > 'src/com/halil/ayetvakti/Engine.java' <<'AYET_EOF'
           package com.halil.ayetvakti;
@@ -514,12 +866,111 @@ jobs:
 
               static void applyNow(Context c) throws IOException {
                   Point s = screenSize(c);
-                  Bitmap b = Renderer.render(current(c), theme(c), s.x, s.y);
+                  Bitmap b = Renderer.render(current(c), theme(c), s.x, s.y, Data.now(c));
                   try {
                       WallpaperManager.getInstance(c).setBitmap(b, null, true, WallpaperManager.FLAG_LOCK);
+                      prefs(c).edit().putLong("rendered", System.currentTimeMillis()).apply();
                   } finally {
                       b.recycle();
                   }
+              }
+
+              static long renderedAt(Context c) { return prefs(c).getLong("rendered", 0); }
+
+              /** Vakit ve hava durumu verisini gerekiyorsa internetten yeniler. Yeni veri geldiyse true. */
+              static boolean refreshData(Context c, boolean eager) {
+                  boolean a = false, b = false;
+                  try { a = Data.refreshPrayer(c, false); } catch (Throwable ignored) {}
+                  try { b = Data.refreshWeather(c, eager ? 15 * 60_000L : 50 * 60_000L); } catch (Throwable ignored) {}
+                  return a || b;
+              }
+
+              // ---------------- Vakit alarmları ve bildirimleri ----------------
+
+              static final String ACTION_VAKIT = "com.halil.ayetvakti.VAKIT";
+              static final int WARN_MIN = 15;
+              static boolean notify(Context c) { return prefs(c).getBoolean("notify", true); }
+
+              /** Sıradaki vakit olayı: [zaman, tür, vakit no]. tür 0 = vakit girdi, 1 = çıkmasına az kaldı. */
+              static long[] nextVakitEvent(Context c) {
+                  long now = System.currentTimeMillis() + 5_000L;
+                  long[] best = null;
+                  Calendar day = Calendar.getInstance();
+                  for (int k = 0; k < 2; k++) {
+                      Data.Day d = Data.day(c, day);
+                      for (int i = 0; i < 6; i++) {
+                          long t = Data.at(day, d.min[i]);
+                          if (t > now && (best == null || t < best[0])) best = new long[]{t, 0, i};
+                          // çıkış uyarısı: güneş (sabah çıkar), ikindi (öğle çıkar), akşam (ikindi çıkar), yatsı (akşam çıkar)
+                          if (i == 1 || i == 3 || i == 4 || i == 5) {
+                              long wt = t - WARN_MIN * 60_000L;
+                              if (wt > now && (best == null || wt < best[0])) best = new long[]{wt, 1, i};
+                          }
+                      }
+                      day.add(Calendar.DAY_OF_YEAR, 1);
+                  }
+                  return best;
+              }
+
+              private static PendingIntent vakitIntent(Context c, long[] ev) {
+                  Intent i = new Intent(c, TickReceiver.class).setAction(ACTION_VAKIT);
+                  if (ev != null) { i.putExtra("kind", (int) ev[1]); i.putExtra("idx", (int) ev[2]); i.putExtra("at", ev[0]); }
+                  return PendingIntent.getBroadcast(c, 8, i, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+              }
+
+              static void scheduleVakit(Context c) {
+                  long[] ev = nextVakitEvent(c);
+                  if (ev == null) return;
+                  setExact(c, ev[0], vakitIntent(c, ev));
+              }
+
+              private static void setExact(Context c, long at, PendingIntent pi) {
+                  AlarmManager am = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
+                  try {
+                      if (Build.VERSION.SDK_INT >= 31 && !am.canScheduleExactAlarms()) {
+                          am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
+                      } else {
+                          am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
+                      }
+                  } catch (SecurityException e) {
+                      am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
+                  }
+              }
+
+              static void postVakitNotice(Context c, int kind, int idx) {
+                  if (!notify(c)) return;
+                  String[] enter = {
+                          "İmsak vakti girdi", "Güneş doğdu", "Öğle vakti girdi",
+                          "İkindi vakti girdi", "Akşam vakti girdi", "Yatsı vakti girdi"};
+                  String[] enterSub = {
+                          "Sabah namazı vakti başladı · Yatsı vakti çıktı", "Sabah namazı vakti çıktı",
+                          "Öğle namazı vakti başladı", "Öğle vakti çıktı", "İkindi vakti çıktı", "Akşam vakti çıktı"};
+                  String[] warn = {"", "Sabah namazı vaktinin", "", "Öğle vaktinin", "İkindi vaktinin", "Akşam vaktinin"};
+                  Data.Day d = Data.day(c, Calendar.getInstance());
+                  String title, text;
+                  if (kind == 0) {
+                      title = enter[idx] + " · " + Data.clockMin(d.min[idx]);
+                      text = enterSub[idx];
+                  } else {
+                      title = warn[idx] + " çıkmasına " + WARN_MIN + " dk kaldı";
+                      text = "Çıkış: " + Data.clockMin(d.min[idx]);
+                  }
+                  android.app.NotificationManager nm = (android.app.NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
+                  android.app.NotificationChannel ch = new android.app.NotificationChannel(
+                          "vakit", "Vakit bildirimleri", android.app.NotificationManager.IMPORTANCE_DEFAULT);
+                  ch.setDescription("Vakit girdiğinde ve çıkmasına az kaldığında haber verir");
+                  nm.createNotificationChannel(ch);
+                  PendingIntent open = PendingIntent.getActivity(c, 0, new Intent(c, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
+                  int icon = c.getResources().getIdentifier("ic_stat", "drawable", c.getPackageName());
+                  android.app.Notification n = new android.app.Notification.Builder(c, "vakit")
+                          .setSmallIcon(icon)
+                          .setContentTitle(title)
+                          .setContentText(text)
+                          .setContentIntent(open)
+                          .setAutoCancel(true)
+                          .setTimeoutAfter(kind == 0 ? 60 * 60_000L : WARN_MIN * 60_000L)
+                          .build();
+                  try { nm.notify(100 + kind, n); } catch (Throwable ignored) {}
               }
 
               static long nextHour() {
@@ -554,6 +1005,7 @@ jobs:
               static void cancel(Context c) {
                   AlarmManager am = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
                   am.cancel(tickIntent(c));
+                  am.cancel(vakitIntent(c, null));
               }
           }
           AYET_EOF
@@ -564,12 +1016,15 @@ jobs:
           import android.app.Activity;
           import android.content.ActivityNotFoundException;
           import android.content.Intent;
+          import android.Manifest;
+          import android.content.pm.PackageManager;
           import android.graphics.Bitmap;
           import android.graphics.Outline;
           import android.graphics.Point;
           import android.graphics.Typeface;
           import android.graphics.drawable.GradientDrawable;
           import android.net.Uri;
+          import android.os.Build;
           import android.os.Bundle;
           import android.os.Handler;
           import android.os.Looper;
@@ -595,7 +1050,7 @@ jobs:
               private float dp;
               private ScrollView scroll;
               private ImageView preview;
-              private TextView title, subtitle, status, mainBtn, nextBtn, modeBtn, keepBtn, batteryBtn, themeLabel, note;
+              private TextView title, subtitle, status, mainBtn, nextBtn, modeBtn, keepBtn, notifyBtn, batteryBtn, themeLabel, note;
               private LinearLayout chips;
               private int previewSeq = 0;
 
@@ -605,12 +1060,26 @@ jobs:
                   dp = getResources().getDisplayMetrics().density;
                   buildUi();
                   refresh();
+                  if (Build.VERSION.SDK_INT >= 33
+                          && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                      requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 5);
+                  }
               }
 
               @Override
               protected void onResume() {
                   super.onResume();
                   refresh();
+                  final android.content.Context app = getApplicationContext();
+                  new Thread(() -> {
+                      boolean fresh = Engine.refreshData(app, true);
+                      if (fresh) {
+                          ui.post(this::refresh);
+                          if (Engine.isActive(app)) {
+                              try { Engine.applyNow(app); } catch (Throwable ignored) {}
+                          }
+                      }
+                  }).start();
               }
 
               private void buildUi() {
@@ -626,7 +1095,7 @@ jobs:
                   title.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
                   root.addView(title);
 
-                  subtitle = text("Ekranı her açışınızda kilit ekranında,\ngüzel ahlak üzerine yeni bir ayet.", 15, false);
+                  subtitle = text("Kilit ekranında güzel ahlak üzerine ayetler,\nBursa namaz vakitleri ve hava durumu.", 15, false);
                   subtitle.setPadding(0, px(6), 0, px(22));
                   root.addView(subtitle);
 
@@ -670,6 +1139,11 @@ jobs:
                   keepBtn.setOnClickListener(v -> cycleKeep());
                   root.addView(keepBtn, btnLp(10));
 
+                  notifyBtn = button();
+                  notifyBtn.setTextSize(14);
+                  notifyBtn.setOnClickListener(v -> toggleNotify());
+                  root.addView(notifyBtn, btnLp(10));
+
                   themeLabel = text("Tema", 13, true);
                   themeLabel.setLetterSpacing(0.2f);
                   themeLabel.setPadding(0, px(26), 0, px(10));
@@ -698,6 +1172,8 @@ jobs:
                   note = text("Ayet yalnızca kilit ekranı duvar kâğıdına yazılır; ana ekranınız değişmez. "
                           + "Ekran kapandığında sıradaki ayet hazırlanır, ekranı açtığınızda o karşılar. "
                           + "Toplam " + AyetData.ALL.length + " ayet var; hepsi bitmeden aynısı tekrar gelmez.\n\n"
+                          + "Namaz vakitleri Diyanet'in Bursa (merkez) vakitleridir; ayda bir internetten alınır. "
+                          + "Hava durumu saatte bir yenilenir (Open-Meteo).\n\n"
                           + "Samsung'da: Ayarlar › Kilit ekranı'nda \"Dinamik kilit ekranı\" veya \"Kilit ekranı duvar kâğıdı servisleri\" açıksa kapatın; yoksa ayetin üstüne yazabilir.\n\n"
                           + "Mealler anlam aktarımıdır; bazı ayetlerin yalnızca bir bölümü verilmiştir.", 12.5f, false);
                   note.setPadding(px(6), px(22), px(6), 0);
@@ -745,6 +1221,10 @@ jobs:
                   styleSecondary(nextBtn, t);
                   styleSecondary(modeBtn, t);
                   styleSecondary(keepBtn, t);
+                  styleSecondary(notifyBtn, t);
+                  notifyBtn.setText(Engine.notify(this)
+                          ? "Vakit bildirimleri: açık ✓  (girişte ve çıkışa " + Engine.WARN_MIN + " dk kala)"
+                          : "Vakit bildirimleri: kapalı  (dokun: aç)");
                   int ks = Engine.keepSeconds(this);
                   keepBtn.setText(ks > 0
                           ? "Okuma süresi: ekran " + ks + " sn açık kalır  (dokun: değiştir)"
@@ -772,7 +1252,7 @@ jobs:
                   final int th = Engine.theme(this);
                   final Point s = Engine.screenSize(this);
                   new Thread(() -> {
-                      final Bitmap bmp = Renderer.render(a, th, s.x / 2, s.y / 2);
+                      final Bitmap bmp = Renderer.render(a, th, s.x / 2, s.y / 2, Data.now(getApplicationContext()));
                       ui.post(() -> {
                           if (seq == previewSeq) preview.setImageBitmap(bmp);
                       });
@@ -810,6 +1290,13 @@ jobs:
                   toast(next > 0 ? "Kilit ekranı " + next + " saniye açık kalacak." : "Telefonun kendi ekran süresi kullanılacak.");
               }
 
+              private void toggleNotify() {
+                  boolean on = !Engine.notify(this);
+                  Engine.prefs(this).edit().putBoolean("notify", on).apply();
+                  refresh();
+                  toast(on ? "Vakit girince ve çıkmasına " + Engine.WARN_MIN + " dk kala haber verilecek." : "Vakit bildirimleri kapatıldı.");
+              }
+
               private void toggleMode() {
                   boolean on = !Engine.onScreen(this);
                   Engine.prefs(this).edit().putBoolean("onScreen", on).apply();
@@ -830,8 +1317,10 @@ jobs:
                   new Thread(() -> {
                       String msg = okMsg;
                       try {
+                          Engine.refreshData(app, true);
                           Engine.applyNow(app);
                           Engine.scheduleNext(app);
+                          Engine.scheduleVakit(app);
                       } catch (Throwable e) {
                           msg = "Duvar kâğıdı ayarlanamadı: " + e.getMessage();
                       }
@@ -938,7 +1427,7 @@ jobs:
 
               static boolean isLight(int theme) { return theme == 2; }
 
-              static Bitmap render(AyetData.Ayet a, int theme, int w, int h) {
+              static Bitmap render(AyetData.Ayet a, int theme, int w, int h, Data.Now info) {
                   int[] t = THEMES[Math.floorMod(theme, THEMES.length)];
                   boolean light = isLight(theme);
                   Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
@@ -949,22 +1438,39 @@ jobs:
                   p.setShader(new LinearGradient(0, 0, 0, h, t[0], t[1], Shader.TileMode.CLAMP));
                   cv.drawRect(0, 0, w, h, p);
 
-                  float cy = h * 0.575f;
+                  float cardTop = h * 0.268f;
+                  float cardBottom = info != null ? drawInfoCard(cv, w, h, cardTop, t, light, info, true) : cardTop;
+                  float regionTop = info != null ? cardBottom + h * 0.022f : h * 0.30f;
+                  float regionBottom = h * 0.865f;
+                  float cy = (regionTop + regionBottom) / 2f;
+
                   p.setShader(new RadialGradient(w / 2f, cy, w * 0.85f,
                           alpha(t[2], light ? 50 : 38), alpha(t[2], 0), Shader.TileMode.CLAMP));
                   cv.drawRect(0, 0, w, h, p);
                   p.setShader(null);
 
                   drawPattern(cv, w, h, cy, t[4], light);
+                  if (info != null) {
+                      float mx = w * 0.065f, r = w * 0.05f;
+                      Paint bg = new Paint(Paint.ANTI_ALIAS_FLAG);
+                      bg.setColor(light ? 0x78FFFFFF : 0x52000000);
+                      cv.drawRoundRect(mx, cardTop, w - mx, cardBottom, r, r, bg);
+                      Paint br = new Paint(Paint.ANTI_ALIAS_FLAG);
+                      br.setStyle(Paint.Style.STROKE);
+                      br.setStrokeWidth(Math.max(1f, w * 0.0018f));
+                      br.setColor(alpha(t[2], 85));
+                      cv.drawRoundRect(mx, cardTop, w - mx, cardBottom, r, r, br);
+                      drawInfoCard(cv, w, h, cardTop, t, light, info, false);
+                  }
 
                   // Yazı ayarları
-                  float margin = w * 0.10f;
+                  float margin = w * 0.09f;
                   int tw = (int) (w - 2 * margin);
 
                   TextPaint label = new TextPaint(Paint.ANTI_ALIAS_FLAG);
                   label.setColor(t[2]);
                   label.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-                  label.setTextSize(w * 0.029f);
+                  label.setTextSize(w * 0.028f);
                   label.setLetterSpacing(0.28f);
                   label.setTextAlign(Paint.Align.CENTER);
 
@@ -976,49 +1482,254 @@ jobs:
                   TextPaint ref = new TextPaint(Paint.ANTI_ALIAS_FLAG);
                   ref.setColor(t[2]);
                   ref.setTypeface(Typeface.create(Typeface.SERIF, Typeface.ITALIC));
-                  ref.setTextSize(w * 0.036f);
+                  ref.setTextSize(w * 0.035f);
                   ref.setTextAlign(Paint.Align.CENTER);
 
-                  String txt = "“" + a.text + "”";
-                  float size = w * 0.058f;
+                  String txt = "\u201C" + a.text + "\u201D";
+                  float labelH = -label.ascent() + label.descent();
+                  float refH = -ref.ascent() + ref.descent();
+                  float ornH = w * 0.026f;
+                  float gap = w * 0.034f;
+                  float deco = labelH + gap + ornH + gap * 1.1f + gap * 1.1f + ornH + gap + refH;
+                  float budget = regionBottom - regionTop;
+                  float size = w * 0.056f;
                   StaticLayout lay;
                   while (true) {
                       body.setTextSize(size);
                       lay = StaticLayout.Builder.obtain(txt, 0, txt.length(), body, tw)
                               .setAlignment(Layout.Alignment.ALIGN_CENTER)
-                              .setLineSpacing(0f, 1.2f)
+                              .setLineSpacing(0f, 1.18f)
                               .setIncludePad(false)
                               .setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY)
                               .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_NONE)
                               .build();
-                      if (lay.getHeight() <= h * 0.36f || size <= w * 0.034f) break;
+                      if (lay.getHeight() + deco <= budget || size <= w * 0.030f) break;
                       size *= 0.95f;
                   }
 
-                  String topic = a.topic.toUpperCase(new Locale("tr", "TR"));
-                  float labelH = -label.ascent() + label.descent();
-                  float refH = -ref.ascent() + ref.descent();
-                  float ornH = w * 0.03f;
-                  float gap = w * 0.042f;
-                  float total = labelH + gap + ornH + gap * 1.2f + lay.getHeight() + gap * 1.2f + ornH + gap + refH;
+                  String topic = a.topic.toUpperCase(TR);
+                  float total = deco + lay.getHeight();
                   float y = cy - total / 2f;
 
                   cv.drawText(topic, w / 2f, y - label.ascent(), label);
                   y += labelH + gap;
-                  drawOrnament(cv, w / 2f, y + ornH / 2f, w * 0.20f, w * 0.012f, t[2]);
-                  y += ornH + gap * 1.2f;
+                  drawOrnament(cv, w / 2f, y + ornH / 2f, w * 0.20f, w * 0.011f, t[2]);
+                  y += ornH + gap * 1.1f;
 
                   cv.save();
                   cv.translate(margin, y);
                   lay.draw(cv);
                   cv.restore();
-                  y += lay.getHeight() + gap * 1.2f;
+                  y += lay.getHeight() + gap * 1.1f;
 
-                  drawOrnament(cv, w / 2f, y + ornH / 2f, w * 0.12f, w * 0.009f, t[2]);
+                  drawOrnament(cv, w / 2f, y + ornH / 2f, w * 0.12f, w * 0.008f, t[2]);
                   y += ornH + gap;
                   cv.drawText(a.ref, w / 2f, y - ref.ascent(), ref);
 
                   return bmp;
+              }
+
+              static final Locale TR = new Locale("tr", "TR");
+
+              /**
+               * Hava durumu + namaz vakitleri kartı. measureOnly=true ise sadece yüksekliği hesaplar.
+               * Kartın alt kenarının y değerini döndürür.
+               */
+              private static float drawInfoCard(Canvas cv, int w, int h, float top, int[] t, boolean light,
+                                                Data.Now n, boolean measureOnly) {
+                  float mx = w * 0.065f;
+                  float left = mx, right = w - mx;
+                  float pad = w * 0.045f;
+                  float inL = left + pad, inR = right - pad;
+
+                  TextPaint big = tp(t[3], w * 0.074f, "sans-serif-light", Paint.Align.LEFT);
+                  TextPaint small = tp(alpha(t[3], 210), w * 0.031f, "sans-serif", Paint.Align.LEFT);
+                  TextPaint tiny = tp(alpha(t[3], 160), w * 0.027f, "sans-serif", Paint.Align.LEFT);
+                  TextPaint goldLbl = tp(t[2], w * 0.027f, "sans-serif-medium", Paint.Align.CENTER);
+                  goldLbl.setLetterSpacing(0.2f);
+                  TextPaint line = tp(t[3], w * 0.041f, "sans-serif", Paint.Align.CENTER);
+                  TextPaint colName = tp(alpha(t[3], 165), w * 0.025f, "sans-serif", Paint.Align.CENTER);
+                  TextPaint colTime = tp(t[3], w * 0.036f, "sans-serif-medium", Paint.Align.CENTER);
+
+                  float y = top + pad;
+
+                  // --- 1. satır: hava durumu ---
+                  float rowA = w * 0.085f;
+                  if (!measureOnly) {
+                      Data.Weather wt = n.weather;
+                      float midA = y + rowA / 2f;
+                      float x = inL;
+                      if (wt != null) {
+                          drawWeatherIcon(cv, x + rowA * 0.5f, midA, rowA * 0.92f, Data.weatherKind(wt.code), wt.day, t[2], t[3]);
+                          x += rowA + w * 0.02f;
+                          String deg = wt.temp + "°";
+                          cv.drawText(deg, x, midA - (big.ascent() + big.descent()) / 2f, big);
+                          x += big.measureText(deg) + w * 0.03f;
+                          String desc = Data.weatherText(wt.code);
+                          String hl = "↑" + wt.max + "°  ↓" + wt.min + "°" + (wt.rain >= 20 ? "   ☂ %" + wt.rain : "");
+                          cv.drawText(desc, x, midA - w * 0.006f, small);
+                          cv.drawText(hl, x, midA - tiny.ascent() + w * 0.004f, tiny);
+                      } else {
+                          cv.drawText("Hava durumu bekleniyor…", x, midA - (small.ascent() + small.descent()) / 2f, small);
+                      }
+                      TextPaint city = tp(t[2], w * 0.028f, "sans-serif-medium", Paint.Align.RIGHT);
+                      city.setLetterSpacing(0.18f);
+                      cv.drawText(Data.CITY.toUpperCase(TR), inR, midA - w * 0.006f, city);
+                      TextPaint hij = tp(alpha(t[3], 150), w * 0.024f, "sans-serif", Paint.Align.RIGHT);
+                      String hijri = n.today.hijri;
+                      if (hijri.isEmpty()) hijri = new java.text.SimpleDateFormat("d MMMM EEEE", TR).format(n.now);
+                      cv.drawText(fit(hijri, hij, w * 0.30f), inR, midA - hij.ascent() + w * 0.004f, hij);
+                  }
+                  y += rowA + w * 0.03f;
+
+                  // ayraç
+                  if (!measureOnly) {
+                      Paint d = new Paint(Paint.ANTI_ALIAS_FLAG);
+                      d.setColor(alpha(t[2], 90));
+                      d.setStrokeWidth(Math.max(1f, w * 0.0015f));
+                      cv.drawLine(inL, y, inR, y, d);
+                  }
+                  y += w * 0.032f;
+
+                  // --- 2. satır: şu anki vakit ve çıkışı ---
+                  long rem = n.end - n.now;
+                  boolean soon = n.prayer && rem <= 30 * 60_000L;
+                  String lbl = Data.vakitLabel(n.idx).toUpperCase(TR);
+                  String msg = n.prayer
+                          ? "Çıkmasına " + Data.left(rem) + "  ·  " + Data.clock(n.end)
+                          : "Öğle vaktine " + Data.left(rem) + "  ·  " + Data.clock(n.end);
+                  float lblH = -goldLbl.ascent() + goldLbl.descent();
+                  if (!measureOnly) {
+                      cv.drawText(lbl, w / 2f, y - goldLbl.ascent(), goldLbl);
+                      line.setColor(soon ? t[2] : t[3]);
+                      if (soon) line.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+                      cv.drawText(msg, w / 2f, y + lblH + w * 0.012f - line.ascent(), line);
+                  }
+                  y += lblH + w * 0.012f + (-line.ascent() + line.descent()) + w * 0.034f;
+
+                  // --- 3. satır: 6 vakit ---
+                  float colW = (inR - inL) / 6f;
+                  float nameH = -colName.ascent() + colName.descent();
+                  float timeH = -colTime.ascent() + colTime.descent();
+                  float pillPad = w * 0.012f;
+                  float rowC = pillPad + nameH + w * 0.006f + timeH + pillPad;
+                  if (!measureOnly) {
+                      for (int i = 0; i < 6; i++) {
+                          float cx = inL + colW * (i + 0.5f);
+                          boolean cur = i == n.idx;
+                          if (cur) {
+                              Paint pill = new Paint(Paint.ANTI_ALIAS_FLAG);
+                              pill.setColor(t[2]);
+                              float r = w * 0.022f;
+                              cv.drawRoundRect(cx - colW * 0.47f, y, cx + colW * 0.47f, y + rowC, r, r, pill);
+                          }
+                          colName.setColor(cur ? alpha(t[0], 220) : alpha(t[3], 165));
+                          colTime.setColor(cur ? t[0] : t[3]);
+                          cv.drawText(Data.NAMES[i], cx, y + pillPad - colName.ascent(), colName);
+                          cv.drawText(Data.clockMin(n.today.min[i]), cx, y + pillPad + nameH + w * 0.006f - colTime.ascent(), colTime);
+                      }
+                  }
+                  y += rowC;
+                  if (n.today.approx) {
+                      y += w * 0.012f;
+                      if (!measureOnly) {
+                          TextPaint ap = tp(alpha(t[3], 140), w * 0.022f, "sans-serif", Paint.Align.CENTER);
+                          cv.drawText("Vakitler yaklaşık · Diyanet verisi için internet gerekli", w / 2f, y - ap.ascent(), ap);
+                      }
+                      y += w * 0.03f;
+                  }
+                  y += pad;
+
+                  return y;
+              }
+
+              private static TextPaint tp(int color, float size, String family, Paint.Align al) {
+                  TextPaint p = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                  p.setColor(color);
+                  p.setTextSize(size);
+                  p.setTypeface(Typeface.create(family, Typeface.NORMAL));
+                  p.setTextAlign(al);
+                  return p;
+              }
+
+              private static String fit(String s, Paint p, float max) {
+                  if (p.measureText(s) <= max) return s;
+                  while (s.length() > 3 && p.measureText(s + "…") > max) s = s.substring(0, s.length() - 1);
+                  return s.trim() + "…";
+              }
+
+              /** Basit hava durumu simgeleri: 0 açık, 1 parçalı, 2 bulut, 3 sis, 4 yağmur, 5 kar, 6 fırtına */
+              private static void drawWeatherIcon(Canvas cv, float cx, float cy, float s, int kind, boolean day, int gold, int fg) {
+                  Paint f = new Paint(Paint.ANTI_ALIAS_FLAG);
+                  Paint st = new Paint(Paint.ANTI_ALIAS_FLAG);
+                  st.setStyle(Paint.Style.STROKE);
+                  st.setStrokeCap(Paint.Cap.ROUND);
+                  st.setStrokeWidth(s * 0.06f);
+                  if (kind == 0 || kind == 1) {
+                      float r = kind == 0 ? s * 0.22f : s * 0.17f;
+                      float sx = kind == 0 ? cx : cx - s * 0.16f, sy = kind == 0 ? cy : cy - s * 0.14f;
+                      f.setColor(gold);
+                      st.setColor(gold);
+                      if (day) {
+                          cv.drawCircle(sx, sy, r, f);
+                          for (int i = 0; i < 8; i++) {
+                              double an = Math.PI / 4 * i;
+                              float r1 = r * 1.45f, r2 = r * 1.9f;
+                              cv.drawLine(sx + (float) Math.cos(an) * r1, sy + (float) Math.sin(an) * r1,
+                                      sx + (float) Math.cos(an) * r2, sy + (float) Math.sin(an) * r2, st);
+                          }
+                      } else {
+                          Path m = new Path();
+                          m.addCircle(sx, sy, r * 1.3f, Path.Direction.CW);
+                          Path cut = new Path();
+                          cut.addCircle(sx + r * 0.7f, sy - r * 0.45f, r * 1.1f, Path.Direction.CW);
+                          m.op(cut, Path.Op.DIFFERENCE);
+                          cv.drawPath(m, f);
+                      }
+                      if (kind == 0) return;
+                  }
+                  float ccy = kind == 1 ? cy + s * 0.08f : cy - (kind >= 4 ? s * 0.10f : 0);
+                  if (kind != 3) {
+                      f.setColor(fg);
+                      Path c = new Path();
+                      c.addCircle(cx - s * 0.15f, ccy + s * 0.04f, s * 0.15f, Path.Direction.CW);
+                      c.addCircle(cx + s * 0.05f, ccy - s * 0.05f, s * 0.2f, Path.Direction.CW);
+                      c.addCircle(cx + s * 0.24f, ccy + s * 0.06f, s * 0.13f, Path.Direction.CW);
+                      c.addRoundRect(cx - s * 0.30f, ccy + s * 0.02f, cx + s * 0.37f, ccy + s * 0.19f, s * 0.08f, s * 0.08f, Path.Direction.CW);
+                      cv.drawPath(c, f);
+                  }
+                  st.setColor(gold);
+                  float by = ccy + s * 0.30f;
+                  if (kind == 3) {
+                      st.setColor(fg);
+                      for (int i = 0; i < 3; i++) {
+                          float yy = cy - s * 0.16f + i * s * 0.16f;
+                          float off = (i % 2) * s * 0.08f;
+                          cv.drawLine(cx - s * 0.32f + off, yy, cx + s * 0.32f - (0.08f * s - off), yy, st);
+                      }
+                  } else if (kind == 4) {
+                      for (int i = 0; i < 3; i++) {
+                          float x = cx - s * 0.16f + i * s * 0.16f;
+                          cv.drawLine(x, by, x - s * 0.05f, by + s * 0.14f, st);
+                      }
+                  } else if (kind == 5) {
+                      f.setColor(gold);
+                      for (int i = 0; i < 3; i++) {
+                          float x = cx - s * 0.16f + i * s * 0.16f;
+                          cv.drawCircle(x, by + s * 0.05f + (i % 2) * s * 0.06f, s * 0.04f, f);
+                      }
+                  } else if (kind == 6) {
+                      f.setColor(gold);
+                      Path b = new Path();
+                      b.moveTo(cx + s * 0.04f, by - s * 0.06f);
+                      b.lineTo(cx - s * 0.09f, by + s * 0.10f);
+                      b.lineTo(cx, by + s * 0.10f);
+                      b.lineTo(cx - s * 0.05f, by + s * 0.24f);
+                      b.lineTo(cx + s * 0.11f, by + s * 0.04f);
+                      b.lineTo(cx + s * 0.02f, by + s * 0.04f);
+                      b.close();
+                      cv.drawPath(b, f);
+                  }
               }
 
               /** Hafif, sekiz köşeli yıldız deseni; yazının çevresinde solar. */
@@ -1111,18 +1822,31 @@ jobs:
                   @Override
                   public void onReceive(Context context, Intent intent) {
                       String action = intent.getAction();
-                      if (Intent.ACTION_SCREEN_ON.equals(action)) { holdScreen(); return; }
+                      final Context app = getApplicationContext();
+                      if (Intent.ACTION_SCREEN_ON.equals(action)) {
+                          holdScreen();
+                          // kalan süre güncel kalsın: son çizimden bu yana 1 dakikadan fazla geçtiyse yeniden çiz
+                          if (System.currentTimeMillis() - Engine.renderedAt(app) > 60_000L && busy.compareAndSet(false, true)) {
+                              worker.execute(() -> {
+                                  try { if (Engine.isActive(app)) Engine.applyNow(app); }
+                                  catch (Throwable ignored) {}
+                                  finally { busy.set(false); }
+                              });
+                          }
+                          return;
+                      }
                       if (Intent.ACTION_USER_PRESENT.equals(action)) { releaseScreen(); return; }
                       if (!Intent.ACTION_SCREEN_OFF.equals(action)) return;
                       releaseScreen();
-                      if (!Engine.onScreen(context)) return;
                       long now = SystemClock.elapsedRealtime();
                       if (now - lastRun < 1500 || !busy.compareAndSet(false, true)) return;
                       lastRun = now;
-                      final Context app = getApplicationContext();
                       worker.execute(() -> {
                           try {
-                              if (Engine.isActive(app)) Engine.advanceAndApply(app);
+                              if (!Engine.isActive(app)) return;
+                              if (Engine.onScreen(app)) Engine.advanceAndApply(app);
+                              else Engine.applyNow(app);
+                              if (Engine.refreshData(app, false)) Engine.applyNow(app);
                           } catch (Throwable ignored) {
                           } finally {
                               busy.set(false);
@@ -1145,7 +1869,7 @@ jobs:
                   Notification n = new Notification.Builder(this, CHANNEL)
                           .setSmallIcon(icon)
                           .setContentTitle("Ayet Vakti")
-                          .setContentText("Ekranı her açışınızda yeni bir ayet")
+                          .setContentText("Kilit ekranında ayet, vakitler ve hava durumu")
                           .setContentIntent(open)
                           .setOngoing(true)
                           .build();
@@ -1212,20 +1936,33 @@ jobs:
           import android.content.Context;
           import android.content.Intent;
 
-          /** Saat başı alarmı, telefon açılışı ve saat değişikliklerinde ayeti yeniler. */
+          /** Saat başı alarmı, vakit alarmları, telefon açılışı ve saat değişikliklerinde çalışır. */
           public class TickReceiver extends BroadcastReceiver {
               @Override
               public void onReceive(Context context, Intent intent) {
                   final Context c = context.getApplicationContext();
                   if (!Engine.isActive(c)) return;
+                  final String action = intent.getAction();
                   final PendingResult result = goAsync();
                   new Thread(() -> {
                       try {
-                          if (Engine.ACTION_TICK.equals(intent.getAction())) Engine.advanceAndApply(c);
-                          else Engine.applyNow(c);
+                          if (Engine.ACTION_VAKIT.equals(action)) {
+                              int kind = intent.getIntExtra("kind", 0);
+                              long at = intent.getLongExtra("at", 0);
+                              // geç gelen (ör. telefon kapalıyken kaçan) bildirimleri gösterme
+                              if (System.currentTimeMillis() - at < 10 * 60_000L) {
+                                  Engine.postVakitNotice(c, kind, intent.getIntExtra("idx", 0));
+                              }
+                              Engine.applyNow(c);
+                          } else {
+                              Engine.refreshData(c, false);
+                              if (Engine.ACTION_TICK.equals(action) && !Engine.onScreen(c)) Engine.advanceAndApply(c);
+                              else Engine.applyNow(c);
+                          }
                       } catch (Throwable ignored) {
                       } finally {
                           try { Engine.scheduleNext(c); } catch (Throwable ignored) {}
+                          try { Engine.scheduleVakit(c); } catch (Throwable ignored) {}
                           Engine.syncService(c);
                           result.finish();
                       }
@@ -1234,13 +1971,12 @@ jobs:
           }
           AYET_EOF
 
-      - name: APK derle
+      - name: APK derle (imzasiz)
         run: |
           set -e
           BT="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
           PLAT="$ANDROID_HOME/platforms/$(ls "$ANDROID_HOME/platforms" | sort -V | tail -1)/android.jar"
-          echo "build-tools: $BT"; echo "platform: $PLAT"
-          VC=${{ github.run_number }}
+          VC=$(( ${{ github.run_number }} + 10 ))
           mkdir -p build/classes build/dex
           "$BT/aapt2" compile --dir res -o build/res.zip
           "$BT/aapt2" link -o build/base.apk -I "$PLAT" --manifest AndroidManifest.xml \
@@ -1250,23 +1986,55 @@ jobs:
             -d build/classes $(find src -name '*.java')
           "$BT/d8" --release --min-api 26 --lib "$PLAT" --output build/dex $(find build/classes -name '*.class')
           (cd build/dex && zip -q -u ../base.apk classes.dex)
-          "$BT/zipalign" -f -p 4 build/base.apk build/aligned.apk
-          echo "$KS_B64" | base64 -d > build/ks.p12
-          "$BT/apksigner" sign --ks build/ks.p12 --ks-type PKCS12 --ks-pass pass:ayetvakti --key-pass pass:ayetvakti \
-            --out build/AyetVakti.apk build/aligned.apk
-          "$BT/apksigner" verify build/AyetVakti.apk
-          ls -l build/AyetVakti.apk
-
-      - name: APK'yı Releases'e koy
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release create "ayet-vakti-v${{ github.run_number }}" build/AyetVakti.apk \
-            --repo "${{ github.repository }}" \
-            --title "Ayet Vakti 1.${{ github.run_number }}" \
-            --notes "Telefona yüklemek için aşağıdaki AyetVakti.apk dosyasına dokunun."
+          "$BT/zipalign" -f -p 4 build/base.apk build/AyetVakti-unsigned.apk
+          # deneme imzasi (yalnizca emulator icin; asil imza bu depoda tutulmaz)
+          keytool -genkeypair -keystore build/test.p12 -storetype PKCS12 -storepass testtest -keypass testtest \
+            -alias t -keyalg RSA -keysize 2048 -validity 30 -dname "CN=test" >/dev/null 2>&1
+          "$BT/apksigner" sign --ks build/test.p12 --ks-pass pass:testtest --out build/AyetVakti-test.apk build/AyetVakti-unsigned.apk
 
       - uses: actions/upload-artifact@v4
         with:
           name: AyetVakti
-          path: build/AyetVakti.apk
+          path: |
+            build/AyetVakti-unsigned.apk
+            build/AyetVakti-test.apk
+
+  preview:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: AyetVakti
+      - name: KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Emulatorde ac ve ekran goruntusu al
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7_pro
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: |
+            adb install -r -g AyetVakti-test.apk
+            adb shell settings put system time_12_24 24
+            adb shell am start -n com.halil.ayetvakti/.MainActivity
+            sleep 25
+            adb exec-out screencap -p > shot1.png
+            adb shell input swipe 700 2400 700 900 300
+            sleep 3
+            adb exec-out screencap -p > shot2.png
+            adb logcat -d -s AndroidRuntime:E > crash.txt || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: preview
+          path: |
+            shot*.png
+            crash.txt
