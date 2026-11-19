@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.provider.MediaStore;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
@@ -51,6 +52,11 @@ public class MainActivity extends Activity {
         if (b != null) web.restoreState(b); else web.loadUrl("file:///android_asset/index.html");
     }
 
+    @Override protected void onResume() {
+        super.onResume();
+        if (web != null) web.evaluateJavascript("window.otoKontrol&&window.otoKontrol()", null);
+    }
+
     @Override protected void onSaveInstanceState(Bundle o) { super.onSaveInstanceState(o); web.saveState(o); }
 
     @Override protected void onActivityResult(int req, int res, Intent data) {
@@ -68,6 +74,19 @@ public class MainActivity extends Activity {
     }
 
     class Bridge {
+        @JavascriptInterface public String otoAl() { return OtoKuyruk.al(MainActivity.this); }
+        @JavascriptInterface public boolean otoAcik() {
+            String s = Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");
+            return s != null && s.contains(getPackageName());
+        }
+        @JavascriptInterface public void otoAyar() {
+            try { startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)); }
+            catch (Exception e) { startActivity(new Intent(Settings.ACTION_SETTINGS)); }
+        }
+        @JavascriptInterface public void uygulamaBilgisi() {
+            try { startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()))); }
+            catch (Exception ignored) { }
+        }
         @JavascriptInterface public String saveFile(String name, String mime, String text) {
             try {
                 byte[] bytes = text.getBytes(StandardCharsets.UTF_8);

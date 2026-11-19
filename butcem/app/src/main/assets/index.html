@@ -199,7 +199,7 @@ function runRecurring(){
 
 /* ---------- durum ---------- */
 let tab="home", sub=null, month=mk(today()), txFilter={type:"all",q:"",cat:""};
-const TITLES={home:"Bütçem",tx:"İşlemler",budget:"Bütçe",reports:"Raporlar",more:"Daha Fazla",accounts:"Hesaplar",recurring:"Tekrarlayan İşlemler",goals:"Birikim Hedefleri",categories:"Kategoriler",backup:"Yedekleme"};
+const TITLES={home:"Bütçem",tx:"İşlemler",budget:"Bütçe",reports:"Raporlar",more:"Daha Fazla",accounts:"Hesaplar",recurring:"Tekrarlayan İşlemler",goals:"Birikim Hedefleri",categories:"Kategoriler",backup:"Yedekleme",auto:"Otomatik Takip"};
 
 function monthNav(){ return `<div class="monthnav"><button class="iconbtn" data-act="mprev">‹</button><b>${mLabel(month)}</b><button class="iconbtn" data-act="mnext">›</button></div>`; }
 function txRow(t){
@@ -234,6 +234,7 @@ function vHome(){
    ${menuRow("recurring","🔄","Tekrarlayan işlemler","Maaş, kira, abonelik otomatik eklenir")}
    ${menuRow("goals","🏆","Birikim hedefleri","Hedef belirle, ilerlemeyi gör")}
    ${menuRow("categories","🏷️","Kategoriler","Ekle, düzenle")}
+   ${menuRow("auto","🔔","Otomatik harcama takibi","Garanti BBVA / Bonus Flaş bildirimlerinden")}
    ${menuRow("backup","💾","Yedekleme & dışa aktarma","JSON yedek, Excel (CSV)")}</div></div>`;
   return h;
 }
@@ -363,7 +364,7 @@ function render(){
   $("#title").textContent=TITLES[v];
   $("#backbtn").style.display=sub?"":"none";
   document.querySelectorAll("nav.bottom [data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab&&!sub));
-  const views={home:vHome,tx:vTx,budget:vBudget,reports:vReports,accounts:vAccounts,recurring:vRecurring,goals:vGoals,categories:vCategories,backup:vBackup};
+  const views={home:vHome,tx:vTx,budget:vBudget,reports:vReports,accounts:vAccounts,recurring:vRecurring,goals:vGoals,categories:vCategories,backup:vBackup,auto:vAuto};
   $("#main").innerHTML=views[v]();
   const q=$("#q"); if(q){ q.oninput=()=>{ txFilter.q=q.value; const pos=q.selectionStart; render(); const n=$("#q"); n.focus(); n.setSelectionRange(pos,pos); }; }
   const fc=$("#fcat"); if(fc) fc.onchange=()=>{ txFilter.cat=fc.value; render(); };
@@ -385,11 +386,11 @@ function txSheet(id,preset){
     if(type!=="transfer" && !cats.find(c=>c.id===catId)) catId=null;
     return `<h2>${t?"İşlemi düzenle":"Yeni işlem"}</h2>
     <div class="seg"><button data-ty="expense" class="${type==="expense"?"on e":""}">Gider</button><button data-ty="income" class="${type==="income"?"on i":""}">Gelir</button><button data-ty="transfer" class="${type==="transfer"?"on t":""}">Transfer</button></div>
-    <input class="amtin" id="amt" inputmode="decimal" placeholder="0 ₺" value="${t?nf2.format(t.amount):""}">
+    <input class="amtin" id="amt" inputmode="decimal" placeholder="0 ₺" value="${t?nf2.format(t.amount):(preset&&preset.amount?nf2.format(preset.amount):"")}">
     ${type==="transfer"?`<div class="two"><div><label class="f">Nereden</label><select id="acc">${accOpts(t?t.accId:S.accounts[1]&&S.accounts[1].id)}</select></div><div><label class="f">Nereye</label><select id="acc2">${accOpts(t?t.toAccId:S.accounts[0]&&S.accounts[0].id)}</select></div></div>`
       :`<label class="f">Kategori</label><div class="catgrid">${cats.map(c=>`<div class="cat ${c.id===catId?"on":""}" data-cat="${c.id}"><span>${c.icon}</span>${esc(c.name)}</div>`).join("")}</div>
       <label class="f">Hesap</label><select id="acc">${accOpts(t?t.accId:(S.lastAcc||S.accounts[0]&&S.accounts[0].id))}</select>`}
-    <div class="two"><div><label class="f">Tarih</label><input type="date" id="date" value="${t?t.date:today()}"></div><div><label class="f">Not</label><input id="note" placeholder="İsteğe bağlı" value="${t?esc(t.note||""):""}"></div></div>
+    <div class="two"><div><label class="f">Tarih</label><input type="date" id="date" value="${t?t.date:today()}"></div><div><label class="f">Not</label><input id="note" placeholder="İsteğe bağlı" value="${t?esc(t.note||""):(preset&&preset.note?esc(preset.note):"")}"></div></div>
     ${!t&&type!=="transfer"?`<label class="f" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="rep" style="width:auto"> Tekrarlayan yap <select id="freq" style="width:auto;padding:6px 8px;margin-left:auto"><option value="monthly">Her ay</option><option value="weekly">Her hafta</option><option value="yearly">Her yıl</option></select></label>`:""}
     <div class="btns">${t?`<button class="btn del" id="del" style="flex:0 0 32%">Sil</button>`:""}<button class="btn" id="ok">Kaydet</button></div>`;
   };
@@ -512,6 +513,61 @@ function csv(list){
 $("#filein").onchange=e=>{ const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ try{ const d=JSON.parse(rd.result); if(!d||!Array.isArray(d.tx)||!Array.isArray(d.categories)) throw 0;
   confirmBox(`Yedekte ${d.tx.length} işlem var. Mevcut verilerin yerine geçecek.`,()=>{ S=Object.assign(defaults(),d); save(); render(); toast("Yedek geri yüklendi ✓"); },"Geri yükle"); }catch(err){ toast("Geçersiz yedek dosyası"); } e.target.value=""; }; rd.readAsText(f); };
 
+/* ---------- otomatik harcama takibi (bildirim okuma) ---------- */
+const OTO_ATLA=/şifre|doğrulama|onay kodu|kampanya|fırsat|indirim|ekstre|son ödeme|asgari|davet|faiz oranı|limit (artış|tanım)/;
+const OTO_GELIR=/hesabınıza|gelen (eft|havale|fast)|maaş.*(yatt|yatır)|para girişi|alacak/;
+const OTO_GIDER=/harcama|alışveriş|işlem|ödeme|çekil|çekim|provizyon|satın|kartınızdan|kartınızla|fatura|ödendi|gönderildi|gönderdiniz|havale|eft|fast|hesabınızdan/;
+const OTO_KAT=[["Market",/migros|\bbim\b|a101|şok|carrefour|market|macro|file market/],["Yemek & Kafe",/yemek|restoran|restaurant|cafe|kafe|starbucks|getir|burger|döner|lokanta|pastane|kahve|kebap/],["Yakıt",/shell|opet|petrol|\bbp\b|total|aygaz|akaryakıt|lukoil|alpet/],["Ulaşım",/bursakart|taksi|uber|bitaksi|otobüs|dolmuş|vapur|ido|bdr|otopark|hgs|ogs/],["Faturalar",/elektrik|doğalgaz|bursagaz|enerjisa|uedaş|uludağ|bursa su|buski|fatura/],["Sağlık",/eczane|hastane|klinik|medikal|sağlık/],["Giyim",/lcw|koton|defacto|zara|h&m|mavi|giyim|boyner|\bflo\b|ayakkabı/],["Abonelikler",/netflix|spotify|youtube|apple|google|prime|disney|exxen|blu ?tv|icloud/],["Telefon & İnternet",/turkcell|vodafone|türk telekom|turknet|superonline|gsm|internet/],["Eğlence",/sinema|bilet|cinema|konser|oyun/],["Eğitim",/kitap|kurs|okul|udemy|eğitim/]];
+function otoParse(text,pkg,cats,accs){
+  const t=String(text||"").replace(/\s+/g," ").trim(); const low=t.toLocaleLowerCase("tr")+" "+t.toLowerCase();
+  if(!t||OTO_ATLA.test(low)) return null;
+  const re1=/(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d+(?:,\d{1,2})?)\s*(?:TL|₺|TRY)/i, re2=/(?:TL|₺)\s*(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d+(?:,\d{1,2})?)/i;
+  const m1=re1.exec(t), m2=re2.exec(t); let m=m1;
+  if(m2&&(!m1||m2.index<m1.index)) m=m2; if(!m) return null;
+  const amount=parseAmt(m[1]); if(!(amount>0)) return null;
+  let type=null; if(OTO_GELIR.test(low)&&!/hesabınızdan/.test(low)) type="income"; else if(OTO_GIDER.test(low)) type="expense"; if(!type) return null;
+  const p=String(pkg||"").toLowerCase();
+  const cardy=/banka kartı|hesabınızdan/.test(low)?false:(/kart|visa|master/.test(low)||p.includes("bonus"));
+  const accId=(cardy?accs.find(a=>a.id==="a_card"):accs.find(a=>a.id==="a_bank"))?.id||(accs[0]&&accs[0].id);
+  let catName=type==="income"?(/maaş/.test(low)?"Maaş":"Diğer Gelir"):"Diğer";
+  if(type==="expense") for(const [n,r] of OTO_KAT) if(r.test(low)){ catName=n; break; }
+  const c=cats.find(x=>x.kind===type&&x.name===catName)||cats.find(x=>x.kind===type);
+  if(!c||!accId) return null;
+  return {type,amount,catId:c.id,accId,note:"🔔 "+t.slice(0,80)};
+}
+function otoIsle(){
+  let raw; try{ if(!(window.AndroidBridge&&AndroidBridge.otoAl)) return; raw=JSON.parse(AndroidBridge.otoAl()||"[]"); }catch(e){ return; }
+  if(!raw.length) return;
+  if(!S.oto) S.oto={skipped:[]}; let added=0, warn=null;
+  raw.sort((a,b)=>a.ts-b.ts);
+  for(const r of raw){
+    if(S.tx.some(t=>t.nid===r.id)) continue;
+    const text=(r.title&&r.text&&!r.text.includes(r.title)?r.title+" ":"")+(r.text||r.title||"");
+    const o=otoParse(text,r.pkg,S.categories,S.accounts);
+    if(!o){ S.oto.skipped.unshift({ts:r.ts,text:text.replace(/\s+/g," ").trim().slice(0,200)}); continue; }
+    if(S.tx.some(t=>t.nid&&t.type===o.type&&t.amount===o.amount&&Math.abs((t.nts||0)-r.ts)<5*60*1000)) continue;
+    const date=ds(new Date(r.ts));
+    S.tx.push({id:uid(),ts:Date.now()+added,nid:r.id,nts:r.ts,...o,date}); added++;
+    if(o.type==="expense"){ const l=S.budgets[o.catId]; if(l){ const sp=byCat(mk(date))[o.catId]||0; if(sp>l) warn="⚠️ "+cat(o.catId).name+" bütçesi aşıldı!"; else if(sp/l>=.8&&!warn) warn="Dikkat: "+cat(o.catId).name+" bütçesinin %"+Math.round(sp/l*100)+"'i doldu"; } }
+  }
+  S.oto.skipped=S.oto.skipped.slice(0,30);
+  save(); render();
+  if(added){ toast(added+" işlem bildirimden otomatik eklendi ✓"); if(warn) setTimeout(()=>toast(warn),2400); }
+}
+window.otoKontrol=otoIsle; setInterval(otoIsle,4000);
+function vAuto(){
+  let on=false; try{ on=!!(window.AndroidBridge&&AndroidBridge.otoAcik&&AndroidBridge.otoAcik()); }catch(e){}
+  const sk=(S.oto&&S.oto.skipped)||[]; const last=sortTx(S.tx.filter(t=>t.nid)).slice(0,8);
+  return `<div class="wrap"><div class="card"><h3>Durum</h3><div class="t1">${on?"✅ Açık: Garanti BBVA ve Bonus Flaş bildirimleri okunuyor":"⚠️ Kapalı: bildirim erişimi verilmedi"}</div>
+  <p class="tip">Bu uygulamalardan gelen harcama/para girişi bildirimleri, kategorisi tahmin edilerek otomatik kaydedilir. Hiçbir veri telefondan çıkmaz.</p>
+  <button class="btn" data-act="otoayar">🔔 Bildirim erişimi ayarını aç</button>
+  <button class="btn sec" style="margin-top:8px" data-act="otoinfo">Açılmıyor / gri mi? (kısıtlı ayar)</button>
+  <p class="tip">Ayarda <b>Bütçem</b>'i bulup açın. APK dışarıdan kurulduğu için Android ilk seferde engelleyebilir: "Uygulama bilgisi → ⋮ (sağ üst) → Kısıtlı ayarlara izin ver" yapıp tekrar deneyin.</p></div>
+  <div class="card"><h3>Son otomatik eklenenler</h3>${last.length?last.map(txRow).join(""):emptyBox("🔔","Henüz otomatik kayıt yok. Bir harcama bildirimi gelince burada görünür.")}</div>
+  <div class="card"><h3>Tanınmayan bildirimler</h3><p class="tip">Tutar veya harcama olduğu anlaşılamayan bildirimler. İstersen elle ekle.</p>
+  ${sk.length?sk.map((x,i)=>`<div class="row" data-act="otoadd" data-id="${i}"><div class="ico">➕</div><div class="grow"><div class="t1" style="white-space:normal">${esc(x.text)}</div><div class="t2">${new Date(x.ts).toLocaleString("tr-TR")}</div></div></div>`).join("")+`<button class="btn sec" style="margin-top:8px" data-act="otoclear">Listeyi temizle</button>`:emptyBox("✨","Liste boş")}</div></div>`;
+}
+
 /* ---------- olaylar ---------- */
 document.addEventListener("click",e=>{
   const tb=e.target.closest("[data-tab]"); if(tb&&!e.target.closest("#sheet")){ tab=tb.dataset.tab; sub=null; render(); window.scrollTo(0,0); return; }
@@ -535,6 +591,10 @@ document.addEventListener("click",e=>{
     case "copyjson": copyText(JSON.stringify(S),"Yedek panoya kopyalandı"); break;
     case "impjson": $("#filein").click(); break;
     case "expcsv": saveFile("butcem-"+(el.dataset.v==="all"?"tum":month)+".csv","text/csv",csv(el.dataset.v==="all"?S.tx:monthTx(month))); break;
+    case "otoayar": try{ AndroidBridge.otoAyar(); }catch(e){ toast("Sadece Android uygulamasında çalışır"); } break;
+    case "otoinfo": try{ AndroidBridge.uygulamaBilgisi(); }catch(e){} break;
+    case "otoclear": if(S.oto){ S.oto.skipped=[]; save(); render(); } break;
+    case "otoadd": { const x=(S.oto&&S.oto.skipped||[])[+id]; if(x){ const m=/(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d+(?:,\d{1,2})?)\s*(?:TL|₺)/i.exec(x.text); txSheet(null,{type:"expense",amount:m?parseAmt(m[1]):0,note:x.text.slice(0,80)}); } break; }
     case "reset": confirmBox("Tüm işlemler, hesaplar, hedefler silinecek. Geri alınamaz.",()=>{ S=defaults(); save(); render(); toast("Sıfırlandı"); }); break;
   }
 });
@@ -578,6 +638,7 @@ async function cloudInit(){
 (async()=>{ try{ if(window.claude&&claude.use&&!window.AndroidBridge) downloadsCap=await claude.use("downloads"); }catch(e){} })();
 
 runRecurring();
+otoIsle();
 render();
 cloudInit();
 })();
