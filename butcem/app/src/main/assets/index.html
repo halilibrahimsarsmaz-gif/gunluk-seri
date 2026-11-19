@@ -115,6 +115,10 @@ svg text{fill:var(--muted);font-size:10px}
 <div id="sheet"></div>
 <div id="toast"></div>
 <input type="file" id="filein" accept=".json,application/json" style="display:none">
+<input type="file" id="pdfin" accept=".pdf,application/pdf" style="display:none">
+<script src="pdf.min.js"></script>
+<script src="pdf.worker.min.js"></script>
+<script src="ekstre.js"></script>
 
 <script>
 (function(){
@@ -354,6 +358,7 @@ function vBackup(){
   return `<div class="wrap"><div class="card"><h3>Yedekle</h3><p class="tip">Verilerin bu cihazda saklanır. Telefon değiştirirsen ya da uygulamayı silersen kaybolmaması için ara sıra yedek al.</p>
   <button class="btn" data-act="expjson">💾 Yedek dosyası indir (JSON)</button>
   <button class="btn sec" style="margin-top:8px" data-act="impjson">📂 Yedekten geri yükle</button></div>
+  <div class="card"><h3>Kredi kartı ekstresi</h3><p class="tip">Garanti kredi kartı ekstresi PDF'ini seç; harcamalar listelenir, onaylayınca eklenir.</p><button class="btn" data-act="pdfimp">📄 PDF'den aktar</button></div>
   <div class="card"><h3>Dışa aktar</h3><p class="tip">Excel / Google E-Tablolar'da açılabilen CSV dosyası.</p>
   <div class="btns" style="margin-top:0"><button class="btn sec" data-act="expcsv" data-v="month">${mLabel(month)}</button><button class="btn sec" data-act="expcsv" data-v="all">Tüm kayıtlar</button></div></div>
   <div class="card"><h3>Diğer</h3><button class="btn sec" data-act="copyjson">📋 Yedeği panoya kopyala</button><button class="btn del" style="margin-top:8px" data-act="reset">🗑️ Tüm verileri sil</button>
@@ -575,10 +580,58 @@ function vAuto(){
   <button class="btn sec" style="margin-top:8px" data-act="otoinfo">Açılmıyor / gri mi? (kısıtlı ayar)</button>
   <p class="tip">Ayarda <b>Bütçem</b>'i bulup açın. APK dışarıdan kurulduğu için Android ilk seferde engelleyebilir: "Uygulama bilgisi → ⋮ (sağ üst) → Kısıtlı ayarlara izin ver" yapıp tekrar deneyin.</p></div>
   ${pendCard()}
+  <div class="card"><h3>Eksik harcamalar için</h3><p class="tip">Bildirimi gelmeyen harcamalar için kart ekstresi PDF'ini aktar. Aynı kayıtlar tekrar eklenmez.</p><button class="btn sec" data-act="pdfimp">📄 Ekstre PDF'inden aktar</button></div>
   <div class="card"><h3>Son otomatik eklenenler</h3>${last.length?last.map(txRow).join(""):emptyBox("🔔","Henüz otomatik kayıt yok. Bir harcama bildirimi gelince burada görünür.")}</div>
   <div class="card"><h3>Tanınmayan bildirimler</h3><p class="tip">Tutar veya harcama olduğu anlaşılamayan bildirimler. İstersen elle ekle.</p>
   ${sk.length?sk.map((x,i)=>`<div class="row" data-act="otoadd" data-id="${i}"><div class="ico">➕</div><div class="grow"><div class="t1" style="white-space:normal">${esc(x.text)}</div><div class="t2">${new Date(x.ts).toLocaleString("tr-TR")}</div></div></div>`).join("")+`<button class="btn sec" style="margin-top:8px" data-act="otoclear">Listeyi temizle</button>`:emptyBox("✨","Liste boş")}</div></div>`;
 }
+
+/* ---------- kredi kartı ekstresi (PDF) aktarma ---------- */
+const EK_BOLUM={"akaryakıt":"Yakıt","cafe & restaurant":"Yemek & Kafe","süpermarket":"Market","eğitim":"Eğitim"};
+const EK_KAT=[["Market",/\bbim\b|a101|\bsok\b|migros|file f|carrefour|market|suthane/],["Yakıt",/opet|shell|petrol|akaryakit|\bbp\b|baranpet/],["Yemek & Kafe",/koftec|tadiyaman|restor|cafe|lokanta|kebap|burger|doner|yemek|getir/],["Giyim",/lcw|koton|defacto|olka spor|spor malz|\bmavi\b|zara|tekstil/],["Telefon & İnternet",/turknet|turkcell|vodafone|telekom/],["Ev & Bakım",/baymak/],["Ulaşım",/lastikpark|otopark|hgs|ogs|taksi/],["Sağlık",/saglik|eczane|hastane/],["Abonelikler",/youtube|google|netflix|spotify|prime|apple/],["Eğitim",/egitim|okul|kurs/],["Eğlence",/turizm|sinema|bilet|jolly/],["Faturalar",/elektrik|dogalgaz|su idare|fatura/]];
+const ekFold=t=>String(t||"").toLocaleLowerCase("tr").replace(/ç/g,"c").replace(/ğ/g,"g").replace(/ı/g,"i").replace(/ö/g,"o").replace(/ş/g,"s").replace(/ü/g,"u");
+function ekCat(r){
+  const pool=S.categories.filter(c=>c.kind===(r.credit?"income":"expense")); const byName=n=>pool.find(c=>c.name===n);
+  if(r.credit) return (byName("Diğer Gelir")||pool[0]||{}).id;
+  let n=EK_BOLUM[String(r.section||"").toLocaleLowerCase("tr")];
+  if(!n){ const f=ekFold(r.desc); for(const [k,re] of EK_KAT) if(re.test(f)){ n=k; break; } }
+  return (byName(n)||byName("Diğer")||pool[0]||{}).id;
+}
+const ekId=r=>[r.date,r.desc,r.amount.toFixed(2),r.taksit,r.credit?"+":"-"].join("|");
+function ekAccId(){ return (S.accounts.find(a=>a.id==="a_card")||S.accounts.find(a=>/kart/i.test(a.name))||S.accounts[0]).id; }
+async function pdfOku(file){
+  if(!window.pdfjsLib||!window.ekstreParse) throw new Error("PDF modülü yüklenemedi");
+  const buf=await file.arrayBuffer();
+  const doc=await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise; const pages=[];
+  for(let i=1;i<=doc.numPages;i++){ const tc=await (await doc.getPage(i)).getTextContent(); pages.push(tc.items.map(t=>({str:t.str,x:t.transform[4],y:t.transform[5],w:t.width}))); }
+  return ekstreParse(pages);
+}
+function ekOnizle(res){
+  const rows=res.rows.map(r=>{
+    const id=ekId(r), done=S.tx.some(t=>t.ekid===id);
+    const type=r.credit?"income":"expense";
+    const near=!done&&S.tx.some(t=>t.type===type&&Math.abs(t.amount-r.amount)<0.005&&Math.abs((pd(t.date)-pd(r.date))/864e5)<=3);
+    return {...r,id,type,catId:ekCat(r),done,near,on:!done&&!near};
+  });
+  if(!rows.length) return toast("Ekstrede işlem bulunamadı");
+  const sum=()=>rows.filter(r=>r.on).reduce((a,r)=>a+(r.credit?-r.amount:r.amount),0);
+  const draw=()=>`<h2>Ekstre: ${rows.length} satır</h2><p class="tip">İşaretli olanlar Kredi Kartı hesabına eklenir. Daha önce aktarılanlar ve aynı tutarlı yakın tarihli kayıtlar işaretsiz gelir.</p>
+  <div style="max-height:52vh;overflow:auto;margin:0 -4px">${rows.map((r,i)=>`<div class="row" style="cursor:default;align-items:flex-start;gap:8px"><input type="checkbox" data-i="${i}" ${r.on?"checked":""} style="width:auto;margin-top:6px"><div class="grow"><div class="t1" style="white-space:normal">${esc(r.desc)}${r.taksit?` <span class="mut">(${r.taksit}. taksit)</span>`:""}</div><div class="t2">${dLabel(r.date)}${r.done?" · daha önce aktarıldı":r.near?" · kayıtlı olabilir":""}</div>
+   <select data-c="${i}" style="margin-top:4px;padding:4px 6px">${S.categories.filter(c=>c.kind===r.type).map(c=>`<option value="${c.id}" ${c.id===r.catId?"selected":""}>${c.icon} ${esc(c.name)}</option>`).join("")}</select></div><div class="amt ${r.credit?"inc":"exp"}">${r.credit?"+":""}${fmt(r.amount)}</div></div>`).join("")}</div>
+  <div class="btns"><button class="btn sec" id="ekno">Vazgeç</button><button class="btn" id="ekok">Ekle (${rows.filter(r=>r.on).length}) · ${fmt(sum())}</button></div>`;
+  const mount=sh=>{
+    const upd=()=>{ sh.querySelector("#ekok").textContent="Ekle ("+rows.filter(r=>r.on).length+") · "+fmt(sum()); };
+    sh.querySelectorAll("[data-i]").forEach(c=>c.onchange=()=>{ rows[+c.dataset.i].on=c.checked; upd(); });
+    sh.querySelectorAll("[data-c]").forEach(c=>c.onchange=()=>{ rows[+c.dataset.c].catId=c.value; });
+    sh.querySelector("#ekno").onclick=closeSheet;
+    sh.querySelector("#ekok").onclick=()=>{ const acc=ekAccId(); let n=0;
+      for(const r of rows) if(r.on){ S.tx.push({id:uid(),ts:Date.now()+n,type:r.type,amount:r.amount,catId:r.catId,accId:acc,date:r.date,note:"💳 "+r.desc+(r.taksit?" ("+r.taksit+". taksit)":""),ekid:r.id}); n++; }
+      if(n){ save(); month=mk(res.kesim||rows[0].date); } closeSheet(); render(); toast(n+" işlem eklendi ✓"); };
+  };
+  openSheet(draw(),mount);
+}
+$("#pdfin").onchange=async e=>{ const f=e.target.files[0]; e.target.value=""; if(!f) return; toast("Ekstre okunuyor…");
+  try{ ekOnizle(await pdfOku(f)); }catch(err){ toast("PDF okunamadı"); try{ console.log(err); }catch(_){} } };
 
 /* ---------- olaylar ---------- */
 document.addEventListener("click",e=>{
@@ -603,6 +656,7 @@ document.addEventListener("click",e=>{
     case "copyjson": copyText(JSON.stringify(S),"Yedek panoya kopyalandı"); break;
     case "impjson": $("#filein").click(); break;
     case "expcsv": saveFile("butcem-"+(el.dataset.v==="all"?"tum":month)+".csv","text/csv",csv(el.dataset.v==="all"?S.tx:monthTx(month))); break;
+    case "pdfimp": $("#pdfin").click(); break;
     case "otoayar": try{ AndroidBridge.otoAyar(); }catch(e){ toast("Sadece Android uygulamasında çalışır"); } break;
     case "otoinfo": try{ AndroidBridge.uygulamaBilgisi(); }catch(e){} break;
     case "pend": { const x=(S.oto&&S.oto.pending||[])[+id]; if(x) txSheet(null,{type:x.type,amount:x.sug||0,note:x.note,catId:x.catId,accId:x.accId,date:ds(new Date(x.ts)),done:o=>{ S.oto.pending=S.oto.pending.filter(p=>p.id!==x.id); S.oto.memo[x.key]=o.amount; }}); break; }
