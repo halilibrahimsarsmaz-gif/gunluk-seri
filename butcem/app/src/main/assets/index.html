@@ -222,6 +222,7 @@ function vHome(){
   let h=monthNav()+`<div class="wrap">
   <div class="card hero"><div class="lbl">Toplam varlık (tüm hesaplar)</div><div class="big">${fmt(total)}</div>
    <div class="tiles"><div class="tile"><small>Gelir</small><b>${fmt(s.inc)}</b></div><div class="tile"><small>Gider</small><b>${fmt(s.exp)}</b></div><div class="tile"><small>Kalan</small><b>${fmt(s.net)}</b></div></div></div>`;
+  h+=pendCard();
   if(bTotal>0){ const p=bSpent/bTotal*100;
     h+=`<div class="card"><h3>Aylık bütçe <a data-tab="budget">Detay</a></h3><div style="display:flex;justify-content:space-between"><b>${fmt(bSpent)}</b><span class="mut">/ ${fmt(bTotal)}</span></div><div class="bar"><i class="${p>=100?"o":p>=80?"w":""}" style="width:${Math.min(100,p)}%"></i></div><div class="t2" style="margin-top:6px">${p>=100?"⚠️ Bütçeyi aştın: "+fmt(bSpent-bTotal):"Kalan: "+fmt(bTotal-bSpent)}</div></div>`; }
   h+=`<div class="card"><h3>En çok harcanan <a data-tab="reports">Rapor</a></h3>`;
@@ -380,7 +381,7 @@ const accOpts=(sel)=>S.accounts.map(a=>`<option value="${a.id}" ${a.id===sel?"se
 function txSheet(id,preset){
   const t = id? S.tx.find(x=>x.id===id) : null;
   let type = t?t.type:(preset&&preset.type)||"expense";
-  let catId = t?t.catId:null;
+  let catId = t?t.catId:((preset&&preset.catId)||null);
   const draw=()=>{
     const cats=S.categories.filter(c=>c.kind===(type==="income"?"income":"expense"));
     if(type!=="transfer" && !cats.find(c=>c.id===catId)) catId=null;
@@ -389,8 +390,8 @@ function txSheet(id,preset){
     <input class="amtin" id="amt" inputmode="decimal" placeholder="0 ₺" value="${t?nf2.format(t.amount):(preset&&preset.amount?nf2.format(preset.amount):"")}">
     ${type==="transfer"?`<div class="two"><div><label class="f">Nereden</label><select id="acc">${accOpts(t?t.accId:S.accounts[1]&&S.accounts[1].id)}</select></div><div><label class="f">Nereye</label><select id="acc2">${accOpts(t?t.toAccId:S.accounts[0]&&S.accounts[0].id)}</select></div></div>`
       :`<label class="f">Kategori</label><div class="catgrid">${cats.map(c=>`<div class="cat ${c.id===catId?"on":""}" data-cat="${c.id}"><span>${c.icon}</span>${esc(c.name)}</div>`).join("")}</div>
-      <label class="f">Hesap</label><select id="acc">${accOpts(t?t.accId:(S.lastAcc||S.accounts[0]&&S.accounts[0].id))}</select>`}
-    <div class="two"><div><label class="f">Tarih</label><input type="date" id="date" value="${t?t.date:today()}"></div><div><label class="f">Not</label><input id="note" placeholder="İsteğe bağlı" value="${t?esc(t.note||""):(preset&&preset.note?esc(preset.note):"")}"></div></div>
+      <label class="f">Hesap</label><select id="acc">${accOpts(t?t.accId:((preset&&preset.accId)||S.lastAcc||(S.accounts[0]&&S.accounts[0].id)))}</select>`}
+    <div class="two"><div><label class="f">Tarih</label><input type="date" id="date" value="${t?t.date:((preset&&preset.date)||today())}"></div><div><label class="f">Not</label><input id="note" placeholder="İsteğe bağlı" value="${t?esc(t.note||""):(preset&&preset.note?esc(preset.note):"")}"></div></div>
     ${!t&&type!=="transfer"?`<label class="f" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="rep" style="width:auto"> Tekrarlayan yap <select id="freq" style="width:auto;padding:6px 8px;margin-left:auto"><option value="monthly">Her ay</option><option value="weekly">Her hafta</option><option value="yearly">Her yıl</option></select></label>`:""}
     <div class="btns">${t?`<button class="btn del" id="del" style="flex:0 0 32%">Sil</button>`:""}<button class="btn" id="ok">Kaydet</button></div>`;
   };
@@ -414,6 +415,7 @@ function txSheet(id,preset){
         else S.tx.push({id:uid(),ts:Date.now(),...o});
         if(mk(date)!==month) month=mk(date);
       }
+      if(!t&&preset&&preset.done) preset.done(o);
       save(); closeSheet(); render(); toast(t?"Güncellendi":"Kaydedildi ✓");
       if(!t&&type==="expense"){ const l=S.budgets[catId]; if(l){ const sp=byCat(mk(date))[catId]||0; if(sp>l) setTimeout(()=>toast("⚠️ "+cat(catId).name+" bütçesi aşıldı!"),2300); else if(sp/l>=.8) setTimeout(()=>toast("Dikkat: "+cat(catId).name+" bütçesinin %"+Math.round(sp/l*100)+"'i doldu"),2300); } }
     };
@@ -517,34 +519,40 @@ $("#filein").onchange=e=>{ const f=e.target.files[0]; if(!f) return; const rd=ne
 const OTO_ATLA=/şifre|doğrulama|onay kodu|kampanya|fırsat|indirim|ekstre|son ödeme|asgari|davet|faiz oranı|limit (artış|tanım)/;
 const OTO_GELIR=/hesabınıza|gelen (eft|havale|fast)|maaş.*(yatt|yatır)|para girişi|alacak/;
 const OTO_GIDER=/harcama|alışveriş|işlem|ödeme|çekil|çekim|provizyon|satın|kartınızdan|kartınızla|fatura|ödendi|gönderildi|gönderdiniz|havale|eft|fast|hesabınızdan/;
+const OTO_TUTARSIZ=/otomatik ödeme|talimat|maaş|hesabınıza.*(yatırıl|geçti|gönderil)|ödendi|ödenmiştir|ödemeniz gerçekleş|harcama|alışveriş|çekim|gerçekleştirildi|gerçekleşti/;
+const OTO_HATIRLAT=/hatırlat|yaklaş|unutma|gerekmektedir|ödemeniz gerek|son gün/;
+const otoKey=t=>String(t||"").toLowerCase().replace(/[\d.,:\/]+/g,"").replace(/\s+/g," ").trim().slice(0,40);
 const OTO_KAT=[["Market",/migros|\bbim\b|a101|şok|carrefour|market|macro|file market/],["Yemek & Kafe",/yemek|restoran|restaurant|cafe|kafe|starbucks|getir|burger|döner|lokanta|pastane|kahve|kebap/],["Yakıt",/shell|opet|petrol|\bbp\b|total|aygaz|akaryakıt|lukoil|alpet/],["Ulaşım",/bursakart|taksi|uber|bitaksi|otobüs|dolmuş|vapur|ido|bdr|otopark|hgs|ogs/],["Faturalar",/elektrik|doğalgaz|bursagaz|enerjisa|uedaş|uludağ|bursa su|buski|fatura/],["Sağlık",/eczane|hastane|klinik|medikal|sağlık/],["Giyim",/lcw|koton|defacto|zara|h&m|mavi|giyim|boyner|\bflo\b|ayakkabı/],["Abonelikler",/netflix|spotify|youtube|apple|google|prime|disney|exxen|blu ?tv|icloud/],["Telefon & İnternet",/turkcell|vodafone|türk telekom|turknet|superonline|gsm|internet/],["Eğlence",/sinema|bilet|cinema|konser|oyun/],["Eğitim",/kitap|kurs|okul|udemy|eğitim/]];
 function otoParse(text,pkg,cats,accs){
   const t=String(text||"").replace(/\s+/g," ").trim(); const low=t.toLocaleLowerCase("tr")+" "+t.toLowerCase();
   if(!t||OTO_ATLA.test(low)) return null;
   const re1=/(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d+(?:,\d{1,2})?)\s*(?:TL|₺|TRY)/i, re2=/(?:TL|₺)\s*(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d+(?:,\d{1,2})?)/i;
   const m1=re1.exec(t), m2=re2.exec(t); let m=m1;
-  if(m2&&(!m1||m2.index<m1.index)) m=m2; if(!m) return null;
-  const amount=parseAmt(m[1]); if(!(amount>0)) return null;
-  let type=null; if(OTO_GELIR.test(low)&&!/hesabınızdan/.test(low)) type="income"; else if(OTO_GIDER.test(low)) type="expense"; if(!type) return null;
+  if(m2&&(!m1||m2.index<m1.index)) m=m2;
+  let amount=m?parseAmt(m[1]):NaN, noAmt=false;
+  if(!(amount>0)){ if(!OTO_TUTARSIZ.test(low)||OTO_HATIRLAT.test(low)) return null; amount=0; noAmt=true; }
+  let type=null; if(OTO_GELIR.test(low)&&!/hesabınızdan/.test(low)) type="income"; else if(OTO_GIDER.test(low)||noAmt) type="expense"; if(!type) return null;
   const p=String(pkg||"").toLowerCase();
   const cardy=/banka kartı|hesabınızdan/.test(low)?false:(/kart|visa|master/.test(low)||p.includes("bonus"));
   const accId=(cardy?accs.find(a=>a.id==="a_card"):accs.find(a=>a.id==="a_bank"))?.id||(accs[0]&&accs[0].id);
   let catName=type==="income"?(/maaş/.test(low)?"Maaş":"Diğer Gelir"):"Diğer";
-  if(type==="expense") for(const [n,r] of OTO_KAT) if(r.test(low)){ catName=n; break; }
+  if(type==="expense"){ let f=false; for(const [n,r] of OTO_KAT) if(r.test(low)){ catName=n; f=true; break; } if(!f&&/otomatik ödeme|talimat/.test(low)) catName="Faturalar"; }
   const c=cats.find(x=>x.kind===type&&x.name===catName)||cats.find(x=>x.kind===type);
   if(!c||!accId) return null;
-  return {type,amount,catId:c.id,accId,note:"🔔 "+t.slice(0,80)};
+  return {type,amount,catId:c.id,accId,note:"🔔 "+t.slice(0,80),noAmt};
 }
 function otoIsle(){
   let raw; try{ if(!(window.AndroidBridge&&AndroidBridge.otoAl)) return; raw=JSON.parse(AndroidBridge.otoAl()||"[]"); }catch(e){ return; }
   if(!raw.length) return;
-  if(!S.oto) S.oto={skipped:[]}; let added=0, warn=null;
+  if(!S.oto) S.oto={}; S.oto.skipped=S.oto.skipped||[]; S.oto.pending=S.oto.pending||[]; S.oto.memo=S.oto.memo||{}; let added=0, warn=null, pend=0;
   raw.sort((a,b)=>a.ts-b.ts);
   for(const r of raw){
     if(S.tx.some(t=>t.nid===r.id)) continue;
     const text=(r.title&&r.text&&!r.text.includes(r.title)?r.title+" ":"")+(r.text||r.title||"");
     const o=otoParse(text,r.pkg,S.categories,S.accounts);
     if(!o){ S.oto.skipped.unshift({ts:r.ts,text:text.replace(/\s+/g," ").trim().slice(0,200)}); continue; }
+    if(o.noAmt){ const key=otoKey(text); if(S.oto.pending.some(x=>x.id===r.id||(x.key===key&&Math.abs(x.ts-r.ts)<5*60*1000))) continue;
+      S.oto.pending.push({id:r.id,ts:r.ts,type:o.type,catId:o.catId,accId:o.accId,note:o.note,key,sug:S.oto.memo[key]||0}); pend++; continue; }
     if(S.tx.some(t=>t.nid&&t.type===o.type&&t.amount===o.amount&&Math.abs((t.nts||0)-r.ts)<5*60*1000)) continue;
     const date=ds(new Date(r.ts));
     S.tx.push({id:uid(),ts:Date.now()+added,nid:r.id,nts:r.ts,...o,date}); added++;
@@ -553,8 +561,11 @@ function otoIsle(){
   S.oto.skipped=S.oto.skipped.slice(0,30);
   save(); render();
   if(added){ toast(added+" işlem bildirimden otomatik eklendi ✓"); if(warn) setTimeout(()=>toast(warn),2400); }
+  if(pend) setTimeout(()=>toast(pend+" bildirimde tutar yazmıyor: ana sayfadan tutarı girin"),added?4800:0);
 }
 window.otoKontrol=otoIsle; setInterval(otoIsle,4000);
+function pendCard(){ const p=(S.oto&&S.oto.pending)||[]; if(!p.length) return "";
+  return `<div class="card"><h3>Tutarı bekleyenler <a data-act="pendclear">Hepsini sil</a></h3><p class="tip">Bildirimde tutar yazmıyor. Dokunup tutarı girin; bir sonraki sefer son tutar önerilir.</p>`+p.map((x,i)=>`<div class="row" data-act="pend" data-id="${i}"><div class="ico">${x.type==="income"?"💰":"🧾"}</div><div class="grow"><div class="t1" style="white-space:normal">${esc(x.note.replace("🔔 ",""))}</div><div class="t2">${dLabel(ds(new Date(x.ts)))}${x.sug?" · son tutar "+fmt(x.sug):""}</div></div><span class="mut">›</span></div>`).join("")+`</div>`; }
 function vAuto(){
   let on=false; try{ on=!!(window.AndroidBridge&&AndroidBridge.otoAcik&&AndroidBridge.otoAcik()); }catch(e){}
   const sk=(S.oto&&S.oto.skipped)||[]; const last=sortTx(S.tx.filter(t=>t.nid)).slice(0,8);
@@ -563,6 +574,7 @@ function vAuto(){
   <button class="btn" data-act="otoayar">🔔 Bildirim erişimi ayarını aç</button>
   <button class="btn sec" style="margin-top:8px" data-act="otoinfo">Açılmıyor / gri mi? (kısıtlı ayar)</button>
   <p class="tip">Ayarda <b>Bütçem</b>'i bulup açın. APK dışarıdan kurulduğu için Android ilk seferde engelleyebilir: "Uygulama bilgisi → ⋮ (sağ üst) → Kısıtlı ayarlara izin ver" yapıp tekrar deneyin.</p></div>
+  ${pendCard()}
   <div class="card"><h3>Son otomatik eklenenler</h3>${last.length?last.map(txRow).join(""):emptyBox("🔔","Henüz otomatik kayıt yok. Bir harcama bildirimi gelince burada görünür.")}</div>
   <div class="card"><h3>Tanınmayan bildirimler</h3><p class="tip">Tutar veya harcama olduğu anlaşılamayan bildirimler. İstersen elle ekle.</p>
   ${sk.length?sk.map((x,i)=>`<div class="row" data-act="otoadd" data-id="${i}"><div class="ico">➕</div><div class="grow"><div class="t1" style="white-space:normal">${esc(x.text)}</div><div class="t2">${new Date(x.ts).toLocaleString("tr-TR")}</div></div></div>`).join("")+`<button class="btn sec" style="margin-top:8px" data-act="otoclear">Listeyi temizle</button>`:emptyBox("✨","Liste boş")}</div></div>`;
@@ -593,6 +605,8 @@ document.addEventListener("click",e=>{
     case "expcsv": saveFile("butcem-"+(el.dataset.v==="all"?"tum":month)+".csv","text/csv",csv(el.dataset.v==="all"?S.tx:monthTx(month))); break;
     case "otoayar": try{ AndroidBridge.otoAyar(); }catch(e){ toast("Sadece Android uygulamasında çalışır"); } break;
     case "otoinfo": try{ AndroidBridge.uygulamaBilgisi(); }catch(e){} break;
+    case "pend": { const x=(S.oto&&S.oto.pending||[])[+id]; if(x) txSheet(null,{type:x.type,amount:x.sug||0,note:x.note,catId:x.catId,accId:x.accId,date:ds(new Date(x.ts)),done:o=>{ S.oto.pending=S.oto.pending.filter(p=>p.id!==x.id); S.oto.memo[x.key]=o.amount; }}); break; }
+    case "pendclear": confirmBox("Tutarı bekleyen tüm bildirimler silinecek.",()=>{ S.oto.pending=[]; save(); render(); }); break;
     case "otoclear": if(S.oto){ S.oto.skipped=[]; save(); render(); } break;
     case "otoadd": { const x=(S.oto&&S.oto.skipped||[])[+id]; if(x){ const m=/(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d+(?:,\d{1,2})?)\s*(?:TL|₺)/i.exec(x.text); txSheet(null,{type:"expense",amount:m?parseAmt(m[1]):0,note:x.text.slice(0,80)}); } break; }
     case "reset": confirmBox("Tüm işlemler, hesaplar, hedefler silinecek. Geri alınamaz.",()=>{ S=defaults(); save(); render(); toast("Sıfırlandı"); }); break;
